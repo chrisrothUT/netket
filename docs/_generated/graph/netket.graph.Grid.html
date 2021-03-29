@@ -475,6 +475,21 @@ The fact that some node may not be reachable from another is represented by -1</
 </dd></dl>
 
 <dl class="py method">
+<dt id="netket.graph.Grid.lattice_group">
+<code class="sig-name descname"><span class="pre">lattice_group</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/graph/grid.html#Grid.lattice_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.graph.Grid.lattice_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all permutations of lattice sites that correspond to translation
+and space group symmetry operations. Translation is applied first, followed
+by reflection along lattice axes, followed by reflections along diagonals.</p>
+<p>The lattice permuations are a subset of the permutations returned by
+<cite>self.automorphisms()</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="netket.graph.Grid.nodes">
 <code class="sig-name descname"><span class="pre">nodes</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#netket.graph.Grid.nodes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Iterator over the nodes of the graph</p>
@@ -491,6 +506,20 @@ The fact that some node may not be reachable from another is represented by -1</
 <dd><p>Returns all permutations of lattice sites that correspond to translations
 along the grid directions with periodic boundary conditions.</p>
 <p>The periodic translations are a subset of the permutations returned by
+<cite>self.automorphisms()</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.graph.Grid.space_group">
+<code class="sig-name descname"><span class="pre">space_group</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/graph/grid.html#Grid.space_group"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.graph.Grid.space_group" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns all permutations of lattice sites that correspond to space group
+symmetry operations.</p>
+<p>The space group operations are a subset of the permutations returned by
 <cite>self.automorphisms()</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
