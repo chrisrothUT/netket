@@ -243,7 +243,7 @@
 
         <span class="k">return</span> <span class="p">[</span><span class="n">translate</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">identity</span><span class="p">)</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">translation_group</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="Grid.space_group"><a class="viewcode-back" href="../../../docs/_generated/graph/netket.graph.Grid.html#netket.graph.Grid.space_group">[docs]</a>    <span class="k">def</span> <span class="nf">space_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">identity</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
+<div class="viewcode-block" id="Grid.space_group"><a class="viewcode-back" href="../../../docs/_generated/graph/netket.graph.Grid.html#netket.graph.Grid.space_group">[docs]</a>    <span class="k">def</span> <span class="nf">space_group</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identity</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns all permutations of lattice sites that correspond to space group</span>
 <span class="sd">        symmetry operations.</span>
@@ -253,44 +253,46 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">_np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">identity</span><span class="p">):</span>
-            <span class="n">identity</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">_np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">()))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">identity</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span>
+                <span class="n">_np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nodes</span><span class="p">()))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">0</span>
+            <span class="p">)</span>
         <span class="n">ndim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
 
         <span class="n">dup_axes</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">alr_dup</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">l</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">i</span> <span class="ow">in</span> <span class="n">alr_dup</span><span class="p">):</span>
                 <span class="n">dups</span> <span class="o">=</span> <span class="p">[]</span>
-                <span class="n">dups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ndim</span><span class="o">-</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">ndim</span><span class="p">):</span>
+                <span class="n">dups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ndim</span> <span class="o">-</span> <span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ndim</span><span class="p">):</span>
                     <span class="k">if</span> <span class="n">l</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">[</span><span class="n">j</span><span class="p">]:</span>
-                        <span class="n">dups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ndim</span><span class="o">-</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="n">dups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ndim</span> <span class="o">-</span> <span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
                         <span class="n">alr_dup</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
                 <span class="n">dup_axes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dups</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ndim</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">perms</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">identity</span><span class="p">,</span><span class="n">_np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">identity</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)),</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">perms</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">identity</span><span class="p">,</span> <span class="n">_np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">identity</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)),</span> <span class="mi">0</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">perms</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">perms</span><span class="p">,</span><span class="n">_np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">perms</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)),</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">perms</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">perms</span><span class="p">,</span> <span class="n">_np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">perms</span><span class="p">,</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)),</span> <span class="mi">0</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">set_axes</span> <span class="ow">in</span> <span class="n">dup_axes</span><span class="p">:</span>  
+        <span class="k">for</span> <span class="n">set_axes</span> <span class="ow">in</span> <span class="n">dup_axes</span><span class="p">:</span>
 
             <span class="n">set_axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="o">+</span> <span class="mi">1</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">set_axes</span><span class="p">]</span>
             <span class="n">axis_perms</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">permutations</span><span class="p">(</span><span class="n">set_axes</span><span class="p">)</span>
 
             <span class="n">iden</span> <span class="o">=</span> <span class="n">perms</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">axis_perm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axis_perms</span><span class="p">):</span>
-                
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">axis_perm</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axis_perms</span><span class="p">):</span>
+
                 <span class="n">apply_perm</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">ndim</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
                 <span class="n">apply_perm</span><span class="p">[</span><span class="n">set_axes</span><span class="p">]</span> <span class="o">=</span> <span class="n">axis_perm</span>
-                
+
                 <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                    <span class="n">perms</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">perms</span><span class="p">,</span><span class="n">iden</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">apply_perm</span><span class="p">)),</span><span class="mi">0</span><span class="p">)</span>
-                    
-        <span class="n">perms</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">perms</span><span class="p">,[</span><span class="nb">len</span><span class="p">(</span><span class="n">perms</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="n">perms</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">perms</span><span class="p">,</span> <span class="n">iden</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">apply_perm</span><span class="p">)),</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">perms</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">perms</span><span class="p">,</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">perms</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>
 
         <span class="n">list_perms</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -309,10 +311,13 @@
 <span class="sd">        `self.automorphisms()`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">identity</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">_np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">periodic_translations</span><span class="p">()),[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+        <span class="n">identity</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+            <span class="n">_np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">periodic_translations</span><span class="p">()),</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">space_group</span><span class="p">(</span><span class="n">identity</span><span class="p">)</span></div></div>
-        
+
+
 <div class="viewcode-block" id="Hypercube"><a class="viewcode-back" href="../../../docs/_generated/graph/netket.graph.Hypercube.html#netket.graph.Hypercube">[docs]</a><span class="k">def</span> <span class="nf">Hypercube</span><span class="p">(</span><span class="n">length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">pbc</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Grid</span><span class="p">:</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;A hypercube lattice of side L in d dimensions.</span>
 <span class="sd">    Periodic boundary conditions can also be imposed.</span>
