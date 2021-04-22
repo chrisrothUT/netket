@@ -21,6 +21,7 @@
       .. autoattribute:: GraphOperator.graph
       .. autoattribute:: GraphOperator.hilbert
       .. autoattribute:: GraphOperator.is_hermitian
+      .. autoattribute:: GraphOperator.max_conn_size
       .. autoattribute:: GraphOperator.mel_cutoff
       .. autoattribute:: GraphOperator.n_operators
       .. autoattribute:: GraphOperator.operators

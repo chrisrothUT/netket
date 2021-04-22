@@ -29,6 +29,7 @@
       .. automethod:: RBMMultiVal.__call__
       .. automethod:: RBMMultiVal.activation
       .. automethod:: RBMMultiVal.apply
+      .. automethod:: RBMMultiVal.bind
       .. automethod:: RBMMultiVal.clone
       .. automethod:: RBMMultiVal.get_variable
       .. automethod:: RBMMultiVal.has_variable

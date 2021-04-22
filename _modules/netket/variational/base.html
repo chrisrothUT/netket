@@ -345,12 +345,17 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">Ô</span><span class="p">:</span> <span class="n">AbstractOperator</span><span class="p">,</span>
         <span class="n">mutable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">is_hermitian</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Stats</span><span class="p">,</span> <span class="n">PyTree</span><span class="p">]:</span>
         <span class="c1"># do the computation in super-operator space</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hilbert</span> <span class="o">==</span> <span class="n">Ô</span><span class="o">.</span><span class="n">hilbert</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">expect_and_grad</span><span class="p">(</span><span class="n">Ô</span><span class="p">,</span> <span class="n">mutable</span><span class="o">=</span><span class="n">mutable</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">expect_and_grad</span><span class="p">(</span>
+                <span class="n">Ô</span><span class="p">,</span> <span class="n">mutable</span><span class="o">=</span><span class="n">mutable</span><span class="p">,</span> <span class="n">is_hermitian</span><span class="o">=</span><span class="n">is_hermitian</span>
+            <span class="p">)</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">hilbert_physical</span> <span class="o">==</span> <span class="n">Ô</span><span class="o">.</span><span class="n">hilbert</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">expect_and_grad</span><span class="p">(</span><span class="n">Ô</span><span class="p">,</span> <span class="n">mutable</span><span class="o">=</span><span class="n">mutable</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">expect_and_grad</span><span class="p">(</span>
+                <span class="n">Ô</span><span class="p">,</span> <span class="n">mutable</span><span class="o">=</span><span class="n">mutable</span><span class="p">,</span> <span class="n">is_hermitian</span><span class="o">=</span><span class="n">is_hermitian</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">NotImplemented</span>
 
@@ -392,7 +397,7 @@
     </p>
     <p>
         &copy; Copyright 2019-2021, The Netket authors - All rights reserved.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.3.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
     </p>
   </div>
 </footer>

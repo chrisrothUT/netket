@@ -18,6 +18,7 @@
       .. autoattribute:: AbstractOperator.dtype
       .. autoattribute:: AbstractOperator.hilbert
       .. autoattribute:: AbstractOperator.is_hermitian
+      .. autoattribute:: AbstractOperator.max_conn_size
       .. autoattribute:: AbstractOperator.size
    
       

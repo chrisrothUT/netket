@@ -18,6 +18,8 @@
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <script src="../../../_static/js/rtd_theme.js"></script>
     <link rel="author" title="About these documents" href="../../../about.html" />
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -127,6 +129,11 @@
 <li class="toctree-l2"><a class="reference internal" href="../../whats_new.html#api-changes">API Changes</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../superop.html">The Lindblad Master Equation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../superop.html#the-density-matrix-and-the-liouvillian">The Density Matrix and the Liouvillian</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../superop.html#computing-observables">Computing Observables</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../varstate.html">The Variational State Interface</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../varstate.html#constructing-a-variational-state">Constructing a Variational State</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../varstate.html#defining-models-flax">Defining models: Flax</a></li>
@@ -174,6 +181,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Lattice.html">netket.graph.Lattice</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Chain.html">netket.graph.Chain</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Grid.html">netket.graph.Grid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.SymmGroup.html">netket.graph.SymmGroup</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#hilbert">Hilbert</a><ul>
@@ -259,6 +267,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../models/netket.models.Jastrow.html">netket.models.Jastrow</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../models/netket.models.MPSPeriodic.html">netket.models.MPSPeriodic</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../models/netket.models.NDM.html">netket.models.NDM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../models/netket.models.GCNN.html">netket.models.GCNN</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#model-tools">Model tools</a><ul>
@@ -267,7 +276,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.Dense.html">netket.nn.Dense</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.DenseGeneral.html">netket.nn.DenseGeneral</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.DenseSymm.html">netket.nn.DenseSymm</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.create_DenseSymm.html">netket.nn.create_DenseSymm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.DenseEquivariant.html">netket.nn.DenseEquivariant</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.Conv.html">netket.nn.Conv</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.Embed.html">netket.nn.Embed</a></li>
 </ul>
@@ -320,6 +329,10 @@
 <li class="toctree-l3"><a class="reference internal" href="../driver/netket.logging.TBLog.html">netket.logging.TBLog</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#utils">Utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../utils/netket.utils.HashableArray.html">netket.utils.HashableArray</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#callbacks">Callbacks</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../callbacks/netket.callbacks.EarlyStopping.html">netket.callbacks.EarlyStopping</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../callbacks/netket.callbacks.Timeout.html">netket.callbacks.Timeout</a></li>
@@ -339,14 +352,14 @@
 <h1>netket.variational.MCMixedState<a class="headerlink" href="#netket-variational-mcmixedstate" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="netket.variational.MCMixedState">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">netket.variational.</span></code><code class="sig-name descname"><span class="pre">MCMixedState</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_discard_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DeviceArray([0,</span> <span class="pre">34144251],</span> <span class="pre">dtype=uint32)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler_seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/variational/mc_mixed_state.html#MCMixedState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.variational.MCMixedState" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">netket.variational.</span></code><code class="sig-name descname"><span class="pre">MCMixedState</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_discard_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DeviceArray([0,</span> <span class="pre">593462462],</span> <span class="pre">dtype=uint32)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler_seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/variational/mc_mixed_state.html#MCMixedState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.variational.MCMixedState" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">netket.variational.base.VariationalMixedState</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">netket.variational.mc_state.MCState</span></code></p>
 <p>Variational State for a Mixed Variational Neural Quantum State.</p>
 <p>The state is sampled according to the provided sampler, and it’s diagonal is sampled
 according to another sampler.</p>
 <dl class="py method">
 <dt id="netket.variational.MCMixedState.__init__">
-<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_discard_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DeviceArray([0,</span> <span class="pre">34144251],</span> <span class="pre">dtype=uint32)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler_seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/variational/mc_mixed_state.html#MCMixedState.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.variational.MCMixedState.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_discard_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DeviceArray([0,</span> <span class="pre">593462462],</span> <span class="pre">dtype=uint32)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler_seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/variational/mc_mixed_state.html#MCMixedState.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.variational.MCMixedState.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Constructs the MCMixedState.
 Arguments are the same as <a class="reference internal" href="netket.variational.MCState.html#netket.variational.MCState" title="netket.variational.MCState"><code class="xref py py-class docutils literal notranslate"><span class="pre">MCState</span></code></a>.</p>
 <dl class="field-list simple">
@@ -569,7 +582,7 @@ used when evaluating it.</p>
 <dt>Methods</dt><dd><dl class="py method">
 <dt id="netket.variational.MCMixedState.evaluate">
 <code class="sig-name descname"><span class="pre">evaluate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">σ</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.variational.MCMixedState.evaluate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Evaluate the variational state given a batch of states.</p>
+<dd><p>DEPRECATED: use log_value instead.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
@@ -606,7 +619,7 @@ otherwise for a mixed state $rho$, this is $&lt;O&gt; = Tr[rho hat{O}/Tr[rho]$.<
 
 <dl class="py method">
 <dt id="netket.variational.MCMixedState.expect_and_grad">
-<code class="sig-name descname"><span class="pre">expect_and_grad</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ô</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mutable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.variational.MCMixedState.expect_and_grad" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">expect_and_grad</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ô</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mutable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_hermitian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.variational.MCMixedState.expect_and_grad" title="Permalink to this definition">¶</a></dt>
 <dd><p>Estimates both the gradient of the quantum expectation value of a given operator O.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -619,7 +632,7 @@ This is used to mutate the state of the model while you train it (for example
 to implement BatchNorm. Consult
 <a class="reference external" href="https://flax.readthedocs.io/en/latest/_modules/flax/linen/module.html#Module.apply">Flax’s Module.apply documentation</a>
 for a more in-depth exaplanation).</p></li>
-<li><p><strong>is_hermitian</strong> – optional override for whever to use or not the hermitian logic. By default
+<li><p><strong>is_hermitian</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>]) – optional override for whever to use or not the hermitian logic. By default
 it’s automatically detected.</p></li>
 <li><p><strong>Ô</strong> (<em>netket.operator._abstract_operator.AbstractOperator</em>) – </p></li>
 </ul>
@@ -725,6 +738,27 @@ a random seed.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt id="netket.variational.MCMixedState.log_value">
+<code class="sig-name descname"><span class="pre">log_value</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">σ</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.variational.MCMixedState.log_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the variational state for a batch of states and returns
+the logarithm of the amplitude of the quantum state. For pure states,
+this is <span class="math notranslate nohighlight">\(log(&lt;σ|ψ&gt;)\)</span>, whereas for mixed states this is
+<span class="math notranslate nohighlight">\(log(&lt;σr|ρ|σc&gt;)\)</span>, where ψ and ρ are respectively a pure state
+(wavefunction) and a mixed state (density matrix).
+For the density matrix, the left and right-acting states (row and column)
+are obtained as <code class="code docutils literal notranslate"><span class="pre">σr=σ[::,0:N]</span></code> and <code class="code docutils literal notranslate"><span class="pre">σc=σ[::,N:]</span></code>.</p>
+<p>Given a batch of inputs (Nb, N), returns a batch of outputs (Nb,).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-even">Parameters</dt>
+<dd class="field-even"><p><strong>σ</strong> (<em>jax._src.numpy.lax_numpy.ndarray</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="netket.variational.MCMixedState.quantum_geometric_tensor">
 <code class="sig-name descname"><span class="pre">quantum_geometric_tensor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sr</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.variational.MCMixedState.quantum_geometric_tensor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes an estimate of the quantum geometric tensor G_ij.
@@ -735,7 +769,7 @@ or can be converted to a full matrix.</p>
 <dd class="field-odd"><p>A linear operator representing the quantum geometric tensor.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.linalg.LinearOperator.html#scipy.sparse.linalg.LinearOperator" title="(in SciPy v1.6.1)">scipy.sparse.linalg.LinearOperator</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.sparse.linalg.LinearOperator.html#scipy.sparse.linalg.LinearOperator" title="(in SciPy v1.6.2)">scipy.sparse.linalg.LinearOperator</a></p>
 </dd>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>sr</strong> (<em>netket.optimizer.sr.api.SR</em>) – </p>
@@ -826,7 +860,7 @@ basis.</p>
     </p>
     <p>
         &copy; Copyright 2019-2021, The Netket authors - All rights reserved.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.3.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
     </p>
   </div>
 </footer>

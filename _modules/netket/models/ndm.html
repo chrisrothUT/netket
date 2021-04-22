@@ -212,7 +212,7 @@
     <span class="sd">&quot;&quot;&quot;Initializer for the hidden bias.&quot;&quot;&quot;</span>
 
     <span class="nd">@nn</span><span class="o">.</span><span class="n">compact</span>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">σr</span><span class="p">,</span> <span class="n">σc</span><span class="p">,</span> <span class="n">symmetric</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">σr</span><span class="p">,</span> <span class="n">σc</span><span class="p">):</span>
         <span class="n">U_S</span> <span class="o">=</span> <span class="n">nknn</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Symm&quot;</span><span class="p">,</span>
             <span class="n">features</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">*</span> <span class="n">σr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span>
@@ -344,7 +344,7 @@
     </p>
     <p>
         &copy; Copyright 2019-2021, The Netket authors - All rights reserved.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.3.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
     </p>
   </div>
 </footer>

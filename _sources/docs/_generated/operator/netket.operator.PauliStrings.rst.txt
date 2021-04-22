@@ -18,6 +18,7 @@
       .. autoattribute:: PauliStrings.dtype
       .. autoattribute:: PauliStrings.hilbert
       .. autoattribute:: PauliStrings.is_hermitian
+      .. autoattribute:: PauliStrings.max_conn_size
       .. autoattribute:: PauliStrings.size
    
       

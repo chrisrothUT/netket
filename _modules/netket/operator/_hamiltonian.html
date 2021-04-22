@@ -300,6 +300,11 @@
 
         <span class="k">return</span> <span class="n">out</span></div>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">max_conn_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The maximum number of non zero ⟨x|O|x&#39;⟩ for every x.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="mi">1</span>
+
 <div class="viewcode-block" id="Ising.copy"><a class="viewcode-back" href="../../../docs/_generated/operator/netket.operator.Ising.html#netket.operator.Ising.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">graph</span> <span class="o">=</span> <span class="n">Graph</span><span class="p">(</span><span class="n">edges</span><span class="o">=</span><span class="p">[</span><span class="nb">list</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span> <span class="k">for</span> <span class="n">edge</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">edges</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">Ising</span><span class="p">(</span><span class="n">hilbert</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">hilbert</span><span class="p">,</span> <span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">,</span> <span class="n">J</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">J</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span></div>
@@ -684,6 +689,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_J</span> <span class="o">-=</span> <span class="n">other</span><span class="o">.</span><span class="n">J</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_V</span> <span class="o">-=</span> <span class="n">other</span><span class="o">.</span><span class="n">V</span>
 
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">max_conn_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The maximum number of non zero ⟨x|O|x&#39;⟩ for every x.&quot;&quot;&quot;</span>
+        <span class="c1"># 1 diagonal element + 2 for every coupling</span>
+        <span class="k">return</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_edges</span><span class="p">)</span>
+
 <div class="viewcode-block" id="BoseHubbard.get_conn"><a class="viewcode-back" href="../../../docs/_generated/operator/netket.operator.BoseHubbard.html#netket.operator.BoseHubbard.get_conn">[docs]</a>    <span class="k">def</span> <span class="nf">get_conn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Finds the connected elements of the Operator. Starting</span>
 <span class="sd">        from a given quantum number x, it finds all other quantum numbers x&#39; such</span>
@@ -887,7 +898,7 @@
     </p>
     <p>
         &copy; Copyright 2019-2021, The Netket authors - All rights reserved.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.3.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
     </p>
   </div>
 </footer>

@@ -24,6 +24,7 @@
    Methods
       .. automethod:: Jastrow.__call__
       .. automethod:: Jastrow.apply
+      .. automethod:: Jastrow.bind
       .. automethod:: Jastrow.clone
       .. automethod:: Jastrow.get_variable
       .. automethod:: Jastrow.has_variable

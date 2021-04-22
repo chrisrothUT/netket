@@ -22,6 +22,7 @@
       .. autoattribute:: LocalLiouvillian.hilbert_physical
       .. autoattribute:: LocalLiouvillian.is_hermitian
       .. autoattribute:: LocalLiouvillian.jump_operators
+      .. autoattribute:: LocalLiouvillian.max_conn_size
       .. autoattribute:: LocalLiouvillian.size
    
       

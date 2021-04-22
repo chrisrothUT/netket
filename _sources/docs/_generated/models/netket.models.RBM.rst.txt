@@ -29,6 +29,7 @@
       .. automethod:: RBM.__call__
       .. automethod:: RBM.activation
       .. automethod:: RBM.apply
+      .. automethod:: RBM.bind
       .. automethod:: RBM.clone
       .. automethod:: RBM.get_variable
       .. automethod:: RBM.has_variable

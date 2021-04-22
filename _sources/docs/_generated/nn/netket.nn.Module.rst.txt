@@ -20,6 +20,7 @@
 
    Methods
       .. automethod:: Module.apply
+      .. automethod:: Module.bind
       .. automethod:: Module.clone
       .. automethod:: Module.get_variable
       .. automethod:: Module.has_variable

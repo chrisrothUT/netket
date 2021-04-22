@@ -129,6 +129,11 @@
 <li class="toctree-l2"><a class="reference internal" href="whats_new.html#api-changes">API Changes</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="superop.html">The Lindblad Master Equation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="superop.html#the-density-matrix-and-the-liouvillian">The Density Matrix and the Liouvillian</a></li>
+<li class="toctree-l2"><a class="reference internal" href="superop.html#computing-observables">Computing Observables</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="varstate.html">The Variational State Interface</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="varstate.html#constructing-a-variational-state">Constructing a Variational State</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="varstate.html#defining-models-flax">Defining models: Flax</a></li>
@@ -176,6 +181,7 @@
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Lattice.html">netket.graph.Lattice</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Chain.html">netket.graph.Chain</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Grid.html">netket.graph.Grid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.SymmGroup.html">netket.graph.SymmGroup</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#hilbert">Hilbert</a><ul>
@@ -261,6 +267,7 @@
 <li class="toctree-l3"><a class="reference internal" href="_generated/models/netket.models.Jastrow.html">netket.models.Jastrow</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/models/netket.models.MPSPeriodic.html">netket.models.MPSPeriodic</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/models/netket.models.NDM.html">netket.models.NDM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/models/netket.models.GCNN.html">netket.models.GCNN</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#model-tools">Model tools</a><ul>
@@ -269,7 +276,7 @@
 <li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.Dense.html">netket.nn.Dense</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.DenseGeneral.html">netket.nn.DenseGeneral</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.DenseSymm.html">netket.nn.DenseSymm</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.create_DenseSymm.html">netket.nn.create_DenseSymm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.DenseEquivariant.html">netket.nn.DenseEquivariant</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.Conv.html">netket.nn.Conv</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.Embed.html">netket.nn.Embed</a></li>
 </ul>
@@ -322,6 +329,10 @@
 <li class="toctree-l3"><a class="reference internal" href="_generated/driver/netket.logging.TBLog.html">netket.logging.TBLog</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#utils">Utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="_generated/utils/netket.utils.HashableArray.html">netket.utils.HashableArray</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#callbacks">Callbacks</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="_generated/callbacks/netket.callbacks.EarlyStopping.html">netket.callbacks.EarlyStopping</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/callbacks/netket.callbacks.Timeout.html">netket.callbacks.Timeout</a></li>
@@ -367,6 +378,9 @@
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="_generated/graph/netket.graph.Grid.html#netket.graph.Grid" title="netket.graph.Grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.Grid</span></code></a></p></td>
 <td><p>A Grid lattice of d dimensions, and possibly different sizes of each dimension.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/graph/netket.graph.SymmGroup.html#netket.graph.SymmGroup" title="netket.graph.SymmGroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.SymmGroup</span></code></a></p></td>
+<td><p>Collection of symmetry operations acting on the sites of a graph (graph automorphisms).</p></td>
 </tr>
 </tbody>
 </table>
@@ -651,6 +665,9 @@ neural quantum states.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="_generated/models/netket.models.NDM.html#netket.models.NDM" title="netket.models.NDM"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.models.NDM</span></code></a></p></td>
 <td><p>Encodes a Positive-Definite Neural Density Matrix using the ansatz from Torlai and Melko, PRL 120, 240503 (2018).</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/models/netket.models.GCNN.html#netket.models.GCNN" title="netket.models.GCNN"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.models.GCNN</span></code></a></p></td>
+<td><p>Implements a Group Convolutional Neural Network (G-CNN) that outputs a wavefunction that is invariant over a specified symmetry group.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -686,8 +703,8 @@ Read more about the design goal of this module in their <a class="reference exte
 <tr class="row-odd"><td><p><a class="reference internal" href="_generated/nn/netket.nn.DenseSymm.html#netket.nn.DenseSymm" title="netket.nn.DenseSymm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.nn.DenseSymm</span></code></a></p></td>
 <td><p>A symmetrized linear transformation applied over the last dimension of the input.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/nn/netket.nn.create_DenseSymm.html#netket.nn.create_DenseSymm" title="netket.nn.create_DenseSymm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.nn.create_DenseSymm</span></code></a></p></td>
-<td><p>A symmetrized linear transformation applied over the last dimension of the input.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/nn/netket.nn.DenseEquivariant.html#netket.nn.DenseEquivariant" title="netket.nn.DenseEquivariant"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.nn.DenseEquivariant</span></code></a></p></td>
+<td><p>Implements a G-convolution that acts on a feature map of symmetry poses of shape [batch_size,n_symm*in_features] and returns a feature map of poses of shape [batch_size,n_symm*out_features]</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="_generated/nn/netket.nn.Conv.html#netket.nn.Conv" title="netket.nn.Conv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.nn.Conv</span></code></a></p></td>
 <td><p>Convolution Module wrapping lax.conv_general_dilated.</p></td>
@@ -868,6 +885,21 @@ optimisers, and it’s extremely easy to use step-dependent schedulers.</p>
 </tbody>
 </table>
 </div>
+<div class="section" id="utils">
+<span id="utils-api"></span><h2>Utils<a class="headerlink" href="#utils" title="Permalink to this headline">¶</a></h2>
+<p>Utility functions and classes.</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/utils/netket.utils.HashableArray.html#netket.utils.HashableArray" title="netket.utils.HashableArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.utils.HashableArray</span></code></a></p></td>
+<td><p>This class wraps a numpy or jax array in order to make it hashable and equality comparable (which is necessary since a well-defined hashable object needs to satisfy <code class="code docutils literal notranslate"><span class="pre">obj1</span> <span class="pre">==</span> <span class="pre">obj2</span></code> whenever <code class="code docutils literal notranslate"><span class="pre">hash(obj1)</span> <span class="pre">==</span> <span class="pre">hash(obj2)</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <div class="section" id="callbacks">
 <span id="callbacks-api"></span><h2>Callbacks<a class="headerlink" href="#callbacks" title="Permalink to this headline">¶</a></h2>
 <p>Those callbacks can be used with the optimisation drivers.</p>
@@ -902,7 +934,7 @@ optimisers, and it’s extremely easy to use step-dependent schedulers.</p>
     </p>
     <p>
         &copy; Copyright 2019-2021, The Netket authors - All rights reserved.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.3.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
     </p>
   </div>
 </footer>

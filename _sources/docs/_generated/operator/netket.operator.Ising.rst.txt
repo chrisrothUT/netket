@@ -21,6 +21,7 @@
       .. autoattribute:: Ising.h
       .. autoattribute:: Ising.hilbert
       .. autoattribute:: Ising.is_hermitian
+      .. autoattribute:: Ising.max_conn_size
       .. autoattribute:: Ising.size
    
       

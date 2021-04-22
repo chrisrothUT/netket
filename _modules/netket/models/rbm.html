@@ -119,7 +119,8 @@
 <span class="kn">from</span> <span class="nn">flax</span> <span class="kn">import</span> <span class="n">linen</span> <span class="k">as</span> <span class="n">nn</span>
 
 <span class="kn">from</span> <span class="nn">netket.hilbert</span> <span class="kn">import</span> <span class="n">AbstractHilbert</span>
-<span class="kn">from</span> <span class="nn">netket.graph</span> <span class="kn">import</span> <span class="n">AbstractGraph</span>
+<span class="kn">from</span> <span class="nn">netket.graph</span> <span class="kn">import</span> <span class="n">AbstractGraph</span><span class="p">,</span> <span class="n">SymmGroup</span>
+<span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">HashableArray</span>
 <span class="kn">from</span> <span class="nn">netket.utils.types</span> <span class="kn">import</span> <span class="n">PRNGKeyT</span><span class="p">,</span> <span class="n">Shape</span><span class="p">,</span> <span class="n">DType</span><span class="p">,</span> <span class="n">Array</span><span class="p">,</span> <span class="n">NNInitFunc</span>
 
 <span class="kn">from</span> <span class="nn">netket</span> <span class="kn">import</span> <span class="n">nn</span> <span class="k">as</span> <span class="n">nknn</span>
@@ -293,8 +294,10 @@
 <div class="viewcode-block" id="RBMSymm"><a class="viewcode-back" href="../../../docs/_generated/models/netket.models.RBMSymm.html#netket.models.RBMSymm">[docs]</a><span class="k">class</span> <span class="nc">RBMSymm</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A symmetrized RBM using the :ref:`netket.nn.DenseSymm` layer internally.&quot;&quot;&quot;</span>
 
-    <span class="n">permutations</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="n">Array</span><span class="p">]</span>
-    <span class="sd">&quot;&quot;&quot;See documentation of :ref:`netket.nn.DenseSymm`.&quot;&quot;&quot;</span>
+    <span class="n">symmetries</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">HashableArray</span><span class="p">,</span> <span class="n">SymmGroup</span><span class="p">]</span>
+    <span class="sd">&quot;&quot;&quot;A group of symmetry operations (or array of permutation indices) over which the layer should be invariant.</span>
+<span class="sd">    Numpy/Jax arrays must be wrapped into an :class:`netket.utils.HashableArray`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span>
     <span class="sd">&quot;&quot;&quot;The dtype of the weights.&quot;&quot;&quot;</span>
     <span class="n">activation</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">nknn</span><span class="o">.</span><span class="n">logcosh</span>
@@ -315,20 +318,20 @@
     <span class="n">visible_bias_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">normal</span><span class="p">(</span><span class="n">stddev</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
     <span class="sd">&quot;&quot;&quot;Initializer for the visible bias.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_sites</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">permutations</span><span class="p">()</span><span class="o">.</span><span class="n">shape</span>
+<div class="viewcode-block" id="RBMSymm.setup"><a class="viewcode-back" href="../../../docs/_generated/models/netket.models.RBMSymm.html#netket.models.RBMSymm.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_sites</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symmetries</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">features</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_sites</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;RBMSymm: alpha=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="si">}</span><span class="s2"> is too small &quot;</span>
                 <span class="sa">f</span><span class="s2">&quot;for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="si">}</span><span class="s2"> permutations, alpha ≥ </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_sites</span><span class="si">}</span><span class="s2"> is needed.&quot;</span>
-            <span class="p">)</span>
+            <span class="p">)</span></div>
 
-    <span class="nd">@nn</span><span class="o">.</span><span class="n">compact</span>
+<div class="viewcode-block" id="RBMSymm.__call__"><a class="viewcode-back" href="../../../docs/_generated/models/netket.models.RBMSymm.html#netket.models.RBMSymm.__call__">[docs]</a>    <span class="nd">@nn</span><span class="o">.</span><span class="n">compact</span>
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_in</span><span class="p">):</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">nknn</span><span class="o">.</span><span class="n">DenseSymm</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Dense&quot;</span><span class="p">,</span>
-            <span class="n">permutations</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">permutations</span><span class="p">,</span>
+            <span class="n">symmetries</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">symmetries</span><span class="p">,</span>
             <span class="n">features</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">,</span>
             <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
             <span class="n">use_bias</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">use_hidden_bias</span><span class="p">,</span>
@@ -346,39 +349,7 @@
             <span class="n">out_bias</span> <span class="o">=</span> <span class="n">v_bias</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x_in</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">out_bias</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">x</span></div>
-
-
-<span class="k">def</span> <span class="nf">create_RBMSymm</span><span class="p">(</span>
-    <span class="n">permutations</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[],</span> <span class="n">Array</span><span class="p">],</span> <span class="n">AbstractGraph</span><span class="p">,</span> <span class="n">Array</span><span class="p">],</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
-<span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A symmetrized RBM using the :ref:`netket.nn.DenseSymm` layer internally.</span>
-
-<span class="sd">    Attributes:</span>
-<span class="sd">        permutations: See documentation of :func:`~netket.nn.create_DenseSymm`.</span>
-<span class="sd">        dtype: The dtype of the weights.</span>
-<span class="sd">        activation: The nonlinear activation function.</span>
-<span class="sd">        alpha: Feature density. Number of features equal to alpha * input.shape[-1]</span>
-<span class="sd">        use_hidden_bias: if True uses a bias in the dense layer (hidden layer bias).</span>
-<span class="sd">        use_visible_bias: if True adds a bias to the input not passed through the nonlinear layer.</span>
-<span class="sd">        percision: numerical precision of the computation see `jax.lax.Precision`for details.</span>
-<span class="sd">        kernel_init: Initializer for the Dense layer matrix.</span>
-<span class="sd">        hidden_bias_init: Initializer for the hidden bias.</span>
-<span class="sd">        visible_bias_init: Initializer for the visible bias.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">permutations</span><span class="p">,</span> <span class="n">Callable</span><span class="p">):</span>
-        <span class="n">perm_fn</span> <span class="o">=</span> <span class="n">permutations</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">permutations</span><span class="p">,</span> <span class="n">AbstractGraph</span><span class="p">):</span>
-        <span class="n">perm_fn</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">permutations</span><span class="o">.</span><span class="n">automorphisms</span><span class="p">())</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">permutations</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">permutations</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">permutations</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;permutations must be an array of shape (#permutations, #sites).&quot;</span>
-            <span class="p">)</span>
-        <span class="n">perm_fn</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">permutations</span>
-
-    <span class="k">return</span> <span class="n">RBMSymm</span><span class="p">(</span><span class="n">permutations</span><span class="o">=</span><span class="n">perm_fn</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">x</span></div></div>
 </pre></div>
 
     </div>
@@ -394,7 +365,7 @@
     </p>
     <p>
         &copy; Copyright 2019-2021, The Netket authors - All rights reserved.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.3.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
     </p>
   </div>
 </footer>

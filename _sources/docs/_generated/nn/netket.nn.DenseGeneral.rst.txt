@@ -29,6 +29,7 @@
       .. automethod:: DenseGeneral.__call__
       .. automethod:: DenseGeneral.apply
       .. automethod:: DenseGeneral.bias_init
+      .. automethod:: DenseGeneral.bind
       .. automethod:: DenseGeneral.clone
       .. automethod:: DenseGeneral.get_variable
       .. automethod:: DenseGeneral.has_variable

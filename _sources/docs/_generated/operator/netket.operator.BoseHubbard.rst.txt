@@ -22,6 +22,7 @@
       .. autoattribute:: BoseHubbard.edges
       .. autoattribute:: BoseHubbard.hilbert
       .. autoattribute:: BoseHubbard.is_hermitian
+      .. autoattribute:: BoseHubbard.max_conn_size
       .. autoattribute:: BoseHubbard.mu
       .. autoattribute:: BoseHubbard.size
    

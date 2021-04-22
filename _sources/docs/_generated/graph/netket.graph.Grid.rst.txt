@@ -22,13 +22,16 @@
    Methods
       .. automethod:: Grid.adjacency_list
       .. automethod:: Grid.automorphisms
+      .. automethod:: Grid.axis_reflection
       .. automethod:: Grid.distances
       .. automethod:: Grid.edges
       .. automethod:: Grid.is_bipartite
       .. automethod:: Grid.is_connected
       .. automethod:: Grid.lattice_group
       .. automethod:: Grid.nodes
-      .. automethod:: Grid.periodic_translations
+      .. automethod:: Grid.planar_rotation
+      .. automethod:: Grid.rotations
       .. automethod:: Grid.space_group
+      .. automethod:: Grid.translations
 
    

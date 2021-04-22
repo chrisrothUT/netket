@@ -32,6 +32,7 @@
       .. automethod:: NDM.activation
       .. automethod:: NDM.apply
       .. automethod:: NDM.bias_init
+      .. automethod:: NDM.bind
       .. automethod:: NDM.clone
       .. automethod:: NDM.get_variable
       .. automethod:: NDM.has_variable

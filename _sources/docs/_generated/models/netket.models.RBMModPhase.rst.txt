@@ -28,6 +28,7 @@
       .. automethod:: RBMModPhase.__call__
       .. automethod:: RBMModPhase.activation
       .. automethod:: RBMModPhase.apply
+      .. automethod:: RBMModPhase.bind
       .. automethod:: RBMModPhase.clone
       .. automethod:: RBMModPhase.get_variable
       .. automethod:: RBMModPhase.has_variable

@@ -22,6 +22,7 @@
       .. autoattribute:: Heisenberg.graph
       .. autoattribute:: Heisenberg.hilbert
       .. autoattribute:: Heisenberg.is_hermitian
+      .. autoattribute:: Heisenberg.max_conn_size
       .. autoattribute:: Heisenberg.mel_cutoff
       .. autoattribute:: Heisenberg.n_operators
       .. autoattribute:: Heisenberg.operators
