@@ -111,7 +111,8 @@
   ---->
 </div>
 
-<ul class="current">
+<p class="caption"><span class="caption-text">Reference Documentation</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../getting_started.html#installation-and-requirements">Installation and requirements</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../getting_started.html#mpi">MPI</a></li>
@@ -153,6 +154,16 @@
 <li class="toctree-l2"><a class="reference internal" href="../../drivers.html#running-the-optimisation">Running the optimisation</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../sharp-bits.html">🔪 The Sharp Bits 🔪</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../sharp-bits.html#parallelization">Parallelization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sharp-bits.html#running-on-cpu-when-gpus-are-present">Running on CPU when GPUs are present</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sharp-bits.html#using-gpus">Using GPUs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sharp-bits.html#nans-in-training-and-loss-of-precision">NaNs in training and loss of precision</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Extending NetKet</span></p>
+<ul>
 <li class="toctree-l1"><a class="reference internal" href="../../custom_models.html">Defining Custom Models</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../custom_models.html#commonalities">Commonalities</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../custom_models.html#defining-models-init-and-apply-functions">Defining models: init and apply functions</a></li>
@@ -163,13 +174,30 @@
 <li class="toctree-l2"><a class="reference internal" href="../../custom_models.html#using-haiku">Using Haiku</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../sharp-bits.html">🔪 The Sharp Bits 🔪</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../sharp-bits.html#parallelization">Parallelization</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../sharp-bits.html#running-on-cpu-when-gpus-are-present">Running on CPU when GPUs are present</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../sharp-bits.html#using-gpus">Using GPUs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../sharp-bits.html#nans-in-training-and-loss-of-precision">NaNs in training and loss of precision</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Documentation</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to NetKet</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#ways-to-contribute">Ways to contribute</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#contributing-code-using-pull-requests">Contributing code using pull requests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../contributing.html#netket-pull-request-checklist">NetKet pull request checklist</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../contributing.html#single-change-commits-and-pull-requests">Single-change commits and pull requests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../contributing.html#python-coding-style">Python coding style</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../contributing.html#docstrings-and-type-hints">Docstrings and Type Hints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../contributing.html#visibility-of-public-api">Visibility of public API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../contributing.html#full-github-test-suite">Full GitHub test suite</a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../writing-tests.html">Writing Tests</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../writing-tests.html#test-structure-and-common-files">Test structure and common files.</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../writing-tests.html#tests-and-mpi">Tests and MPI</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">API documentation</span></p>
+<ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="../../api.html">Public API: netket package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="../../api.html#graph">Graph</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="netket.graph.AbstractGraph.html">netket.graph.AbstractGraph</a></li>
@@ -191,14 +219,6 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#operators">Operators</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../operator/netket.operator.AbstractOperator.html">netket.operator.AbstractOperator</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../operator/netket.operator.BoseHubbard.html">netket.operator.BoseHubbard</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../operator/netket.operator.GraphOperator.html">netket.operator.GraphOperator</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../operator/netket.operator.LocalOperator.html">netket.operator.LocalOperator</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../operator/netket.operator.Ising.html">netket.operator.Ising</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../operator/netket.operator.Heisenberg.html">netket.operator.Heisenberg</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../operator/netket.operator.PauliStrings.html">netket.operator.PauliStrings</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../operator/netket.operator.LocalLiouvillian.html">netket.operator.LocalLiouvillian</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../api.html#pre-defined-operators">Pre-defined operators</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="../hilbert/netket.operator.boson.create.html">netket.operator.boson.create</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../hilbert/netket.operator.boson.destroy.html">netket.operator.boson.destroy</a></li>
@@ -213,129 +233,29 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../../api.html#exact-solvers">Exact solvers</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../exact/netket.exact.full_ed.html">netket.exact.full_ed</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../exact/netket.exact.lanczos_ed.html">netket.exact.lanczos_ed</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../exact/netket.exact.steady_state.html">netket.exact.steady_state</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#exact-solvers">Exact solvers</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#sampler">Sampler</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../api.html#generic-api">Generic API</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../samplers/netket.sampler.sampler_state.html">netket.sampler.sampler_state</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../samplers/netket.sampler.reset.html">netket.sampler.reset</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../samplers/netket.sampler.sample_next.html">netket.sampler.sample_next</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../samplers/netket.sampler.sample.html">netket.sampler.sample</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../samplers/netket.sampler.samples.html">netket.sampler.samples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api.html#generic-api">Generic API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api.html#list-of-samplers">List of Samplers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api.html#transition-rules">Transition Rules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api.html#internal-state">Internal State</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../../api.html#list-of-samplers">List of Samplers</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../samplers/netket.sampler.Sampler.html">netket.sampler.Sampler</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../samplers/netket.sampler.ExactSampler.html">netket.sampler.ExactSampler</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../samplers/netket.sampler.MetropolisSampler.html">netket.sampler.MetropolisSampler</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../samplers/netket.sampler.MetropolisSamplerNumpy.html">netket.sampler.MetropolisSamplerNumpy</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../samplers/netket.sampler.MetropolisPtSampler.html">netket.sampler.MetropolisPtSampler</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../samplers/netket.sampler.MetropolisLocal.html">netket.sampler.MetropolisLocal</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../samplers/netket.sampler.MetropolisExchange.html">netket.sampler.MetropolisExchange</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../samplers/netket.sampler.MetropolisHamiltonian.html">netket.sampler.MetropolisHamiltonian</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../samplers/netket.sampler.MetropolisLocalPt.html">netket.sampler.MetropolisLocalPt</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../samplers/netket.sampler.MetropolisExchangePt.html">netket.sampler.MetropolisExchangePt</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="../../api.html#transition-rules">Transition Rules</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../samplers/netket.sampler.MetropolisRule.html">netket.sampler.MetropolisRule</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../samplers/netket.sampler.rules.LocalRule.html">netket.sampler.rules.LocalRule</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../samplers/netket.sampler.rules.ExchangeRule.html">netket.sampler.rules.ExchangeRule</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../samplers/netket.sampler.rules.HamiltonianRule.html">netket.sampler.rules.HamiltonianRule</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../samplers/netket.sampler.rules.HamiltonianRuleNumpy.html">netket.sampler.rules.HamiltonianRuleNumpy</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../samplers/netket.sampler.rules.CustomRuleNumpy.html">netket.sampler.rules.CustomRuleNumpy</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="../../api.html#internal-state">Internal State</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../samplers/netket.sampler.SamplerState.html">netket.sampler.SamplerState</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../samplers/netket.sampler.MetropolisSamplerState.html">netket.sampler.MetropolisSamplerState</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../../api.html#pre-built-models">Pre-built models</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../models/netket.models.RBM.html">netket.models.RBM</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../models/netket.models.RBMModPhase.html">netket.models.RBMModPhase</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../models/netket.models.RBMMultiVal.html">netket.models.RBMMultiVal</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../models/netket.models.RBMSymm.html">netket.models.RBMSymm</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../models/netket.models.Jastrow.html">netket.models.Jastrow</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../models/netket.models.MPSPeriodic.html">netket.models.MPSPeriodic</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../models/netket.models.NDM.html">netket.models.NDM</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../models/netket.models.GCNN.html">netket.models.GCNN</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#pre-built-models">Pre-built models</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#model-tools">Model tools</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../nn/netket.nn.Module.html">netket.nn.Module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../api.html#linear-modules">Linear Modules</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.Dense.html">netket.nn.Dense</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.DenseGeneral.html">netket.nn.DenseGeneral</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.DenseSymm.html">netket.nn.DenseSymm</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.DenseEquivariant.html">netket.nn.DenseEquivariant</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.Conv.html">netket.nn.Conv</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.Embed.html">netket.nn.Embed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api.html#linear-modules">Linear Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../api.html#activation-functions">Activation functions</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="../../api.html#activation-functions">Activation functions</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.celu.html">netket.nn.celu</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.elu.html">netket.nn.elu</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.gelu.html">netket.nn.gelu</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.glu.html">netket.nn.glu</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.log_sigmoid.html">netket.nn.log_sigmoid</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.log_softmax.html">netket.nn.log_softmax</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.relu.html">netket.nn.relu</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.sigmoid.html">netket.nn.sigmoid</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.soft_sign.html">netket.nn.soft_sign</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.softmax.html">netket.nn.softmax</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.softplus.html">netket.nn.softplus</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.swish.html">netket.nn.swish</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.logcosh.html">netket.nn.logcosh</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../../api.html#variational-state-interface">Variational State Interface</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../variational/netket.variational.VariationalState.html">netket.variational.VariationalState</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../variational/netket.variational.MCState.html">netket.variational.MCState</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../variational/netket.variational.MCMixedState.html">netket.variational.MCMixedState</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../../api.html#optimizer">Optimizer</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../optim/netket.optimizer.SR.html">netket.optimizer.SR</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../optim/netket.optimizer.SRLazyCG.html">netket.optimizer.SRLazyCG</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../optim/netket.optimizer.SRLazyGMRES.html">netket.optimizer.SRLazyGMRES</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../optim/netket.optimizer.sr.LazySMatrix.html">netket.optimizer.sr.LazySMatrix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../optim/netket.optimizer.Adam.html">netket.optimizer.Adam</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../optim/netket.optimizer.AdaGrad.html">netket.optimizer.AdaGrad</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../optim/netket.optimizer.Sgd.html">netket.optimizer.Sgd</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../optim/netket.optimizer.Momentum.html">netket.optimizer.Momentum</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../optim/netket.optimizer.RmsProp.html">netket.optimizer.RmsProp</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../../api.html#optimization-drivers">Optimization drivers</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../driver/netket.driver.AbstractVariationalDriver.html">netket.driver.AbstractVariationalDriver</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../driver/netket.driver.VMC.html">netket.driver.VMC</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../driver/netket.driver.SteadyState.html">netket.driver.SteadyState</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="../../api.html#logging-output">Logging output</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../driver/netket.logging.JsonLog.html">netket.logging.JsonLog</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../driver/netket.logging.RuntimeLog.html">netket.logging.RuntimeLog</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../driver/netket.logging.TBLog.html">netket.logging.TBLog</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#variational-state-interface">Variational State Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#optimizer">Optimizer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#optimization-drivers">Optimization drivers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#logging-output">Logging output</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#utils">Utils</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../utils/netket.utils.HashableArray.html">netket.utils.HashableArray</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../../api.html#callbacks">Callbacks</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../callbacks/netket.callbacks.EarlyStopping.html">netket.callbacks.EarlyStopping</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../callbacks/netket.callbacks.Timeout.html">netket.callbacks.Timeout</a></li>
-</ul>
-</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#callbacks">Callbacks</a></li>
 </ul>
 </li>
 </ul>
@@ -350,7 +270,7 @@
 <h1>netket.graph.Lattice<a class="headerlink" href="#netket-graph-lattice" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="netket.graph.Lattice">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">netket.graph.</span></code><code class="sig-name descname"><span class="pre">Lattice</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basis_vectors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extent</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pbc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atoms_coord</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/graph/lattice.html#Lattice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.graph.Lattice" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">netket.graph.</span></code><code class="sig-name descname"><span class="pre">Lattice</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basis_vectors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extent</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pbc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atoms_coord</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/graph/lattice.html#Lattice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.graph.Lattice" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">netket.graph.graph.NetworkX</span></code></p>
 <p>A lattice built translating a unit cell and adding edges between nearest neighbours sites.</p>
 <p>The unit cell is defined by the <code class="docutils literal notranslate"><span class="pre">basis_vectors</span></code> and it can contain an arbitrary number of atoms.
@@ -361,7 +281,7 @@ There are three different ways to refer to the lattice sites. A site can be labe
 by a simple integer number (the site index) or by its coordinates (actual position in space).</p>
 <dl class="py method">
 <dt id="netket.graph.Lattice.__init__">
-<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basis_vectors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extent</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pbc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atoms_coord</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/graph/lattice.html#Lattice.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.graph.Lattice.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">basis_vectors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extent</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pbc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">atoms_coord</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_atol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/graph/lattice.html#Lattice.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.graph.Lattice.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Constructs a new <code class="docutils literal notranslate"><span class="pre">Lattice</span></code> given its side length and the features of the unit cell.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -372,6 +292,9 @@ by a simple integer number (the site index) or by its coordinates (actual positi
 will have periodic boundary conditions, otherwise
 open boundary conditions are imposed (default=``True``).</p></li>
 <li><p><strong>atoms_coord</strong> – The coordinates of different atoms in the unit cell (default=one atom at the origin).</p></li>
+<li><p><strong>distance_atol</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – A KDTree algorithm finds first neighbours of the lattice, which define the edges of
+the graph. The algorithm needs to be specified some absolute tolerance for those distances,
+as sometimes floating point errors might cause some edges not to be detected.</p></li>
 </ul>
 </dd>
 </dl>
@@ -463,6 +386,30 @@ The fact that some node may not be reachable from another is represented by -1</
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.graph.Lattice.draw">
+<code class="sig-name descname"><span class="pre">draw</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'#1f78b4'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'k'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curvature</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">12</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">font_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'k'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/graph/lattice.html#Lattice.draw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.graph.Lattice.draw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Draws the <code class="docutils literal notranslate"><span class="pre">Lattice</span></code> graph</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ax</strong> – Matplotlib axis object.</p></li>
+<li><p><strong>figsize</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]]]) – (width, height) tuple of the generated figure.</p></li>
+<li><p><strong>node_color</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – String with the colour of the nodes.</p></li>
+<li><p><strong>node_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – Area of the nodes (as in matplotlib.pyplot.scatter).</p></li>
+<li><p><strong>edge_color</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – String with the colour of the edges.</p></li>
+<li><p><strong>curvature</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – A Bezier curve is fit, where the “height” of the curve is <cite>curvature</cite>
+times the “length” of the curvature.</p></li>
+<li><p><strong>font_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – fontsize of the labels for each node.</p></li>
+<li><p><strong>font_color</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Colour of the font used to label nodes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Matplotlib axis object containing the graph’s drawing.</p>
 </dd>
 </dl>
 </dd></dl>
