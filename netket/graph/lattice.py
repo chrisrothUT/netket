@@ -249,8 +249,27 @@ class Lattice(NetworkX):
         """
         return self._atoms_coord
 
-    def rotation_perm(self,period,axes=[0,1]):
+    def translation_perm(self):
       perms = []
+      for vec in self.basis_vectors:
+        perm = []
+        for coord in self._atoms_coord:
+          new_coord = coord.copy() + vec
+          searching = 1
+          while searching:
+            for i, old_coord in enumerate(self._atoms_coord):
+              shift_lattice = product(range(-1,2),repeat=len(self._lattice_dims))
+              for shift in shift_lattice:
+                move_coord = old_coord + _np.sum(_np.expand_dims(_np.asarray(shift),1)*self._lattice_dims,0)
+                if _np.all(_np.isclose(move_coord,new_coord)):
+                  perm.append(i)
+                  searching = 0 
+
+        perms.append(perm)
+      return perms 
+
+    def rotation_perm(self,period,axes=[0,1]):
+      perm = []
       rot_mat = _np.zeros([2,2])
       rot_mat[0,0] = _np.cos(2*pi/period)
       rot_mat[1,0] = -_np.sin(2*pi/period)
@@ -268,12 +287,12 @@ class Lattice(NetworkX):
             for shift in shift_lattice:
               move_coord = old_coord + _np.sum(_np.expand_dims(_np.asarray(shift),1)*self._lattice_dims,0)
               if _np.all(_np.isclose(new_coord,move_coord)):
-                perms.append(i)
+                perm.append(i)
                 searching = 0
           if searching:
             raise ValueError("Rotation with the specified period and axes does not map to itself")
 
-      return perms
+      return perm
 
     def draw(
         self,
