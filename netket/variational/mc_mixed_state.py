@@ -33,7 +33,7 @@ from netket import utils
 from netket.hilbert import AbstractHilbert
 from netket.sampler import Sampler, SamplerState, ExactSampler
 from netket.stats import Stats, statistics, mean, sum_inplace
-from netket.utils import flax as flax_utils, maybe_wrap_module
+from netket.utils import maybe_wrap_module
 from netket.utils.types import DType, Array, PyTree, PRNGKeyT, Shape, NNInitFunc
 from netket.optimizer import SR
 from netket.operator import (
@@ -73,7 +73,7 @@ class MCMixedState(VariationalMixedState, MCState):
         sampler_diag: Sampler = None,
         n_samples_diag: int = 1000,
         n_discard_diag: Optional[int] = None,
-        seed=nkjax.PRNGKey(),
+        seed=None,
         sampler_seed: Optional[int] = None,
         variables=None,
         **kwargs,
