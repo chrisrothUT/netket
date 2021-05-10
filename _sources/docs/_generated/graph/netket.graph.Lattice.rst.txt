@@ -32,8 +32,10 @@
       .. automethod:: Lattice.is_bipartite
       .. automethod:: Lattice.is_connected
       .. automethod:: Lattice.nodes
+      .. automethod:: Lattice.rotation_perm
       .. automethod:: Lattice.site_to_coord
       .. automethod:: Lattice.site_to_vector
+      .. automethod:: Lattice.translation_perm
       .. automethod:: Lattice.vector_to_coord
 
    
