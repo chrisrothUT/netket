@@ -120,12 +120,63 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
 <span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">pi</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">product</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 
-<span class="n">cutoff_tol</span> <span class="o">=</span> <span class="mf">1e-5</span>
+<span class="kn">from</span> <span class="nn">netket.utils.semigroup</span> <span class="kn">import</span> <span class="n">Identity</span><span class="p">,</span> <span class="n">Element</span><span class="p">,</span> <span class="n">PermutationGroup</span>
+<span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">HashableArray</span>
+
+<span class="n">tol_digits</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">cutoff_tol</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="o">-</span><span class="n">tol_digits</span><span class="p">)</span>
 <span class="sd">&quot;&quot;&quot;Tolerance for the maximum distance cutoff when computing the sparse distance matrix.</span>
 <span class="sd">This is necessary because of floating-point errors when computing the distance in non-trivial </span>
 <span class="sd">lattices.</span>
 <span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Translation</span><span class="p">(</span><span class="n">Element</span><span class="p">):</span>
+    <span class="n">perms</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span>
+    <span class="n">shift</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sites</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">dim</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shift</span><span class="p">):</span>
+            <span class="n">perm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">perms</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dim</span><span class="p">):</span>
+                <span class="n">sites</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">sites</span><span class="p">,</span> <span class="n">perm</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">sites</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;T</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">shift</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">PlanarRotation</span><span class="p">(</span><span class="n">Element</span><span class="p">):</span>
+    <span class="n">perm</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+    <span class="n">num_rots</span><span class="p">:</span> <span class="nb">int</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sites</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_rots</span><span class="p">):</span>
+            <span class="n">sites</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">sites</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">perm</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">sites</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Rot</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_rots</span><span class="si">}</span><span class="s2">&quot;</span>
+
+
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Reflection</span><span class="p">(</span><span class="n">Element</span><span class="p">):</span>
+
+    <span class="n">perm</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sites</span><span class="p">):</span>
+        <span class="n">sites</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">sites</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">perm</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">sites</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Ref&quot;</span>
 
 
 <span class="k">def</span> <span class="nf">get_edges</span><span class="p">(</span><span class="n">atoms_positions</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span> <span class="n">distance_atol</span><span class="o">=</span><span class="n">cutoff_tol</span><span class="p">):</span>
@@ -276,7 +327,10 @@
                 <span class="k">for</span> <span class="n">atom_coord</span> <span class="ow">in</span> <span class="n">atoms_coord</span>
             <span class="p">]</span>
         <span class="p">)</span>
-        <span class="k">if</span> <span class="n">atoms_coord_fractional</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">atoms_coord_fractional</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">atoms_coord_fractional</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">cutoff_tol</span>
+            <span class="ow">or</span> <span class="n">atoms_coord_fractional</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">cutoff_tol</span>
+        <span class="p">):</span>
             <span class="c1"># Maybe there is another way to state this. I want to avoid that there exists the possibility that two atoms from different cells are at the same position:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;atoms must reside inside their corresponding unit cell, which includes only the 0-faces in fractional coordinates.&quot;</span>
@@ -288,6 +342,8 @@
                 <span class="sa">f</span><span class="s2">&quot;Some atom positions are not unique. Duplicates were dropped, and now atom positions are </span><span class="si">{</span><span class="n">atoms_coord</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
                 <span class="ne">UserWarning</span><span class="p">,</span>
             <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_atoms_coord</span> <span class="o">=</span> <span class="n">atoms_coord</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pbc</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_pbc</span> <span class="o">=</span> <span class="p">[</span><span class="n">pbc</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_basis_vectors</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -324,15 +380,24 @@
         <span class="n">new_nodes</span> <span class="o">=</span> <span class="p">{</span><span class="n">old_node</span><span class="p">:</span> <span class="n">new_node</span> <span class="k">for</span> <span class="n">new_node</span><span class="p">,</span> <span class="n">old_node</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">old_nodes</span><span class="p">)}</span>
         <span class="n">graph</span> <span class="o">=</span> <span class="n">_nx</span><span class="o">.</span><span class="n">relabel_nodes</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">new_nodes</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_atoms_coord</span> <span class="o">=</span> <span class="n">dicts_to_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span><span class="p">,</span><span class="s2">&quot;r_coord&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_lattice_dims</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extent</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">basis_vectors</span>
-        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_coords</span> <span class="o">=</span> <span class="n">dicts_to_array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_atoms</span><span class="p">,</span> <span class="s2">&quot;r_coord&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_lattice_dims</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extent</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">basis_vectors</span>
+
         <span class="c1"># Order node names</span>
         <span class="n">nodes</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">())</span>
         <span class="n">edges</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">edges</span><span class="p">())</span>
         <span class="n">graph</span> <span class="o">=</span> <span class="n">_nx</span><span class="o">.</span><span class="n">MultiGraph</span><span class="p">()</span>
         <span class="n">graph</span><span class="o">.</span><span class="n">add_nodes_from</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
         <span class="n">graph</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_inv_dims</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lattice_dims</span><span class="p">)</span>
+        <span class="n">frac_positions</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_coords</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inv_dims</span><span class="p">)</span> <span class="o">%</span> <span class="mi">1</span>
+        <span class="n">int_positions</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">frac_positions</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">tol_digits</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="mi">10</span> <span class="o">**</span> <span class="n">tol_digits</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_hash_positions</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">HashableArray</span><span class="p">(</span><span class="n">element</span><span class="p">):</span> <span class="n">index</span> <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">element</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">int_positions</span><span class="p">)</span>
+        <span class="p">}</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span></div>
 
@@ -346,52 +411,115 @@
 <span class="sd">        Coordinates of atoms in the unit cell.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atoms_coord</span>
-   
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">coords</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns list of coordinates of lattice points</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coords</span>
+
 <div class="viewcode-block" id="Lattice.translation_perm"><a class="viewcode-back" href="../../../docs/_generated/graph/netket.graph.Lattice.html#netket.graph.Lattice.translation_perm">[docs]</a>    <span class="k">def</span> <span class="nf">translation_perm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-      <span class="n">perms</span> <span class="o">=</span> <span class="p">[]</span>
-      <span class="k">for</span> <span class="n">vec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">basis_vectors</span><span class="p">:</span>
+        <span class="n">perms</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">vec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">basis_vectors</span><span class="p">:</span>
+            <span class="n">perm</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coords</span><span class="p">:</span>
+                <span class="n">hash_coord</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="o">+</span> <span class="n">vec</span>
+                <span class="n">hash_coord</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">hash_coord</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inv_dims</span><span class="p">)</span> <span class="o">%</span> <span class="mi">1</span>
+                <span class="c1"># make sure 1 and 0 are treated the same</span>
+                <span class="n">hash_coord</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">hash_coord</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">tol_digits</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span>
+                    <span class="mi">10</span> <span class="o">**</span> <span class="n">tol_digits</span>
+                <span class="p">)</span>
+                <span class="n">hash_coord</span> <span class="o">=</span> <span class="n">HashableArray</span><span class="p">(</span><span class="n">hash_coord</span><span class="p">)</span>
+                <span class="n">perm</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hash_positions</span><span class="p">[</span><span class="n">hash_coord</span><span class="p">])</span>
+
+            <span class="n">perms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">perm</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">perms</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Lattice.rotation_perm"><a class="viewcode-back" href="../../../docs/_generated/graph/netket.graph.Lattice.html#netket.graph.Lattice.rotation_perm">[docs]</a>    <span class="k">def</span> <span class="nf">rotation_perm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">period</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]):</span>
         <span class="n">perm</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atoms_coord</span><span class="p">:</span>
-          <span class="n">new_coord</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="o">+</span> <span class="n">vec</span>
-          <span class="n">searching</span> <span class="o">=</span> <span class="mi">1</span>
-          <span class="k">while</span> <span class="n">searching</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">old_coord</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_atoms_coord</span><span class="p">):</span>
-              <span class="n">shift_lattice</span> <span class="o">=</span> <span class="n">product</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="n">repeat</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lattice_dims</span><span class="p">))</span>
-              <span class="k">for</span> <span class="n">shift</span> <span class="ow">in</span> <span class="n">shift_lattice</span><span class="p">:</span>
-                <span class="n">move_coord</span> <span class="o">=</span> <span class="n">old_coord</span> <span class="o">+</span> <span class="n">_np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">_np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">_np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">shift</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_lattice_dims</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">_np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">_np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">move_coord</span><span class="p">,</span><span class="n">new_coord</span><span class="p">)):</span>
-                  <span class="n">perm</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-                  <span class="n">searching</span> <span class="o">=</span> <span class="mi">0</span> 
+        <span class="n">axes</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">axes</span><span class="p">)</span>
+        <span class="n">angle</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">pi</span> <span class="o">/</span> <span class="n">period</span>
+        <span class="n">rot_mat</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[[</span><span class="n">_np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="o">-</span><span class="n">_np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">)],</span> <span class="p">[</span><span class="n">_np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="n">_np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">)]]</span>
+        <span class="p">)</span>
 
-        <span class="n">perms</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">perm</span><span class="p">)</span>
-      <span class="k">return</span> <span class="n">perms</span> </div>
+        <span class="n">rot_coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coords</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">rot_coords</span><span class="p">[:,</span> <span class="n">axes</span><span class="p">]</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">rot_coords</span><span class="p">[:,</span> <span class="n">axes</span><span class="p">],</span> <span class="n">rot_mat</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Lattice.rotation_perm"><a class="viewcode-back" href="../../../docs/_generated/graph/netket.graph.Lattice.html#netket.graph.Lattice.rotation_perm">[docs]</a>    <span class="k">def</span> <span class="nf">rotation_perm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">period</span><span class="p">,</span><span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]):</span>
-      <span class="n">perm</span> <span class="o">=</span> <span class="p">[]</span>
-      <span class="n">rot_mat</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">])</span>
-      <span class="n">rot_mat</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="n">period</span><span class="p">)</span>
-      <span class="n">rot_mat</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="n">_np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="n">period</span><span class="p">)</span>
-      <span class="n">rot_mat</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="n">period</span><span class="p">)</span>
-      <span class="n">rot_mat</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">pi</span><span class="o">/</span><span class="n">period</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">hash_coord</span> <span class="ow">in</span> <span class="n">rot_coords</span><span class="p">:</span>
+            <span class="n">hash_coord</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">hash_coord</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inv_dims</span><span class="p">)</span> <span class="o">%</span> <span class="mi">1</span>
+            <span class="n">hash_coord</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">hash_coord</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">tol_digits</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="mi">10</span> <span class="o">**</span> <span class="n">tol_digits</span>
+            <span class="p">)</span>
+            <span class="n">hash_coord</span> <span class="o">=</span> <span class="n">HashableArray</span><span class="p">(</span><span class="n">hash_coord</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">hash_coord</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash_positions</span><span class="p">:</span>
+                <span class="n">perm</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hash_positions</span><span class="p">[</span><span class="n">hash_coord</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Rotation with the specified period and axes does not map lattice to itself&quot;</span>
+                <span class="p">)</span>
 
-      <span class="k">for</span> <span class="n">coord</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_atoms_coord</span><span class="p">:</span>
-        <span class="n">new_coord</span> <span class="o">=</span> <span class="n">coord</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">new_coord</span><span class="p">[</span><span class="n">axes</span><span class="p">]</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">rot_mat</span><span class="p">,</span><span class="n">new_coord</span><span class="p">[</span><span class="n">axes</span><span class="p">])</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">perm</span><span class="p">)</span></div>
 
-        <span class="n">searching</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="k">while</span> <span class="n">searching</span><span class="p">:</span>
-          <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">old_coord</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_atoms_coord</span><span class="p">):</span>
-            <span class="n">shift_lattice</span> <span class="o">=</span> <span class="n">product</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">repeat</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_lattice_dims</span><span class="p">))</span>
-            <span class="k">for</span> <span class="n">shift</span> <span class="ow">in</span> <span class="n">shift_lattice</span><span class="p">:</span>
-              <span class="n">move_coord</span> <span class="o">=</span> <span class="n">old_coord</span> <span class="o">+</span> <span class="n">_np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">_np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">_np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">shift</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_lattice_dims</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
-              <span class="k">if</span> <span class="n">_np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">_np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">new_coord</span><span class="p">,</span><span class="n">move_coord</span><span class="p">)):</span>
-                <span class="n">perm</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
-                <span class="n">searching</span> <span class="o">=</span> <span class="mi">0</span>
-          <span class="k">if</span> <span class="n">searching</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Rotation with the specified period and axes does not map to itself&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="Lattice.reflection_perm"><a class="viewcode-back" href="../../../docs/_generated/graph/netket.graph.Lattice.html#netket.graph.Lattice.reflection_perm">[docs]</a>    <span class="k">def</span> <span class="nf">reflection_perm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">perm</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">ref_coords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coords</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">ref_coords</span><span class="p">[:,</span> <span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">ref_coords</span><span class="p">[:,</span> <span class="n">axis</span><span class="p">]</span>
 
-      <span class="k">return</span> <span class="n">perm</span></div>
-    
+        <span class="k">for</span> <span class="n">hash_coord</span> <span class="ow">in</span> <span class="n">ref_coords</span><span class="p">:</span>
+            <span class="n">hash_coord</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">hash_coord</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inv_dims</span><span class="p">)</span> <span class="o">%</span> <span class="mi">1</span>
+            <span class="n">hash_coord</span> <span class="o">=</span> <span class="n">_np</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">hash_coord</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">tol_digits</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span>
+                <span class="mi">10</span> <span class="o">**</span> <span class="n">tol_digits</span>
+            <span class="p">)</span>
+            <span class="n">hash_coord</span> <span class="o">=</span> <span class="n">HashableArray</span><span class="p">(</span><span class="n">hash_coord</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">hash_coord</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hash_positions</span><span class="p">:</span>
+                <span class="n">perm</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_hash_positions</span><span class="p">[</span><span class="n">hash_coord</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Reflection about specified axis does not map lattice to itself&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">perm</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Lattice.planar_rotations"><a class="viewcode-back" href="../../../docs/_generated/graph/netket.graph.Lattice.html#netket.graph.Lattice.planar_rotations">[docs]</a>    <span class="k">def</span> <span class="nf">planar_rotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">period</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">PermutationGroup</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns PermutationGroup corresponding to rotations about specfied axes with specified period</span>
+
+<span class="sd">        Arguments:</span>
+<span class="sd">            period: Period of the rotations</span>
+<span class="sd">            axes: Axes that define the plane of the rotation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">perm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotation_perm</span><span class="p">(</span><span class="n">period</span><span class="p">,</span> <span class="n">axes</span><span class="p">)</span>
+        <span class="n">rotations</span> <span class="o">=</span> <span class="p">[</span><span class="n">PlanarRotation</span><span class="p">(</span><span class="n">perm</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">period</span><span class="p">)]</span>
+
+        <span class="k">return</span> <span class="n">PermutationGroup</span><span class="p">([</span><span class="n">Identity</span><span class="p">()]</span> <span class="o">+</span> <span class="n">rotations</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_nodes</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Lattice.basis_translations"><a class="viewcode-back" href="../../../docs/_generated/graph/netket.graph.Lattice.html#netket.graph.Lattice.basis_translations">[docs]</a>    <span class="k">def</span> <span class="nf">basis_translations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PermutationGroup</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns PermutationGroup corresponding to translations by basis vectors</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">translations</span> <span class="o">=</span> <span class="n">product</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">extent</span><span class="p">])</span>
+        <span class="nb">next</span><span class="p">(</span><span class="n">translations</span><span class="p">)</span>
+
+        <span class="n">perms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">translation_perm</span><span class="p">()</span>
+        <span class="n">translations</span> <span class="o">=</span> <span class="p">[</span><span class="n">Translation</span><span class="p">(</span><span class="n">perms</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">translations</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">PermutationGroup</span><span class="p">([</span><span class="n">Identity</span><span class="p">()]</span> <span class="o">+</span> <span class="n">translations</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_nodes</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Lattice.reflections"><a class="viewcode-back" href="../../../docs/_generated/graph/netket.graph.Lattice.html#netket.graph.Lattice.reflections">[docs]</a>    <span class="k">def</span> <span class="nf">reflections</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PermutationGroup</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns PermutationGroup corresponding to reflection about axis</span>
+<span class="sd">        args:</span>
+<span class="sd">          axis: Generated reflections about specified axis</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">perm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reflection_perm</span><span class="p">(</span><span class="n">axis</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">PermutationGroup</span><span class="p">([</span><span class="n">Identity</span><span class="p">()]</span> <span class="o">+</span> <span class="p">[</span><span class="n">Reflection</span><span class="p">(</span><span class="n">perm</span><span class="p">)],</span> <span class="n">degree</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_nodes</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="Lattice.draw"><a class="viewcode-back" href="../../../docs/_generated/graph/netket.graph.Lattice.html#netket.graph.Lattice.draw">[docs]</a>    <span class="k">def</span> <span class="nf">draw</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>

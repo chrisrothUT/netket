@@ -124,8 +124,17 @@
 <li class="toctree-l2"><a class="reference internal" href="../../getting_started.html#commented-example">Commented Example</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../whats_new.html">What’s New in v3.0</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../whats_new.html#api-changes">API Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Change Log</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-0b2-unreleased">NetKet 3.0b2 (unreleased)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#new-features">New features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#breaking-changes">Breaking Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#bug-fixes">Bug Fixes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-0b1-published-beta-release">NetKet 3.0b1 (published beta release)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#api-changes">API Changes</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../superop.html">The Lindblad Master Equation</a><ul>
@@ -147,6 +156,13 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../varstate.html#saving-and-loading-a-variational-state">Saving and Loading a Variational State</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../sr.html">Quantum Geometric Tensor and Stochastic Reconfiguration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../sr.html#stochastic-reconfiguration">Stochastic Reconfiguration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../sr.html#using-stochastic-reconfiguration">Using stochastic reconfiguration</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../drivers.html">The Drivers API</a><ul>
@@ -172,6 +188,15 @@
 <li class="toctree-l2"><a class="reference internal" href="../../custom_models.html#using-flax-linen">Using Flax Linen</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../custom_models.html#using-jax-stax">Using Jax/Stax</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../custom_models.html#using-haiku">Using Haiku</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../custom_preconditioners.html">The preconditioner interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../custom_preconditioners.html#the-linearpreconditioner-interface">The LinearPreconditioner interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../custom_preconditioners.html#bare-interface">Bare interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../custom_preconditioners.html#linearoperator-interface">LinearOperator interface</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../custom_preconditioners.html#the-preconditioner-function-api">The preconditioner function API</a></li>
 </ul>
 </li>
 </ul>
@@ -207,7 +232,6 @@
 <li class="toctree-l3 current"><a class="current reference internal" href="#">netket.graph.Lattice</a></li>
 <li class="toctree-l3"><a class="reference internal" href="netket.graph.Chain.html">netket.graph.Chain</a></li>
 <li class="toctree-l3"><a class="reference internal" href="netket.graph.Grid.html">netket.graph.Grid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="netket.graph.SymmGroup.html">netket.graph.SymmGroup</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#hilbert">Hilbert</a><ul>
@@ -331,16 +355,33 @@
 <li class="toctree-l3"><a class="reference internal" href="../variational/netket.variational.MCMixedState.html">netket.variational.MCMixedState</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../../api.html#optimizer">Optimizer</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../optim/netket.optimizer.SR.html">netket.optimizer.SR</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../optim/netket.optimizer.SRLazyCG.html">netket.optimizer.SRLazyCG</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../optim/netket.optimizer.SRLazyGMRES.html">netket.optimizer.SRLazyGMRES</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../optim/netket.optimizer.sr.LazySMatrix.html">netket.optimizer.sr.LazySMatrix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../optim/netket.optimizer.Adam.html">netket.optimizer.Adam</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../optim/netket.optimizer.AdaGrad.html">netket.optimizer.AdaGrad</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../optim/netket.optimizer.Sgd.html">netket.optimizer.Sgd</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../optim/netket.optimizer.Momentum.html">netket.optimizer.Momentum</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../optim/netket.optimizer.RmsProp.html">netket.optimizer.RmsProp</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#optimizer-module">Optimizer Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api.html#optimizers">Optimizers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../optim/netket.optimizer.Adam.html">netket.optimizer.Adam</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../optim/netket.optimizer.AdaGrad.html">netket.optimizer.AdaGrad</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../optim/netket.optimizer.Sgd.html">netket.optimizer.Sgd</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../optim/netket.optimizer.Momentum.html">netket.optimizer.Momentum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../optim/netket.optimizer.RmsProp.html">netket.optimizer.RmsProp</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../api.html#preconditioners">Preconditioners</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../optim/netket.optimizer.SR.html">netket.optimizer.SR</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../api.html#quantum-geometric-tensor">Quantum Geometric Tensor</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../optim/netket.optimizer.qgt.QGTAuto.html">netket.optimizer.qgt.QGTAuto</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../optim/netket.optimizer.qgt.QGTOnTheFly.html">netket.optimizer.qgt.QGTOnTheFly</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../optim/netket.optimizer.qgt.QGTJacobianPyTree.html">netket.optimizer.qgt.QGTJacobianPyTree</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../optim/netket.optimizer.qgt.QGTJacobianDense.html">netket.optimizer.qgt.QGTJacobianDense</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../api.html#dense-solvers">Dense solvers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../optim/netket.optimizer.solver.svd.html">netket.optimizer.solver.svd</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../optim/netket.optimizer.solver.cholesky.html">netket.optimizer.solver.cholesky</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../optim/netket.optimizer.solver.LU.html">netket.optimizer.solver.LU</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../optim/netket.optimizer.solver.solve.html">netket.optimizer.solver.solve</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#optimization-drivers">Optimization drivers</a><ul>
@@ -358,6 +399,8 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#utils">Utils</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../utils/netket.utils.HashableArray.html">netket.utils.HashableArray</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/netket.utils.semigroup.SemiGroup.html">netket.utils.semigroup.SemiGroup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/netket.utils.semigroup.PermutationGroup.html">netket.utils.semigroup.PermutationGroup</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#callbacks">Callbacks</a><ul>
@@ -430,6 +473,12 @@ as sometimes floating point errors might cause some edges not to be detected.</p
 <dd></dd></dl>
 
 <dl class="py attribute">
+<dt id="netket.graph.Lattice.coords">
+<code class="sig-name descname"><span class="pre">coords</span></code><a class="headerlink" href="#netket.graph.Lattice.coords" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns list of coordinates of lattice points</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt id="netket.graph.Lattice.n_edges">
 <code class="sig-name descname"><span class="pre">n_edges</span></code><a class="headerlink" href="#netket.graph.Lattice.n_edges" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of edges in the graph.</p>
@@ -477,7 +526,18 @@ is represented by an integer in [0, n_nodes)</p>
 <dd><p>Symmetry group containing the automorphisms of the graph</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">SymmGroup</span></code></p>
+<dd class="field-odd"><p><a class="reference internal" href="../utils/netket.utils.semigroup.PermutationGroup.html#netket.utils.semigroup.PermutationGroup" title="netket.utils.semigroup.PermutationGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">PermutationGroup</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.graph.Lattice.basis_translations">
+<code class="sig-name descname"><span class="pre">basis_translations</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/graph/lattice.html#Lattice.basis_translations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.graph.Lattice.basis_translations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns PermutationGroup corresponding to translations by basis vectors</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="../utils/netket.utils.semigroup.PermutationGroup.html#netket.utils.semigroup.PermutationGroup" title="netket.utils.semigroup.PermutationGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">PermutationGroup</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -566,6 +626,40 @@ times the “length” of the curvature.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Generator" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.graph.Lattice.planar_rotations">
+<code class="sig-name descname"><span class="pre">planar_rotations</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">period</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0,</span> <span class="pre">1]</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/graph/lattice.html#Lattice.planar_rotations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.graph.Lattice.planar_rotations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns PermutationGroup corresponding to rotations about specfied axes with specified period</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>period</strong> – Period of the rotations</p></li>
+<li><p><strong>axes</strong> – Axes that define the plane of the rotation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="../utils/netket.utils.semigroup.PermutationGroup.html#netket.utils.semigroup.PermutationGroup" title="netket.utils.semigroup.PermutationGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">PermutationGroup</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.graph.Lattice.reflection_perm">
+<code class="sig-name descname"><span class="pre">reflection_perm</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/graph/lattice.html#Lattice.reflection_perm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.graph.Lattice.reflection_perm" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="netket.graph.Lattice.reflections">
+<code class="sig-name descname"><span class="pre">reflections</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/graph/lattice.html#Lattice.reflections"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.graph.Lattice.reflections" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns PermutationGroup corresponding to reflection about axis
+:param axis: Generated reflections about specified axis</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="../utils/netket.utils.semigroup.PermutationGroup.html#netket.utils.semigroup.PermutationGroup" title="netket.utils.semigroup.PermutationGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">PermutationGroup</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>

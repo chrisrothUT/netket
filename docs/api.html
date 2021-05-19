@@ -18,7 +18,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
     <script src="../_static/js/rtd_theme.js"></script>
     <link rel="author" title="About these documents" href="../about.html" />
@@ -126,8 +126,17 @@
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html#commented-example">Commented Example</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="whats_new.html">What’s New in v3.0</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="whats_new.html#api-changes">API Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#netket-3-0b2-unreleased">NetKet 3.0b2 (unreleased)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#new-features">New features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#breaking-changes">Breaking Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#bug-fixes">Bug Fixes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#netket-3-0b1-published-beta-release">NetKet 3.0b1 (published beta release)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#api-changes">API Changes</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="superop.html">The Lindblad Master Equation</a><ul>
@@ -149,6 +158,13 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="varstate.html#saving-and-loading-a-variational-state">Saving and Loading a Variational State</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sr.html">Quantum Geometric Tensor and Stochastic Reconfiguration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sr.html#stochastic-reconfiguration">Stochastic Reconfiguration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="sr.html#using-stochastic-reconfiguration">Using stochastic reconfiguration</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="drivers.html">The Drivers API</a><ul>
@@ -174,6 +190,15 @@
 <li class="toctree-l2"><a class="reference internal" href="custom_models.html#using-flax-linen">Using Flax Linen</a></li>
 <li class="toctree-l2"><a class="reference internal" href="custom_models.html#using-jax-stax">Using Jax/Stax</a></li>
 <li class="toctree-l2"><a class="reference internal" href="custom_models.html#using-haiku">Using Haiku</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="custom_preconditioners.html">The preconditioner interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="custom_preconditioners.html#the-linearpreconditioner-interface">The LinearPreconditioner interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="custom_preconditioners.html#bare-interface">Bare interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="custom_preconditioners.html#linearoperator-interface">LinearOperator interface</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="custom_preconditioners.html#the-preconditioner-function-api">The preconditioner function API</a></li>
 </ul>
 </li>
 </ul>
@@ -209,7 +234,6 @@
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Lattice.html">netket.graph.Lattice</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Chain.html">netket.graph.Chain</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Grid.html">netket.graph.Grid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.SymmGroup.html">netket.graph.SymmGroup</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#hilbert">Hilbert</a><ul>
@@ -333,16 +357,33 @@
 <li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.variational.MCMixedState.html">netket.variational.MCMixedState</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#optimizer">Optimizer</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="_generated/optim/netket.optimizer.SR.html">netket.optimizer.SR</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/optim/netket.optimizer.SRLazyCG.html">netket.optimizer.SRLazyCG</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/optim/netket.optimizer.SRLazyGMRES.html">netket.optimizer.SRLazyGMRES</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/optim/netket.optimizer.sr.LazySMatrix.html">netket.optimizer.sr.LazySMatrix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/optim/netket.optimizer.Adam.html">netket.optimizer.Adam</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/optim/netket.optimizer.AdaGrad.html">netket.optimizer.AdaGrad</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/optim/netket.optimizer.Sgd.html">netket.optimizer.Sgd</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/optim/netket.optimizer.Momentum.html">netket.optimizer.Momentum</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/optim/netket.optimizer.RmsProp.html">netket.optimizer.RmsProp</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#optimizer-module">Optimizer Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#optimizers">Optimizers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="_generated/optim/netket.optimizer.Adam.html">netket.optimizer.Adam</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/optim/netket.optimizer.AdaGrad.html">netket.optimizer.AdaGrad</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/optim/netket.optimizer.Sgd.html">netket.optimizer.Sgd</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/optim/netket.optimizer.Momentum.html">netket.optimizer.Momentum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/optim/netket.optimizer.RmsProp.html">netket.optimizer.RmsProp</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#preconditioners">Preconditioners</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="_generated/optim/netket.optimizer.SR.html">netket.optimizer.SR</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#quantum-geometric-tensor">Quantum Geometric Tensor</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="_generated/optim/netket.optimizer.qgt.QGTAuto.html">netket.optimizer.qgt.QGTAuto</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/optim/netket.optimizer.qgt.QGTOnTheFly.html">netket.optimizer.qgt.QGTOnTheFly</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/optim/netket.optimizer.qgt.QGTJacobianPyTree.html">netket.optimizer.qgt.QGTJacobianPyTree</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/optim/netket.optimizer.qgt.QGTJacobianDense.html">netket.optimizer.qgt.QGTJacobianDense</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#dense-solvers">Dense solvers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="_generated/optim/netket.optimizer.solver.svd.html">netket.optimizer.solver.svd</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/optim/netket.optimizer.solver.cholesky.html">netket.optimizer.solver.cholesky</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/optim/netket.optimizer.solver.LU.html">netket.optimizer.solver.LU</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/optim/netket.optimizer.solver.solve.html">netket.optimizer.solver.solve</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#optimization-drivers">Optimization drivers</a><ul>
@@ -360,6 +401,8 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#utils">Utils</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="_generated/utils/netket.utils.HashableArray.html">netket.utils.HashableArray</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/utils/netket.utils.semigroup.SemiGroup.html">netket.utils.semigroup.SemiGroup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/utils/netket.utils.semigroup.PermutationGroup.html">netket.utils.semigroup.PermutationGroup</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#callbacks">Callbacks</a><ul>
@@ -407,9 +450,6 @@
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="_generated/graph/netket.graph.Grid.html#netket.graph.Grid" title="netket.graph.Grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.Grid</span></code></a></p></td>
 <td><p>A Grid lattice of d dimensions, and possibly different sizes of each dimension.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/graph/netket.graph.SymmGroup.html#netket.graph.SymmGroup" title="netket.graph.SymmGroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.SymmGroup</span></code></a></p></td>
-<td><p>Collection of symmetry operations acting on the sites of a graph (graph automorphisms).</p></td>
 </tr>
 </tbody>
 </table>
@@ -623,7 +663,7 @@ Sampler. Rules with <cite>Numpy</cite> in their name can only be used with
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/samplers/netket.sampler.MetropolisRule.html#netket.sampler.MetropolisRule" title="netket.sampler.MetropolisRule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.sampler.MetropolisRule</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/samplers/netket.sampler.MetropolisRule.html#netket.sampler.MetropolisRule" title="netket.sampler.MetropolisRule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.sampler.MetropolisRule</span></code></a>(*args[, …])</p></td>
 <td><p>Base class for Transition rules of Metropolis, such as Local, Exchange, Hamiltonian and several others.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="_generated/samplers/netket.sampler.rules.LocalRule.html#netket.sampler.rules.LocalRule" title="netket.sampler.rules.LocalRule"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.sampler.rules.LocalRule</span></code></a>()</p></td>
@@ -653,10 +693,10 @@ Sampler. Rules with <cite>Numpy</cite> in their name can only be used with
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/samplers/netket.sampler.SamplerState.html#netket.sampler.SamplerState" title="netket.sampler.SamplerState"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.sampler.SamplerState</span></code></a>()</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/samplers/netket.sampler.SamplerState.html#netket.sampler.SamplerState" title="netket.sampler.SamplerState"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.sampler.SamplerState</span></code></a>(*args[, …])</p></td>
 <td><p>Base class holding the state of a sampler.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/samplers/netket.sampler.MetropolisSamplerState.html#netket.sampler.MetropolisSamplerState" title="netket.sampler.MetropolisSamplerState"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.sampler.MetropolisSamplerState</span></code></a>(σ, …)</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/samplers/netket.sampler.MetropolisSamplerState.html#netket.sampler.MetropolisSamplerState" title="netket.sampler.MetropolisSamplerState"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.sampler.MetropolisSamplerState</span></code></a>(*args)</p></td>
 <td><p>State for a metropolis sampler.</p></td>
 </tr>
 </tbody>
@@ -815,31 +855,17 @@ Read more about the design goal of this module in their <a class="reference exte
 </tbody>
 </table>
 </div>
-<div class="section" id="optimizer">
-<span id="optimizer-api"></span><h2>Optimizer<a class="headerlink" href="#optimizer" title="Permalink to this headline">¶</a></h2>
-<p>This module provides the following functionalities</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/optim/netket.optimizer.SR.html#netket.optimizer.SR" title="netket.optimizer.SR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.optimizer.SR</span></code></a></p></td>
-<td><p>Construct the structure holding the parameters for using the Stochastic Reconfiguration/Natural gradient method.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/optim/netket.optimizer.SRLazyCG.html#netket.optimizer.SRLazyCG" title="netket.optimizer.SRLazyCG"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.optimizer.SRLazyCG</span></code></a></p></td>
-<td><p>Computes x = ⟨S⟩⁻¹⟨F⟩ by using an iterative conjugate gradient method.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/optim/netket.optimizer.SRLazyGMRES.html#netket.optimizer.SRLazyGMRES" title="netket.optimizer.SRLazyGMRES"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.optimizer.SRLazyGMRES</span></code></a></p></td>
-<td><p>Computes x = ⟨S⟩⁻¹⟨F⟩ by using an iterative GMRES method.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/optim/netket.optimizer.sr.LazySMatrix.html#netket.optimizer.sr.LazySMatrix" title="netket.optimizer.sr.LazySMatrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.optimizer.sr.LazySMatrix</span></code></a></p></td>
-<td><p>Lazy representation of an S Matrix behving like a linear operator.</p></td>
-</tr>
-</tbody>
-</table>
-<p>This module also provides some optimisers from <a class="reference external" href="https://github.com/deepmind/optax">optax</a>.
-Check it out for up-to-date informations on available optimisers.</p>
+<div class="section" id="optimizer-module">
+<span id="optimizer-api"></span><h2>Optimizer Module<a class="headerlink" href="#optimizer-module" title="Permalink to this headline">¶</a></h2>
+<p>This module provides some optimisers,
+implementations of the {ref}`Quantum Geometric Tensor &lt;QGT_and_SR&gt;` and preconditioners such
+as SR.</p>
+<div class="section" id="optimizers">
+<h3>Optimizers<a class="headerlink" href="#optimizers" title="Permalink to this headline">¶</a></h3>
+<p>Optimizers in NetKet are simple wrappers of <a class="reference external" href="https://github.com/deepmind/optax">optax</a>
+optimizers. If you want to write a custom optimizer or use more advanced ones, we suggest
+you have a look at optax documentation.</p>
+<p>Check it out for up-to-date informations on available optimisers.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Even if optimisers in <cite>netket.optimizer</cite> are optax optimisers, they have slightly different
@@ -871,6 +897,71 @@ optimisers, and it’s extremely easy to use step-dependent schedulers.</p>
 </tr>
 </tbody>
 </table>
+</div>
+<div class="section" id="preconditioners">
+<h3>Preconditioners<a class="headerlink" href="#preconditioners" title="Permalink to this headline">¶</a></h3>
+<p>This module also provides an implemnetation of the Stochastic Reconfiguration/Natural
+gradient preconditioner.</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/optim/netket.optimizer.SR.html#netket.optimizer.SR" title="netket.optimizer.SR"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.optimizer.SR</span></code></a></p></td>
+<td><p>Construct the structure holding the parameters for using the Stochastic Reconfiguration/Natural gradient method.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="quantum-geometric-tensor">
+<h3>Quantum Geometric Tensor<a class="headerlink" href="#quantum-geometric-tensor" title="Permalink to this headline">¶</a></h3>
+<p>It also provides the following implementation of the quantum geometric tensor:</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/optim/netket.optimizer.qgt.QGTAuto.html#netket.optimizer.qgt.QGTAuto" title="netket.optimizer.qgt.QGTAuto"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.optimizer.qgt.QGTAuto</span></code></a></p></td>
+<td><p>Automatically select the ‘best’ Quantum Geometric Tensor computing format acoording to some rather untested heuristic.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/optim/netket.optimizer.qgt.QGTOnTheFly.html#netket.optimizer.qgt.QGTOnTheFly" title="netket.optimizer.qgt.QGTOnTheFly"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.optimizer.qgt.QGTOnTheFly</span></code></a></p></td>
+<td><p>Lazy representation of an S Matrix computed by performing 2 jvp and 1 vjp products, using the variational state’s model, the samples that have already been computed, and the vector.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/optim/netket.optimizer.qgt.QGTJacobianPyTree.html#netket.optimizer.qgt.QGTJacobianPyTree" title="netket.optimizer.qgt.QGTJacobianPyTree"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.optimizer.qgt.QGTJacobianPyTree</span></code></a></p></td>
+<td><p>Semi-lazy representation of an S Matrix where the Jacobian O_k is precomputed and stored as a PyTree.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/optim/netket.optimizer.qgt.QGTJacobianDense.html#netket.optimizer.qgt.QGTJacobianDense" title="netket.optimizer.qgt.QGTJacobianDense"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.optimizer.qgt.QGTJacobianDense</span></code></a></p></td>
+<td><p>Semi-lazy representation of an S Matrix where the Jacobian O_k is precomputed and stored as a dense matrix.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="dense-solvers">
+<h3>Dense solvers<a class="headerlink" href="#dense-solvers" title="Permalink to this headline">¶</a></h3>
+<p>And the following dense solvers for Stochastic Reconfiguration:</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/optim/netket.optimizer.solver.svd.html#netket.optimizer.solver.svd" title="netket.optimizer.solver.svd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.optimizer.solver.svd</span></code></a></p></td>
+<td><p>Solve the linear system using Singular Value Decomposition.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/optim/netket.optimizer.solver.cholesky.html#netket.optimizer.solver.cholesky" title="netket.optimizer.solver.cholesky"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.optimizer.solver.cholesky</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/optim/netket.optimizer.solver.LU.html#netket.optimizer.solver.LU" title="netket.optimizer.solver.LU"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.optimizer.solver.LU</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/optim/netket.optimizer.solver.solve.html#netket.optimizer.solver.solve" title="netket.optimizer.solver.solve"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.optimizer.solver.solve</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div class="section" id="optimization-drivers">
 <span id="drivers-api"></span><h2>Optimization drivers<a class="headerlink" href="#optimization-drivers" title="Permalink to this headline">¶</a></h2>
@@ -928,6 +1019,12 @@ optimisers, and it’s extremely easy to use step-dependent schedulers.</p>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="_generated/utils/netket.utils.HashableArray.html#netket.utils.HashableArray" title="netket.utils.HashableArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.utils.HashableArray</span></code></a></p></td>
 <td><p>This class wraps a numpy or jax array in order to make it hashable and equality comparable (which is necessary since a well-defined hashable object needs to satisfy <code class="code docutils literal notranslate"><span class="pre">obj1</span> <span class="pre">==</span> <span class="pre">obj2</span></code> whenever <code class="code docutils literal notranslate"><span class="pre">hash(obj1)</span> <span class="pre">==</span> <span class="pre">hash(obj2)</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/utils/netket.utils.semigroup.SemiGroup.html#netket.utils.semigroup.SemiGroup" title="netket.utils.semigroup.SemiGroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.utils.semigroup.SemiGroup</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/utils/netket.utils.semigroup.PermutationGroup.html#netket.utils.semigroup.PermutationGroup" title="netket.utils.semigroup.PermutationGroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.utils.semigroup.PermutationGroup</span></code></a></p></td>
+<td><p>Collection of permutation operations acting on sequences of length <code class="code docutils literal notranslate"><span class="pre">degree</span></code>.</p></td>
 </tr>
 </tbody>
 </table>

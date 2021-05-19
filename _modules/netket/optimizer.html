@@ -110,7 +110,16 @@
 <span class="c1"># See the License for the specific language governing permissions and</span>
 <span class="c1"># limitations under the License.</span>
 
-<span class="kn">from</span> <span class="nn">.sr</span> <span class="kn">import</span> <span class="n">SR</span><span class="p">,</span> <span class="n">SRLazyCG</span><span class="p">,</span> <span class="n">SRLazyGMRES</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">qgt</span><span class="p">,</span> <span class="n">solver</span>
+
+<span class="kn">from</span> <span class="nn">.sr</span> <span class="kn">import</span> <span class="n">SR</span>
+
+<span class="kn">from</span> <span class="nn">.linear_operator</span> <span class="kn">import</span> <span class="n">LinearOperator</span>
+<span class="kn">from</span> <span class="nn">.preconditioner</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">LinearPreconditioner</span><span class="p">,</span>
+    <span class="n">PreconditionerT</span><span class="p">,</span>
+    <span class="n">identity_preconditioner</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="c1">## Optimisers</span>
 

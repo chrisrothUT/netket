@@ -115,10 +115,9 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">_nx</span>
 
-<span class="kn">from</span> <span class="nn">netket.utils.semigroup</span> <span class="kn">import</span> <span class="n">Permutation</span>
+<span class="kn">from</span> <span class="nn">netket.utils.semigroup</span> <span class="kn">import</span> <span class="n">Permutation</span><span class="p">,</span> <span class="n">PermutationGroup</span>
 
 <span class="kn">from</span> <span class="nn">.abstract_graph</span> <span class="kn">import</span> <span class="n">AbstractGraph</span>
-<span class="kn">from</span> <span class="nn">.symmetry</span> <span class="kn">import</span> <span class="n">SymmGroup</span>
 
 
 <div class="viewcode-block" id="NetworkX"><a class="viewcode-back" href="../../../docs/_generated/graph/netket.graph.NetworkX.html#netket.graph.NetworkX">[docs]</a><span class="k">class</span> <span class="nc">NetworkX</span><span class="p">(</span><span class="n">AbstractGraph</span><span class="p">):</span>
@@ -191,7 +190,7 @@
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;The number of edges in the graph.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
 
-<div class="viewcode-block" id="NetworkX.automorphisms"><a class="viewcode-back" href="../../../docs/_generated/graph/netket.graph.NetworkX.html#netket.graph.NetworkX.automorphisms">[docs]</a>    <span class="k">def</span> <span class="nf">automorphisms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SymmGroup</span><span class="p">:</span>
+<div class="viewcode-block" id="NetworkX.automorphisms"><a class="viewcode-back" href="../../../docs/_generated/graph/netket.graph.NetworkX.html#netket.graph.NetworkX.automorphisms">[docs]</a>    <span class="k">def</span> <span class="nf">automorphisms</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PermutationGroup</span><span class="p">:</span>
         <span class="c1"># TODO: check how to compute these when we have a coloured graph where there could</span>
         <span class="c1">#       be a duplicated edge with two different colors.</span>
 
@@ -213,7 +212,7 @@
                 <span class="n">Permutation</span><span class="p">([</span><span class="n">iso</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">aux_graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">()])</span>
                 <span class="k">for</span> <span class="n">iso</span> <span class="ow">in</span> <span class="n">ismags</span><span class="o">.</span><span class="n">isomorphisms_iter</span><span class="p">()</span>
             <span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_automorphisms</span> <span class="o">=</span> <span class="n">SymmGroup</span><span class="p">(</span><span class="n">_automorphisms</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_automorphisms</span> <span class="o">=</span> <span class="n">PermutationGroup</span><span class="p">(</span><span class="n">_automorphisms</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_nodes</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_automorphisms</span></div>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

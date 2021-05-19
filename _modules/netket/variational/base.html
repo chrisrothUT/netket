@@ -142,6 +142,13 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="VariationalState.__init__"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.variational.VariationalState.html#netket.variational.VariationalState.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hilbert</span><span class="p">:</span> <span class="n">AbstractHilbert</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Initialize the Abstract base class of a Variational State defined</span>
+<span class="sd">        on an hilbert space.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            hilbert: The hilbert space upon which this state is defined.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_hilbert</span> <span class="o">=</span> <span class="n">hilbert</span>  <span class="c1"># type: AbstractHilbert</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_model_state</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># type: PyTree</span>
@@ -296,17 +303,17 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
     <span class="c1"># @abc.abstractmethod</span>
-<div class="viewcode-block" id="VariationalState.quantum_geometric_tensor"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.variational.VariationalState.html#netket.variational.VariationalState.quantum_geometric_tensor">[docs]</a>    <span class="k">def</span> <span class="nf">quantum_geometric_tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sr</span><span class="p">):</span>
+<div class="viewcode-block" id="VariationalState.quantum_geometric_tensor"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.variational.VariationalState.html#netket.variational.VariationalState.quantum_geometric_tensor">[docs]</a>    <span class="k">def</span> <span class="nf">quantum_geometric_tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qgt_T</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Computes an estimate of the quantum geometric tensor G_ij.</span>
 
 <span class="sd">        This function returns a linear operator that can be used to apply G_ij to a given vector</span>
 <span class="sd">        or can be converted to a full matrix.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            sr: The object containing the settings off the SR format to be used.</span>
+<span class="sd">            qgt_T: the optional type of the quantum geometric tensor. By default it&#39;s automatically selected.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">           A linear operator representing the quantum geometric tensor.</span>
+<span class="sd">            nk.optimizer.LinearOperator: A linear operator representing the quantum geometric tensor.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 

@@ -15,6 +15,7 @@
    Attributes
       .. autoattribute:: Lattice.atoms_coord
       .. autoattribute:: Lattice.basis_vectors
+      .. autoattribute:: Lattice.coords
       .. autoattribute:: Lattice.n_edges
       .. autoattribute:: Lattice.n_nodes
    
@@ -25,6 +26,7 @@
       .. automethod:: Lattice.adjacency_list
       .. automethod:: Lattice.atom_label
       .. automethod:: Lattice.automorphisms
+      .. automethod:: Lattice.basis_translations
       .. automethod:: Lattice.coord_to_site
       .. automethod:: Lattice.distances
       .. automethod:: Lattice.draw
@@ -32,6 +34,9 @@
       .. automethod:: Lattice.is_bipartite
       .. automethod:: Lattice.is_connected
       .. automethod:: Lattice.nodes
+      .. automethod:: Lattice.planar_rotations
+      .. automethod:: Lattice.reflection_perm
+      .. automethod:: Lattice.reflections
       .. automethod:: Lattice.rotation_perm
       .. automethod:: Lattice.site_to_coord
       .. automethod:: Lattice.site_to_vector

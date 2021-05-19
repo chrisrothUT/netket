@@ -112,17 +112,15 @@
 
 <span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">from</span> <span class="nn">plum</span> <span class="kn">import</span> <span class="n">dispatch</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">_np</span>
 <span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">_nx</span>
 
-<span class="kn">from</span> <span class="nn">netket.utils.semigroup</span> <span class="kn">import</span> <span class="n">Element</span><span class="p">,</span> <span class="n">Identity</span>
+<span class="kn">from</span> <span class="nn">netket.utils.semigroup</span> <span class="kn">import</span> <span class="n">Element</span><span class="p">,</span> <span class="n">Identity</span><span class="p">,</span> <span class="n">PermutationGroup</span>
 
-<span class="kn">from</span> <span class="nn">.symmetry</span> <span class="kn">import</span> <span class="n">SymmGroup</span>
 <span class="kn">from</span> <span class="nn">.graph</span> <span class="kn">import</span> <span class="n">NetworkX</span>
 
 
@@ -287,7 +285,7 @@
 
 <div class="viewcode-block" id="Grid.translations"><a class="viewcode-back" href="../../../docs/_generated/graph/netket.graph.Grid.html#netket.graph.Grid.translations">[docs]</a>    <span class="k">def</span> <span class="nf">translations</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">dim</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">step</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SymmGroup</span><span class="p">:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PermutationGroup</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns all permutations of lattice sites that correspond to translations</span>
 <span class="sd">        along the grid directions with periodic boundary conditions.</span>
@@ -322,11 +320,11 @@
         <span class="nb">next</span><span class="p">(</span><span class="n">translations</span><span class="p">)</span>  <span class="c1"># skip identity element here</span>
         <span class="n">translations</span> <span class="o">=</span> <span class="p">[</span><span class="n">Translation</span><span class="p">(</span><span class="n">el</span><span class="p">,</span> <span class="n">dims</span><span class="p">)</span> <span class="k">for</span> <span class="n">el</span> <span class="ow">in</span> <span class="n">translations</span><span class="p">]</span>
 
-        <span class="k">return</span> <span class="n">SymmGroup</span><span class="p">([</span><span class="n">Identity</span><span class="p">()]</span> <span class="o">+</span> <span class="n">translations</span><span class="p">,</span> <span class="n">graph</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">PermutationGroup</span><span class="p">([</span><span class="n">Identity</span><span class="p">()]</span> <span class="o">+</span> <span class="n">translations</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_nodes</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Grid.planar_rotation"><a class="viewcode-back" href="../../../docs/_generated/graph/netket.graph.Grid.html#netket.graph.Grid.planar_rotation">[docs]</a>    <span class="k">def</span> <span class="nf">planar_rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axes</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">SymmGroup</span><span class="p">:</span>
+<div class="viewcode-block" id="Grid.planar_rotation"><a class="viewcode-back" href="../../../docs/_generated/graph/netket.graph.Grid.html#netket.graph.Grid.planar_rotation">[docs]</a>    <span class="k">def</span> <span class="nf">planar_rotation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axes</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">PermutationGroup</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns SymmGroup consisting of rotations about the origin in the plane defined by axes</span>
+<span class="sd">        Returns PermutationGroup consisting of rotations about the origin in the plane defined by axes</span>
 
 <span class="sd">        Arguments:</span>
 <span class="sd">            axes: Axes that define the plane of rotation specified by dims.</span>
@@ -351,11 +349,11 @@
 
         <span class="n">rotations</span> <span class="o">=</span> <span class="p">[</span><span class="n">PlanarRotation</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">dims</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">ax</span><span class="p">)</span> <span class="ow">in</span> <span class="n">rotations</span><span class="p">]</span>
 
-        <span class="k">return</span> <span class="n">SymmGroup</span><span class="p">([</span><span class="n">Identity</span><span class="p">()]</span> <span class="o">+</span> <span class="n">rotations</span><span class="p">,</span> <span class="n">graph</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">PermutationGroup</span><span class="p">([</span><span class="n">Identity</span><span class="p">()]</span> <span class="o">+</span> <span class="n">rotations</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_nodes</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Grid.axis_reflection"><a class="viewcode-back" href="../../../docs/_generated/graph/netket.graph.Grid.html#netket.graph.Grid.axis_reflection">[docs]</a>    <span class="k">def</span> <span class="nf">axis_reflection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SymmGroup</span><span class="p">:</span>
+<div class="viewcode-block" id="Grid.axis_reflection"><a class="viewcode-back" href="../../../docs/_generated/graph/netket.graph.Grid.html#netket.graph.Grid.axis_reflection">[docs]</a>    <span class="k">def</span> <span class="nf">axis_reflection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PermutationGroup</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns SymmGroup consisting of identity and the lattice</span>
+<span class="sd">        Returns PermutationGroup consisting of identity and the lattice</span>
 <span class="sd">        reflected about the hyperplane axis = 0</span>
 
 <span class="sd">        Arguments:</span>
@@ -365,9 +363,11 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Axis specified not in dims&quot;</span><span class="p">)</span>
 
         <span class="n">dims</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">SymmGroup</span><span class="p">([</span><span class="n">Identity</span><span class="p">(),</span> <span class="n">Reflection</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">dims</span><span class="p">)],</span> <span class="n">graph</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">PermutationGroup</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">Identity</span><span class="p">(),</span> <span class="n">Reflection</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">dims</span><span class="p">)],</span> <span class="n">degree</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_nodes</span>
+        <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Grid.rotations"><a class="viewcode-back" href="../../../docs/_generated/graph/netket.graph.Grid.html#netket.graph.Grid.rotations">[docs]</a>    <span class="k">def</span> <span class="nf">rotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">remove_duplicates</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SymmGroup</span><span class="p">:</span>
+<div class="viewcode-block" id="Grid.rotations"><a class="viewcode-back" href="../../../docs/_generated/graph/netket.graph.Grid.html#netket.graph.Grid.rotations">[docs]</a>    <span class="k">def</span> <span class="nf">rotations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">remove_duplicates</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PermutationGroup</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns all possible rotation symmetries of the lattice.</span>
 
@@ -379,7 +379,7 @@
 <span class="sd">            remove_duplicates: Only include unique rotations.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">axes</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">length</span><span class="p">)),</span> <span class="mi">2</span><span class="p">)</span>
-        <span class="n">group</span> <span class="o">=</span> <span class="n">SymmGroup</span><span class="p">([</span><span class="n">Identity</span><span class="p">()],</span> <span class="n">graph</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="n">PermutationGroup</span><span class="p">([</span><span class="n">Identity</span><span class="p">()],</span> <span class="n">degree</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_nodes</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">axs</span> <span class="ow">in</span> <span class="n">axes</span><span class="p">:</span>
             <span class="n">group</span> <span class="o">=</span> <span class="n">group</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">planar_rotation</span><span class="p">(</span><span class="n">axs</span><span class="p">)</span>
@@ -389,7 +389,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">group</span></div>
 
-<div class="viewcode-block" id="Grid.space_group"><a class="viewcode-back" href="../../../docs/_generated/graph/netket.graph.Grid.html#netket.graph.Grid.space_group">[docs]</a>    <span class="k">def</span> <span class="nf">space_group</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SymmGroup</span><span class="p">:</span>
+<div class="viewcode-block" id="Grid.space_group"><a class="viewcode-back" href="../../../docs/_generated/graph/netket.graph.Grid.html#netket.graph.Grid.space_group">[docs]</a>    <span class="k">def</span> <span class="nf">space_group</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PermutationGroup</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the full space group of the lattice.</span>
 
@@ -401,7 +401,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rotations</span><span class="p">()</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">axis_reflection</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="Grid.lattice_group"><a class="viewcode-back" href="../../../docs/_generated/graph/netket.graph.Grid.html#netket.graph.Grid.lattice_group">[docs]</a>    <span class="k">def</span> <span class="nf">lattice_group</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SymmGroup</span><span class="p">:</span>
+<div class="viewcode-block" id="Grid.lattice_group"><a class="viewcode-back" href="../../../docs/_generated/graph/netket.graph.Grid.html#netket.graph.Grid.lattice_group">[docs]</a>    <span class="k">def</span> <span class="nf">lattice_group</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PermutationGroup</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the full lattice symmetry group consisting of rotations, reflections, and periodic translation.</span>
 

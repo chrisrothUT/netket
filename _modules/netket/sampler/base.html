@@ -117,7 +117,6 @@
 <span class="kn">import</span> <span class="nn">jax</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">flax</span> <span class="kn">import</span> <span class="n">struct</span>
 <span class="kn">from</span> <span class="nn">flax</span> <span class="kn">import</span> <span class="n">linen</span> <span class="k">as</span> <span class="n">nn</span>
 <span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">jnp</span>
 <span class="kn">from</span> <span class="nn">jax.experimental</span> <span class="kn">import</span> <span class="n">loops</span>
@@ -127,6 +126,7 @@
 <span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">get_afun_if_module</span>
 <span class="kn">from</span> <span class="nn">netket.utils.types</span> <span class="kn">import</span> <span class="n">PyTree</span><span class="p">,</span> <span class="n">PRNGKeyT</span>
 <span class="kn">from</span> <span class="nn">netket.jax</span> <span class="kn">import</span> <span class="n">HashablePartial</span>
+<span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">struct</span>
 
 <span class="n">SeedType</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">PRNGKeyT</span><span class="p">]</span>
 
@@ -320,7 +320,6 @@
             <span class="n">sampler</span><span class="p">,</span> <span class="n">machine</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="n">state</span><span class="p">,</span> <span class="n">chain_length</span><span class="o">=</span><span class="n">chain_length</span>
         <span class="p">)</span></div>
 
-    <span class="nd">@partial</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">,</span> <span class="n">static_argnums</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
     <span class="k">def</span> <span class="nf">_sample_chain</span><span class="p">(</span>
         <span class="n">sampler</span><span class="p">,</span>
         <span class="n">machine</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">],</span>
@@ -328,16 +327,26 @@
         <span class="n">state</span><span class="p">:</span> <span class="n">SamplerState</span><span class="p">,</span>
         <span class="n">chain_length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">SamplerState</span><span class="p">]:</span>
-        <span class="n">_sample_next</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">state</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="n">sampler</span><span class="o">.</span><span class="n">sample_next</span><span class="p">(</span><span class="n">machine</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Samples chain_length elements along the chains.</span>
 
-        <span class="n">state</span><span class="p">,</span> <span class="n">samples</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span>
-            <span class="n">_sample_next</span><span class="p">,</span>
-            <span class="n">state</span><span class="p">,</span>
-            <span class="n">xs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">length</span><span class="o">=</span><span class="n">chain_length</span><span class="p">,</span>
-        <span class="p">)</span>
+<span class="sd">        In general this should not be overridden unless you want to modify the logic by which</span>
+<span class="sd">        the whole sampling is performed.</span>
+<span class="sd">        If using Jax, this function should be jitted</span>
 
-        <span class="k">return</span> <span class="n">samples</span><span class="p">,</span> <span class="n">state</span>
+<span class="sd">        Arguments:</span>
+<span class="sd">            sampler: The Monte Carlo sampler.</span>
+<span class="sd">            machine: The model or callable to sample from (if it&#39;s a function it should have</span>
+<span class="sd">                the signature :code:`f(parameters, σ) -&gt; jnp.ndarray`).</span>
+<span class="sd">            parameters: The PyTree of parameters of the model.</span>
+<span class="sd">            state: current state of the sampler. If None, then initialises it.</span>
+<span class="sd">            chain_length: (default=1), the length of the chains.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            state: The new state of the sampler</span>
+<span class="sd">            σ: The next batch of samples.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_sample_chain</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">machine</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">chain_length</span><span class="p">)</span>
 
     <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
     <span class="k">def</span> <span class="nf">_init_state</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">machine</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SamplerState</span><span class="p">:</span>
@@ -471,6 +480,43 @@
         <span class="n">state</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">machine</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">sampler</span><span class="o">.</span><span class="n">_sample_chain</span><span class="p">(</span><span class="n">machine</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">chain_length</span><span class="p">)</span></div>
+
+
+<span class="nd">@partial</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">,</span> <span class="n">static_argnums</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="k">def</span> <span class="nf">_sample_chain</span><span class="p">(</span>
+    <span class="n">sampler</span><span class="p">,</span>
+    <span class="n">machine</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">],</span>
+    <span class="n">parameters</span><span class="p">:</span> <span class="n">PyTree</span><span class="p">,</span>
+    <span class="n">state</span><span class="p">:</span> <span class="n">SamplerState</span><span class="p">,</span>
+    <span class="n">chain_length</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">SamplerState</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Samples chain_length elements along the chains.</span>
+
+<span class="sd">    Internal method used for jitting calls</span>
+
+<span class="sd">    Arguments:</span>
+<span class="sd">        sampler: The Monte Carlo sampler.</span>
+<span class="sd">        machine: The model or Callable to sample from (if it&#39;s a function it should have</span>
+<span class="sd">            the signature :code:`f(parameters, σ) -&gt; jnp.ndarray`).</span>
+<span class="sd">        parameters: The PyTree of parameters of the model.</span>
+<span class="sd">        state: current state of the sampler. If None, then initialises it.</span>
+<span class="sd">        chain_length: (default=1), the length of the chains.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        state: The new state of the sampler</span>
+<span class="sd">        σ: The next batch of samples.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_sample_next</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">state</span><span class="p">,</span> <span class="n">_</span><span class="p">:</span> <span class="n">sampler</span><span class="o">.</span><span class="n">sample_next</span><span class="p">(</span><span class="n">machine</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+
+    <span class="n">state</span><span class="p">,</span> <span class="n">samples</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span>
+        <span class="n">_sample_next</span><span class="p">,</span>
+        <span class="n">state</span><span class="p">,</span>
+        <span class="n">xs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">length</span><span class="o">=</span><span class="n">chain_length</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">samples</span><span class="p">,</span> <span class="n">state</span>
 
 
 <div class="viewcode-block" id="samples"><a class="viewcode-back" href="../../../docs/_generated/samplers/netket.sampler.samples.html#netket.sampler.samples">[docs]</a><span class="k">def</span> <span class="nf">samples</span><span class="p">(</span>

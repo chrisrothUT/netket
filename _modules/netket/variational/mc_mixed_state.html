@@ -184,7 +184,6 @@
 <span class="sd">            sampler: The sampler</span>
 <span class="sd">            model: (Optional) The model. If not provided, you must provide init_fun and apply_fun.</span>
 
-<span class="sd">        Keyword Arguments:</span>
 <span class="sd">            n_samples: the total number of samples across chains and processes when sampling (default=1000).</span>
 <span class="sd">            n_discard: number of discarded samples at the beginning of each monte-carlo chain (default=n_samples/10).</span>
 <span class="sd">            parameters: Optional PyTree of weights from which to start.</span>
@@ -200,6 +199,7 @@
 <span class="sd">                `model.apply(variables, σ)`. specify only if your network has a non-standard apply method.</span>
 <span class="sd">            training_kwargs: a dict containing the optionaal keyword arguments to be passed to the apply_fun during training.</span>
 <span class="sd">                Useful for example when you have a batchnorm layer that constructs the average/mean only during training.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">seed</span><span class="p">,</span> <span class="n">seed_diag</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">nkjax</span><span class="o">.</span><span class="n">PRNGKey</span><span class="p">(</span><span class="n">seed</span><span class="p">))</span>

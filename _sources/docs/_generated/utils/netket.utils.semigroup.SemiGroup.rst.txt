@@ -1,0 +1,20 @@
+﻿netket.utils.semigroup.SemiGroup
+================================
+
+.. currentmodule:: netket.utils.semigroup
+
+.. autoclass:: SemiGroup
+   :show-inheritance:
+
+   .. automethod:: SemiGroup.__init__
+
+   
+      
+   
+      
+   .. rst-class:: class-dl-groups
+
+   Methods
+      .. automethod:: SemiGroup.__call__
+
+   

@@ -117,10 +117,8 @@
 <span class="kn">import</span> <span class="nn">jax</span>
 <span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">jnp</span>
 <span class="kn">from</span> <span class="nn">flax</span> <span class="kn">import</span> <span class="n">linen</span> <span class="k">as</span> <span class="n">nn</span>
-
-<span class="kn">from</span> <span class="nn">netket.hilbert</span> <span class="kn">import</span> <span class="n">AbstractHilbert</span>
-<span class="kn">from</span> <span class="nn">netket.graph</span> <span class="kn">import</span> <span class="n">AbstractGraph</span><span class="p">,</span> <span class="n">SymmGroup</span>
 <span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">HashableArray</span>
+<span class="kn">from</span> <span class="nn">netket.utils.semigroup</span> <span class="kn">import</span> <span class="n">PermutationGroup</span>
 <span class="kn">from</span> <span class="nn">netket.utils.types</span> <span class="kn">import</span> <span class="n">PRNGKeyT</span><span class="p">,</span> <span class="n">Shape</span><span class="p">,</span> <span class="n">DType</span><span class="p">,</span> <span class="n">Array</span><span class="p">,</span> <span class="n">NNInitFunc</span>
 
 <span class="kn">from</span> <span class="nn">netket</span> <span class="kn">import</span> <span class="n">nn</span> <span class="k">as</span> <span class="n">nknn</span>
@@ -294,7 +292,7 @@
 <div class="viewcode-block" id="RBMSymm"><a class="viewcode-back" href="../../../docs/_generated/models/netket.models.RBMSymm.html#netket.models.RBMSymm">[docs]</a><span class="k">class</span> <span class="nc">RBMSymm</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A symmetrized RBM using the :ref:`netket.nn.DenseSymm` layer internally.&quot;&quot;&quot;</span>
 
-    <span class="n">symmetries</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">HashableArray</span><span class="p">,</span> <span class="n">SymmGroup</span><span class="p">]</span>
+    <span class="n">symmetries</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">HashableArray</span><span class="p">,</span> <span class="n">PermutationGroup</span><span class="p">]</span>
     <span class="sd">&quot;&quot;&quot;A group of symmetry operations (or array of permutation indices) over which the layer should be invariant.</span>
 <span class="sd">    Numpy/Jax arrays must be wrapped into an :class:`netket.utils.HashableArray`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>

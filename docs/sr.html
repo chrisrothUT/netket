@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>What’s New in v3.0 &#8212; netket v3.0 documentation</title>
+    <title>Quantum Geometric Tensor and Stochastic Reconfiguration &#8212; netket v3.0 documentation</title>
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
@@ -18,12 +18,14 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
     <script src="../_static/js/rtd_theme.js"></script>
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="The Lindblad Master Equation" href="superop.html" />
-    <link rel="prev" title="Getting Started" href="getting_started.html" />
+    <link rel="next" title="The Drivers API" href="drivers.html" />
+    <link rel="prev" title="The Variational State Interface" href="varstate.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -124,8 +126,17 @@
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html#commented-example">Commented Example</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">What’s New in v3.0</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#api-changes">API Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#netket-3-0b2-unreleased">NetKet 3.0b2 (unreleased)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#new-features">New features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#breaking-changes">Breaking Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#bug-fixes">Bug Fixes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#netket-3-0b1-published-beta-release">NetKet 3.0b1 (published beta release)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#api-changes">API Changes</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="superop.html">The Lindblad Master Equation</a><ul>
@@ -147,6 +158,13 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="varstate.html#saving-and-loading-a-variational-state">Saving and Loading a Variational State</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Quantum Geometric Tensor and Stochastic Reconfiguration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#stochastic-reconfiguration">Stochastic Reconfiguration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#using-stochastic-reconfiguration">Using stochastic reconfiguration</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="drivers.html">The Drivers API</a><ul>
@@ -172,6 +190,15 @@
 <li class="toctree-l2"><a class="reference internal" href="custom_models.html#using-flax-linen">Using Flax Linen</a></li>
 <li class="toctree-l2"><a class="reference internal" href="custom_models.html#using-jax-stax">Using Jax/Stax</a></li>
 <li class="toctree-l2"><a class="reference internal" href="custom_models.html#using-haiku">Using Haiku</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="custom_preconditioners.html">The preconditioner interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="custom_preconditioners.html#the-linearpreconditioner-interface">The LinearPreconditioner interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="custom_preconditioners.html#bare-interface">Bare interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="custom_preconditioners.html#linearoperator-interface">LinearOperator interface</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="custom_preconditioners.html#the-preconditioner-function-api">The preconditioner function API</a></li>
 </ul>
 </li>
 </ul>
@@ -207,7 +234,6 @@
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Lattice.html">netket.graph.Lattice</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Chain.html">netket.graph.Chain</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Grid.html">netket.graph.Grid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.SymmGroup.html">netket.graph.SymmGroup</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#hilbert">Hilbert</a><ul>
@@ -331,16 +357,33 @@
 <li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.variational.MCMixedState.html">netket.variational.MCMixedState</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="api.html#optimizer">Optimizer</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="_generated/optim/netket.optimizer.SR.html">netket.optimizer.SR</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/optim/netket.optimizer.SRLazyCG.html">netket.optimizer.SRLazyCG</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/optim/netket.optimizer.SRLazyGMRES.html">netket.optimizer.SRLazyGMRES</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/optim/netket.optimizer.sr.LazySMatrix.html">netket.optimizer.sr.LazySMatrix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/optim/netket.optimizer.Adam.html">netket.optimizer.Adam</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/optim/netket.optimizer.AdaGrad.html">netket.optimizer.AdaGrad</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/optim/netket.optimizer.Sgd.html">netket.optimizer.Sgd</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/optim/netket.optimizer.Momentum.html">netket.optimizer.Momentum</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/optim/netket.optimizer.RmsProp.html">netket.optimizer.RmsProp</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#optimizer-module">Optimizer Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="api.html#optimizers">Optimizers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="_generated/optim/netket.optimizer.Adam.html">netket.optimizer.Adam</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/optim/netket.optimizer.AdaGrad.html">netket.optimizer.AdaGrad</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/optim/netket.optimizer.Sgd.html">netket.optimizer.Sgd</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/optim/netket.optimizer.Momentum.html">netket.optimizer.Momentum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/optim/netket.optimizer.RmsProp.html">netket.optimizer.RmsProp</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#preconditioners">Preconditioners</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="_generated/optim/netket.optimizer.SR.html">netket.optimizer.SR</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#quantum-geometric-tensor">Quantum Geometric Tensor</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="_generated/optim/netket.optimizer.qgt.QGTAuto.html">netket.optimizer.qgt.QGTAuto</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/optim/netket.optimizer.qgt.QGTOnTheFly.html">netket.optimizer.qgt.QGTOnTheFly</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/optim/netket.optimizer.qgt.QGTJacobianPyTree.html">netket.optimizer.qgt.QGTJacobianPyTree</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/optim/netket.optimizer.qgt.QGTJacobianDense.html">netket.optimizer.qgt.QGTJacobianDense</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="api.html#dense-solvers">Dense solvers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="_generated/optim/netket.optimizer.solver.svd.html">netket.optimizer.solver.svd</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/optim/netket.optimizer.solver.cholesky.html">netket.optimizer.solver.cholesky</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/optim/netket.optimizer.solver.LU.html">netket.optimizer.solver.LU</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/optim/netket.optimizer.solver.solve.html">netket.optimizer.solver.solve</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#optimization-drivers">Optimization drivers</a><ul>
@@ -358,6 +401,8 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#utils">Utils</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="_generated/utils/netket.utils.HashableArray.html">netket.utils.HashableArray</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/utils/netket.utils.semigroup.SemiGroup.html">netket.utils.semigroup.SemiGroup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/utils/netket.utils.semigroup.PermutationGroup.html">netket.utils.semigroup.PermutationGroup</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#callbacks">Callbacks</a><ul>
@@ -375,43 +420,113 @@
       </div>
     <div class="body col-md-9 content" role="main">
       
-  <div class="section" id="what-s-new-in-v3-0">
-<h1>What’s New in v3.0<a class="headerlink" href="#what-s-new-in-v3-0" title="Permalink to this headline">¶</a></h1>
-<p>In this page we discuss the main differences between old versions of netket and version 3.0.</p>
-<div class="section" id="api-changes">
-<h2>API Changes<a class="headerlink" href="#api-changes" title="Permalink to this headline">¶</a></h2>
+  <div class="section" id="quantum-geometric-tensor-and-stochastic-reconfiguration">
+<span id="qgt-and-sr"></span><h1>Quantum Geometric Tensor and Stochastic Reconfiguration<a class="headerlink" href="#quantum-geometric-tensor-and-stochastic-reconfiguration" title="Permalink to this headline">¶</a></h1>
+<p>The Quantum Geometric Tensor (QGT) is the Fubini-Study metric tensor of the manifold on which a variational state is defined.
+In the general case (and in practise for any NQS ansatz), the QGT varies depending on the current quantum state and thus needs to be computed when the variational parameters <span class="math notranslate nohighlight">\(W\)</span> change.
+To give an example, we consider a variational ansatz <span class="math notranslate nohighlight">\( \psi\colon \mathbb{R} \rightarrow \mathscr{H} \)</span> which maps elements <span class="math notranslate nohighlight">\(W\)</span> of the parameter space to vectors in Hilbert space (quantum states) <span class="math notranslate nohighlight">\(\psi_W\)</span>.</p>
+<p>The parameter space has a simple Euclidean metric, therefore the distance between two points <span class="math notranslate nohighlight">\(\bf{W}\)</span> and <span class="math notranslate nohighlight">\(\bf{W} + \bf{\delta W}\)</span> is simply  <span class="math notranslate nohighlight">\(\Vert\bf{\delta W} \Vert\)</span>.
+However, what we really are interested in when optimizing variational ansätze is not the (Euclidean) distance between those two points in parameter space, but rather the distance in the Hilbert space between the corresponding quantum states (which also properly takes into account gauge degrees of freedom).
+The quantum mechanical distance function for quantum states is the Fubini-Study distance <span class="math notranslate nohighlight">\( d(\psi, \phi) = \cos^{-1} \sqrt{\frac{\langle\psi|\phi\rangle \langle\phi|\psi\rangle}{\langle\psi|\psi\rangle \langle\phi|\phi\rangle}} \)</span>.
+This can be expanded to second order in an infinitesimal parameter change <span class="math notranslate nohighlight">\(\delta W\)</span> as <span class="math notranslate nohighlight">\( d(\psi_W, \psi_{W + \delta W}) = (\delta W)^\dagger S \delta W \)</span> where <span class="math notranslate nohighlight">\( S \)</span> is the QGT.
+In NetKet you can obtain (an approximation of) the quantum geometric tensor of a variational state by calling <a class="reference internal" href="_generated/variational/netket.variational.VariationalState.html#netket.variational.VariationalState.quantum_geometric_tensor" title="netket.variational.VariationalState.quantum_geometric_tensor"><code class="xref py py-attr docutils literal notranslate"><span class="pre">quantum_geometric_tensor</span></code></a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ma</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">RBM</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+<span class="n">sa</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">MetropolisLocal</span><span class="p">(</span><span class="n">nk</span><span class="o">.</span><span class="n">hilbert</span><span class="o">.</span><span class="n">Spin</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span> <span class="n">n_chains</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+<span class="n">vs</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">variational</span><span class="o">.</span><span class="n">MCState</span><span class="p">(</span><span class="n">sa</span><span class="p">,</span> <span class="n">ma</span><span class="p">)</span>
+
+<span class="n">qgt</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">quantum_geometric_tensor</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This will return an object that behaves as a Matrix, which acts on PyTrees of parameters.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">_</span><span class="p">,</span> <span class="n">grad</span> <span class="o">=</span> <span class="n">vs</span><span class="o">.</span><span class="n">expect_and_grad</span><span class="p">(</span><span class="n">nk</span><span class="o">.</span><span class="n">operator</span><span class="o">.</span><span class="n">spin</span><span class="o">.</span><span class="n">sigmax</span><span class="p">(</span><span class="n">nk</span><span class="o">.</span><span class="n">hilbert</span><span class="o">.</span><span class="n">Spin</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span> <span class="mi">0</span><span class="p">))</span>
+<span class="n">qgt_times_grad</span> <span class="o">=</span> <span class="n">qgt</span><span class="nd">@grad</span>
+</pre></div>
+</div>
+<p>The quantum geometric tensor also acts on dense ravellings of the parameters</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">grad_dense</span><span class="p">,</span> <span class="n">unravel</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">jax</span><span class="o">.</span><span class="n">tree_ravel</span><span class="p">(</span><span class="n">grad</span><span class="p">)</span>
+<span class="n">qgt_times_grad_dense</span> <span class="o">=</span> <span class="n">qgt</span><span class="nd">@grad_dense</span>
+</pre></div>
+</div>
+<p>You can convert the quantum geometric tensor to a matrix representation by calling <code class="docutils literal notranslate"><span class="pre">qgt.to_dense()</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">qgt_dense</span> <span class="o">=</span> <span class="n">qgt</span><span class="o">.</span><span class="n">to_dense</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Lastly, you can solve the linear system <span class="math notranslate nohighlight">\( Q_{i,j} x_j = F_i \)</span> by calling the solve method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">qgt</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">scipy</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">gmres</span><span class="p">,</span> <span class="n">grad</span><span class="p">)</span>
+<span class="n">x</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">qgt</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">nk</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">cholesky</span><span class="p">,</span> <span class="n">grad</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>While mathematically those operations are all well defined, there are several ways to implement them in code, all with different performance characteristics. For that reason, we have several (3) different implementations of the same Quantum Geometric Tensor object.
+The 3 implemnentations are:</p>
 <ul class="simple">
-<li><p>Hilbert space constructors do not store the lattice graph anymore. As a consequence, the constructor does not accept the graph anymore.</p></li>
-<li><p>Special Hamiltonians defined on a lattice, such as <a class="reference internal" href="_generated/operator/netket.operator.BoseHubbard.html#netket.operator.BoseHubbard" title="netket.operator.BoseHubbard"><code class="xref py py-class docutils literal notranslate"><span class="pre">operator.BoseHubbard</span></code></a>, <a class="reference internal" href="_generated/operator/netket.operator.Ising.html#netket.operator.Ising" title="netket.operator.Ising"><code class="xref py py-class docutils literal notranslate"><span class="pre">operator.Ising</span></code></a> and <a class="reference internal" href="_generated/operator/netket.operator.Heisenberg.html#netket.operator.Heisenberg" title="netket.operator.Heisenberg"><code class="xref py py-class docutils literal notranslate"><span class="pre">operator.Heisenberg</span></code></a>, now require the graph to be passed explicitly through a <cite>graph</cite> keyword argument.</p></li>
-<li><p><a class="reference internal" href="_generated/operator/netket.operator.LocalOperator.html#netket.operator.LocalOperator" title="netket.operator.LocalOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">operator.LocalOperator</span></code></a> now default to real-valued matrix elements, except if you construct them with a complex-valued matrix. This is also valid for operators such as <a class="reference internal" href="_generated/hilbert/netket.operator.spin.sigmax.html#netket.operator.spin.sigmax" title="netket.operator.spin.sigmax"><code class="xref py py-func docutils literal notranslate"><span class="pre">operator.spin.sigmax()</span></code></a> and similars.</p></li>
-<li><p>When performing algebric operations <code class="code docutils literal notranslate"><span class="pre">*,</span> <span class="pre">-,</span> <span class="pre">+</span></code> on pairs of <a class="reference internal" href="_generated/operator/netket.operator.LocalOperator.html#netket.operator.LocalOperator" title="netket.operator.LocalOperator"><code class="xref py py-class docutils literal notranslate"><span class="pre">operator.LocalOperator</span></code></a>, the dtype of the result iscomputed using standard numpy promotion logic.</p>
-<ul>
-<li><p>Doing an operation in-place <code class="code docutils literal notranslate"><span class="pre">+=,</span> <span class="pre">-=,</span> <span class="pre">*=</span></code> on a real-valued operator will now fail if the other is complex. While this might seem annoying, it’s usefull to ensure that smaller types such as <cite>float32</cite> or <cite>complex64</cite> are preserved if the user desires to do so.</p></li>
+<li><p><a class="reference internal" href="_generated/optim/netket.optimizer.qgt.QGTOnTheFly.html#netket-optimizer-qgt-qgtonthefly"><span class="std std-ref">netket.optimizer.qgt.QGTOnTheFly</span></a>, which uses jax automatic differentiation through two <code class="docutils literal notranslate"><span class="pre">vjp</span></code> and one <code class="docutils literal notranslate"><span class="pre">jvp</span></code> product to compute the action of quantum geometric tensor on a vector and operates natively on PyTrees. This method will essentially run AD every time you compute <code class="docutils literal notranslate"><span class="pre">QGT&#64;vector</span></code>. This method shines if the parameters of your network are stored in a PyTree with few leaf nodes and/or you are not performing many iterations of the iterative solver. It can compute the full dense QGT but it is not efficient at doing it so we advise not to use it with dense solvers.</p></li>
+<li><p><a class="reference internal" href="_generated/optim/netket.optimizer.qgt.QGTJacobianDense.html#netket-optimizer-qgt-qgtjacobiandense"><span class="std std-ref">netket.optimizer.qgt.QGTJacobianDense</span></a>, which precomputes the log derivatives ( <span class="math notranslate nohighlight">\( O_k \)</span> ) when it’s constructed and converts it to a single dense array. If you have a high number of total parameters and/or many leaf nodes in your parameter PyTree, this implementation might perform better because everything is stored contiguously in memory. However, it has an high ‘startup cost’.</p></li>
+<li><p><a class="reference internal" href="_generated/optim/netket.optimizer.qgt.QGTJacobianPyTree.html#netket-optimizer-qgt-qgtjacobianpytree"><span class="std std-ref">netket.optimizer.qgt.QGTJacobianPyTree</span></a>, same as above, but the precomputed jacobian is not stored contiguously in memory but is stored as a PyTree. This might work better than <code class="docutils literal notranslate"><span class="pre">QGTJacobianDense</span></code> if there are few leaf nodes. We haven’t studied the performance tradeoffs between the two Jacobian implementations and we would appreciate feedback.</p></li>
 </ul>
-</li>
-<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractMachine</span></code> has been removed. It’s functionality is now split among the model itself, which is defined by the user and <a class="reference internal" href="_generated/variational/netket.variational.MCState.html#netket.variational.MCState" title="netket.variational.MCState"><code class="xref py py-class docutils literal notranslate"><span class="pre">variational.MCState</span></code></a> for pure states or <a class="reference internal" href="_generated/variational/netket.variational.MCMixedState.html#netket.variational.MCMixedState" title="netket.variational.MCMixedState"><code class="xref py py-class docutils literal notranslate"><span class="pre">variational.MCMixedState</span></code></a> for mixed states.</p>
-<ul>
-<li><p>The model, in general is composed by two functions, or an object with two functions: an <cite>init(rng, sample_val)</cite> function, accepting a <span class="xref std std-ref">jax.random.PRNGKey</span> object and an input, returning the parameters and the state of the model for that particular sample shape, and a <code class="code docutils literal notranslate"><span class="pre">apply(params,</span> <span class="pre">samples,</span> <span class="pre">**kwargs)</span></code> function, evaluating the model for the given parameters and inputs.</p></li>
-<li><p>Some models (previously machines) such as the RBM (Restricted Bolzmann Machine) Machine, NDM (Neural Density Matrix) or MPS (Matrix Product State ansatz) are available in <a class="reference internal" href="api.html#pre-built-models"><span class="std std-ref">Pre-built models</span></a>.</p></li>
-<li><p>Machines, now called models, should be written using <a class="reference external" href="https://flax.readthedocs.io/en/latest">flax</a> or another jax framework.</p></li>
-<li><p>Serialization and deserialization functionality has now been moved to <span class="xref std std-ref">variational.MCState</span>, which support the standard Flax interface through MsgPack. See <a class="reference external" href="https://flax.readthedocs.io/en/latest/flax.serialization.html">Flax docs</a> for more information</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">AbstractMachine.init_random_parameters</span></code> functionality has now been absorbed into <a class="reference internal" href="_generated/variational/netket.variational.VariationalState.html#netket.variational.VariationalState.init_parameters" title="netket.variational.VariationalState.init_parameters"><code class="xref py py-meth docutils literal notranslate"><span class="pre">netket.variational.VariationalState.init_parameters()</span></code></a>, which however has a different syntax.</p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="api.html#sampler"><span class="std std-ref">Samplers</span></a> now require the hilbert space upon which they sample to be passed in to the constructor.</p></li>
-</ul>
-<p>Also note that several keyword arguments of the samplers have changed, and new one are available.</p>
-<ul class="simple">
-<li><p>It’s now possible to change <a class="reference internal" href="api.html#sampler"><span class="std std-ref">Samplers</span></a> dtype, which controls the type of the output. By default they use double-precision samples (<cite>np.float64</cite>). Be wary of type promotion issues with your models.</p></li>
-<li><p><a class="reference internal" href="api.html#sampler"><span class="std std-ref">Samplers</span></a> no longer take a machine as an argument.</p></li>
-<li><p><a class="reference internal" href="api.html#sampler"><span class="std std-ref">Samplers</span></a> are now immutable (frozen) <cite>dataclasses</cite> (defined through <cite>flax.struct.dataclass</cite>) that only hold the sampling parameters. As a consequence it is no longer possible to change their settings such as <cite>n_chains</cite> or <cite>n_sweeps</cite> without creating a new sampler. If you wish to update only one parameter, it is possible to construct the new sampler with the updated value by using the <cite>sampler.replace(parameter=new_value)</cite> function.</p></li>
-<li><p><a class="reference internal" href="api.html#sampler"><span class="std std-ref">Samplers</span></a> are no longer stateful objects. Instead, they can construct an immutable state object <span class="xref std std-ref">sampler.init_state</span>, which can be passed to sampling functions such as <span class="xref std std-ref">sampler.sample</span>, which now return also the updated state. However, unless you have particoular use-cases we advise you use the variational state <a class="reference internal" href="varstate.html#mcstate"><span class="std std-ref">MCState</span></a> instead.</p></li>
-<li><p>The <a class="reference internal" href="api.html#optimizer"><span class="std std-ref">Optimizer</span></a> module has been overhauled, and now only re-exports flax optim module. We advise not to use netket’s optimizer but instead to use <a class="reference external" href="https://github.com/deepmind/optax">optax</a> .</p></li>
-<li><p>The <span class="xref std std-ref">SR</span> object now is only a set of options used to compute the SR matrix. The SR matrix, now called <cite>quantum_geometric_tensor</cite> can be optained by calling <span class="xref std std-ref">MCState.quantum_geometric_tensor(sr)</span>. Depending on the settings, this can be a lazy object.</p></li>
-<li><p><span class="xref std std-ref">netket.Vmc</span> has been renamed to <span class="xref std std-ref">netkt.VMC</span></p></li>
-<li><p><a class="reference internal" href="_generated/models/netket.models.RBM.html#netket-models-rbm"><span class="std std-ref">netket.models.RBM</span></a> replaces the old <code class="code docutils literal notranslate"><span class="pre">RBM</span></code> machine, but has real parameters by default.</p></li>
-<li><p>As we rely on Jax, using <code class="code docutils literal notranslate"><span class="pre">dtype=float</span></code> or <code class="code docutils literal notranslate"><span class="pre">dtype=complex</span></code>, which are weak types, will sometimes lead to loss of precision because they might be converted to <cite>float32</cite>. Use <code class="code docutils literal notranslate"><span class="pre">np.float64</span></code> or <code class="code docutils literal notranslate"><span class="pre">np.complex128</span></code> instead if you want double precision when defining your models.</p></li>
-</ul>
+<p>We also have an extra implementation, called <code class="docutils literal notranslate"><span class="pre">netket.optimizer.qgt.QGTAuto</span></code>, which uses some heuristics based on the parameters of the network to select the best QGT implementation. Be warned that the heuristics we use is very crude, and might not pick the best implementation all the time.</p>
+<p>All the QGT implementations listed above have several options that can affect their performance.
+We advise you to have a look at them and experiment.
+We provide a lot of freedom because it’s not yet clear to us what is the best implementation for which kind of problems.
+If you work with NetKet and determine that a particular implementation works best for certain types of networks, we would be glad to hear it! Let us know by opening a Discussion on our GitHub repository. We might use the insight to improve the automatic selection.</p>
+<div class="section" id="stochastic-reconfiguration">
+<h2>Stochastic Reconfiguration<a class="headerlink" href="#stochastic-reconfiguration" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference external" href="https://www.attaccalite.com/PhDThesis/html/node15.html">stochastic reconfiguration (SR) method</a> is a technique that makes use of the information encoded in the quantum geometric tensor described above to <em>precondition</em> the gradient used in stochastic optimization, <em>improving</em> the convergence rate to the ground state of a Hamiltonian <span class="math notranslate nohighlight">\( \hat{H} \)</span>.</p>
+<p>We would like to underline that SR can be derived (and therefore thought of) as imaginary time evolution of the variational ansatz.
+The derivation in the case of a variational optimization for the ground state, can be sketched as follows:</p>
+<p>Given a a variational wavefunction <span class="math notranslate nohighlight">\( \ket{\psi_W} \)</span>, we consider its first order Taylor expansion around <span class="math notranslate nohighlight">\( W \)</span>, <span class="math notranslate nohighlight">\( \ket{\psi_{W+\delta W}} = \ket{\psi_W} + \delta W_k \hat{O}_k \ket{\psi_W} \)</span>, where <span class="math notranslate nohighlight">\( \bra{\sigma}\hat{O}_k \ket{\eta} = \delta_{\sigma,\eta} \frac{d \log\psi_W(\sigma)}{dW_k}\)</span>.
+We wish to determine the updates <span class="math notranslate nohighlight">\( \delta_{\sigma,\eta} \)</span> of the variational parameters that match a step of imaginary-time evolution, given by</p>
+<div class="amsmath math notranslate nohighlight" id="equation-02c7b2b0-8ad8-4616-a697-7f6a03d84269">
+<span class="eqno">(1)<a class="headerlink" href="#equation-02c7b2b0-8ad8-4616-a697-7f6a03d84269" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+\ket{\phi} = U(\epsilon)\ket{\psi_W} = e^{\epsilon\hat{H}}\ket{\psi_W} \sim (\mathbb{I} - \epsilon \hat{H})\ket{\psi_W}
+\end{equation}\]</div>
+<p>It is possible to show that the updates <span class="math notranslate nohighlight">\(\delta W_k \)</span> that minimise the norm of the state <span class="math notranslate nohighlight">\(\ket{\phi}-\ket{\psi_{W+\delta W}}\)</span> can be determined by solving the linear system</p>
+<div class="amsmath math notranslate nohighlight" id="equation-05fba81d-18ad-4ecb-8b92-3a91cfe1e820">
+<span class="eqno">(2)<a class="headerlink" href="#equation-05fba81d-18ad-4ecb-8b92-3a91cfe1e820" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+S_{i,k} \delta W_k = F_i
+\end{equation}\]</div>
+<p>where <span class="math notranslate nohighlight">\( F_i = \langle \hat{E}^{loc} \hat{O}_i\rangle_c \)</span> is the gradient of the Energy and <span class="math notranslate nohighlight">\( S_{i,k} = \langle \hat{O}^\dagger_i \hat{O}_k\rangle_c \)</span> is the Quantum Geometric Tensor.
+The QGT is positive definite, therefore it can be inverted and the solution is formally written as</p>
+<div class="amsmath math notranslate nohighlight" id="equation-f51cf6d2-a6dd-426b-bb42-f1e10723d8d6">
+<span class="eqno">(3)<a class="headerlink" href="#equation-f51cf6d2-a6dd-426b-bb42-f1e10723d8d6" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+\bf{\delta W} = S^{-1} \bf{F},
+\end{equation}\]</div>
+<p>where bold fonts are used for vectors.
+A complication is given by the fact that the QGT is determined by Monte Carlo sampling and it might have several eigenvalues that are zero or very small, leading to numerical stability issues when inverting the matrix or in the resulting dynamics.
+The linear system can be solved with several methods. For the models with many parameters and to achieve the best performance, iterative solvers such as those found in <code class="docutils literal notranslate"><span class="pre">jax.scipy.sparse.linalg</span></code>, such as <span class="xref std std-ref">jax.scipy.sparse.linalg.cg</span> <span class="xref std std-ref">jax.scipy.sparse.linalg.gmres</span> are the best choice.
+Do note that to stabilize those algorithms it is often needed to add a small (<span class="math notranslate nohighlight">\(10^{-5} - 10^{-2}\)</span>) shift to the diagonal of the QGT.
+This can be set with the keyword argument <code class="docutils literal notranslate"><span class="pre">diag_shift</span></code>.
+Those methods, combined with our lazy representations of the QGT, never instantiate the full matrix and therefore achieve a great performance.
+However, when the number of parameters is small (smaller than 1000-5000), it might make sense to solve the system by factorizing the QGT with cholesky or SVD.
+Those techniques require instantiating the full dense matrix, but in general are more stable and don’t require a diagonal shift.</p>
+<div class="section" id="using-stochastic-reconfiguration">
+<h3>Using stochastic reconfiguration<a class="headerlink" href="#using-stochastic-reconfiguration" title="Permalink to this headline">¶</a></h3>
+<p>To use SR, you must simply provide it as a preconditioner to the VMC solver.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sr</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">SR</span><span class="p">()</span>
+<span class="n">gs</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">VMC</span><span class="p">(</span><span class="n">hamiltonian</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">variational_state</span><span class="o">=</span><span class="n">vstate</span><span class="p">,</span> <span class="n">preconditioner</span><span class="o">=</span><span class="n">sr</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>By default this will use an appropriate QGT and the iterative solver <code class="docutils literal notranslate"><span class="pre">jax.scipy.sparse.linalg.cg</span></code>.
+It is possible to change the iterative solver by providing any solver from <code class="docutils literal notranslate"><span class="pre">jax.scipy.sparse.linalg</span></code> or one of the dense solvers in <code class="docutils literal notranslate"><span class="pre">netket.optimizer.solver</span></code> (such as svd/cholesky/LU) to the SR object.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sr</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">SR</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="n">nk</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">solver</span><span class="o">.</span><span class="n">cholesky</span><span class="p">)</span>
+<span class="n">gs</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">VMC</span><span class="p">(</span><span class="n">hamiltonian</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">variational_state</span><span class="o">=</span><span class="n">vstate</span><span class="p">,</span> <span class="n">preconditioner</span><span class="o">=</span><span class="n">sr</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The solver should be a function that accepts two arguments: the S matrix and the F vector in the linear system to be solved, and an optional x0 keyword argument.
+If you want to specify options of a linear solver, such as the tolerance or the cutoff rate you can do the following:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="n">sr</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">SR</span><span class="p">(</span><span class="n">solver</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">scipy</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">gmres</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">))</span>
+<span class="n">gs</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">VMC</span><span class="p">(</span><span class="n">hamiltonian</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">variational_state</span><span class="o">=</span><span class="n">vstate</span><span class="p">,</span> <span class="n">preconditioner</span><span class="o">=</span><span class="n">sr</span><span class="p">)</span>
+
+</pre></div>
+</div>
+<p>If you don’t specify the QGT format, NetKet will try to guess the best format.
+We reccomend you experiment and specify the QGT format that gives you the best performance, which can be by passing it as an argument. Additional keyword arguments will be forwarded to the QGT constructor, as shown below:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sr</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">SR</span><span class="p">(</span><span class="n">QGTJacobianPyTree</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="n">partial</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">scipy</span><span class="o">.</span><span class="n">sparse</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">gmres</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">)</span><span class="n">diag_shift</span><span class="o">=</span><span class="mf">1e-3</span>
+<span class="n">gs</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">VMC</span><span class="p">(</span><span class="n">hamiltonian</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">variational_state</span><span class="o">=</span><span class="n">vstate</span><span class="p">,</span> <span class="n">preconditioner</span><span class="o">=</span><span class="n">sr</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Since SR leads to an optimisation that approximates an imaginary time evolution, we find that in general it is not a good idea to couple SR with advanced optimisers like ADAM, which modify the gradient remarkably. Stochastic Gradient Descent is the best choice in general.</p>
+</div>
 </div>
 </div>
 

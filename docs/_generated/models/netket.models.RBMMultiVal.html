@@ -124,8 +124,17 @@
 <li class="toctree-l2"><a class="reference internal" href="../../getting_started.html#commented-example">Commented Example</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../whats_new.html">What’s New in v3.0</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../whats_new.html#api-changes">API Changes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Change Log</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-0b2-unreleased">NetKet 3.0b2 (unreleased)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#new-features">New features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#breaking-changes">Breaking Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#bug-fixes">Bug Fixes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-0b1-published-beta-release">NetKet 3.0b1 (published beta release)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#api-changes">API Changes</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../superop.html">The Lindblad Master Equation</a><ul>
@@ -147,6 +156,13 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../varstate.html#saving-and-loading-a-variational-state">Saving and Loading a Variational State</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../sr.html">Quantum Geometric Tensor and Stochastic Reconfiguration</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../sr.html#stochastic-reconfiguration">Stochastic Reconfiguration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../sr.html#using-stochastic-reconfiguration">Using stochastic reconfiguration</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../drivers.html">The Drivers API</a><ul>
@@ -172,6 +188,15 @@
 <li class="toctree-l2"><a class="reference internal" href="../../custom_models.html#using-flax-linen">Using Flax Linen</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../custom_models.html#using-jax-stax">Using Jax/Stax</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../custom_models.html#using-haiku">Using Haiku</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../custom_preconditioners.html">The preconditioner interface</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../custom_preconditioners.html#the-linearpreconditioner-interface">The LinearPreconditioner interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../custom_preconditioners.html#bare-interface">Bare interface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../custom_preconditioners.html#linearoperator-interface">LinearOperator interface</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../custom_preconditioners.html#the-preconditioner-function-api">The preconditioner function API</a></li>
 </ul>
 </li>
 </ul>
@@ -207,7 +232,6 @@
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Lattice.html">netket.graph.Lattice</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Chain.html">netket.graph.Chain</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Grid.html">netket.graph.Grid</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.SymmGroup.html">netket.graph.SymmGroup</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#hilbert">Hilbert</a><ul>
@@ -331,16 +355,33 @@
 <li class="toctree-l3"><a class="reference internal" href="../variational/netket.variational.MCMixedState.html">netket.variational.MCMixedState</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../../api.html#optimizer">Optimizer</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../optim/netket.optimizer.SR.html">netket.optimizer.SR</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../optim/netket.optimizer.SRLazyCG.html">netket.optimizer.SRLazyCG</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../optim/netket.optimizer.SRLazyGMRES.html">netket.optimizer.SRLazyGMRES</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../optim/netket.optimizer.sr.LazySMatrix.html">netket.optimizer.sr.LazySMatrix</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../optim/netket.optimizer.Adam.html">netket.optimizer.Adam</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../optim/netket.optimizer.AdaGrad.html">netket.optimizer.AdaGrad</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../optim/netket.optimizer.Sgd.html">netket.optimizer.Sgd</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../optim/netket.optimizer.Momentum.html">netket.optimizer.Momentum</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../optim/netket.optimizer.RmsProp.html">netket.optimizer.RmsProp</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#optimizer-module">Optimizer Module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../api.html#optimizers">Optimizers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../optim/netket.optimizer.Adam.html">netket.optimizer.Adam</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../optim/netket.optimizer.AdaGrad.html">netket.optimizer.AdaGrad</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../optim/netket.optimizer.Sgd.html">netket.optimizer.Sgd</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../optim/netket.optimizer.Momentum.html">netket.optimizer.Momentum</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../optim/netket.optimizer.RmsProp.html">netket.optimizer.RmsProp</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../api.html#preconditioners">Preconditioners</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../optim/netket.optimizer.SR.html">netket.optimizer.SR</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../api.html#quantum-geometric-tensor">Quantum Geometric Tensor</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../optim/netket.optimizer.qgt.QGTAuto.html">netket.optimizer.qgt.QGTAuto</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../optim/netket.optimizer.qgt.QGTOnTheFly.html">netket.optimizer.qgt.QGTOnTheFly</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../optim/netket.optimizer.qgt.QGTJacobianPyTree.html">netket.optimizer.qgt.QGTJacobianPyTree</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../optim/netket.optimizer.qgt.QGTJacobianDense.html">netket.optimizer.qgt.QGTJacobianDense</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../api.html#dense-solvers">Dense solvers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../optim/netket.optimizer.solver.svd.html">netket.optimizer.solver.svd</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../optim/netket.optimizer.solver.cholesky.html">netket.optimizer.solver.cholesky</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../optim/netket.optimizer.solver.LU.html">netket.optimizer.solver.LU</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../optim/netket.optimizer.solver.solve.html">netket.optimizer.solver.solve</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#optimization-drivers">Optimization drivers</a><ul>
@@ -358,6 +399,8 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#utils">Utils</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../utils/netket.utils.HashableArray.html">netket.utils.HashableArray</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/netket.utils.semigroup.SemiGroup.html">netket.utils.semigroup.SemiGroup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/netket.utils.semigroup.PermutationGroup.html">netket.utils.semigroup.PermutationGroup</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#callbacks">Callbacks</a><ul>
@@ -399,9 +442,9 @@ standard <a class="reference internal" href="netket.models.RBM.html#netket.model
 <li><p><strong>use_hidden_bias</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – </p></li>
 <li><p><strong>use_visible_bias</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a>) – </p></li>
 <li><p><strong>precision</strong> (<em>Any</em>) – </p></li>
-<li><p><strong>kernel_init</strong> (<em>Callable</em><em>[</em><em>[</em><em>Any</em><em>, </em><em>Sequence</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>Union</em><em>[</em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.20)"><em>numpy.ndarray</em></a><em>, </em><em>jaxlib.xla_extension.DeviceArray</em><em>, </em><em>jax.core.Tracer</em><em>]</em><em>]</em>) – </p></li>
-<li><p><strong>hidden_bias_init</strong> (<em>Callable</em><em>[</em><em>[</em><em>Any</em><em>, </em><em>Sequence</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>Union</em><em>[</em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.20)"><em>numpy.ndarray</em></a><em>, </em><em>jaxlib.xla_extension.DeviceArray</em><em>, </em><em>jax.core.Tracer</em><em>]</em><em>]</em>) – </p></li>
-<li><p><strong>visible_bias_init</strong> (<em>Callable</em><em>[</em><em>[</em><em>Any</em><em>, </em><em>Sequence</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>Union</em><em>[</em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.20)"><em>numpy.ndarray</em></a><em>, </em><em>jaxlib.xla_extension.DeviceArray</em><em>, </em><em>jax.core.Tracer</em><em>]</em><em>]</em>) – </p></li>
+<li><p><strong>kernel_init</strong> (<em>Callable</em><em>[</em><em>[</em><em>Any</em><em>, </em><em>Sequence</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>Union</em><em>[</em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.20)"><em>numpy.ndarray</em></a><em>, </em><a class="reference external" href="https://jax.readthedocs.io/en/latest/jax.numpy.html#jaxlib.xla_extension.DeviceArray" title="(in JAX)"><em>jaxlib.xla_extension.DeviceArray</em></a><em>, </em><em>jax.core.Tracer</em><em>]</em><em>]</em>) – </p></li>
+<li><p><strong>hidden_bias_init</strong> (<em>Callable</em><em>[</em><em>[</em><em>Any</em><em>, </em><em>Sequence</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>Union</em><em>[</em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.20)"><em>numpy.ndarray</em></a><em>, </em><a class="reference external" href="https://jax.readthedocs.io/en/latest/jax.numpy.html#jaxlib.xla_extension.DeviceArray" title="(in JAX)"><em>jaxlib.xla_extension.DeviceArray</em></a><em>, </em><em>jax.core.Tracer</em><em>]</em><em>]</em>) – </p></li>
+<li><p><strong>visible_bias_init</strong> (<em>Callable</em><em>[</em><em>[</em><em>Any</em><em>, </em><em>Sequence</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em><em>, </em><em>Any</em><em>]</em><em>, </em><em>Union</em><em>[</em><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.20)"><em>numpy.ndarray</em></a><em>, </em><a class="reference external" href="https://jax.readthedocs.io/en/latest/jax.numpy.html#jaxlib.xla_extension.DeviceArray" title="(in JAX)"><em>jaxlib.xla_extension.DeviceArray</em></a><em>, </em><em>jax.core.Tracer</em><em>]</em><em>]</em>) – </p></li>
 <li><p><strong>parent</strong> (<em>Optional</em><em>[</em><em>Union</em><em>[</em><em>Type</em><em>[</em><a class="reference internal" href="../nn/netket.nn.Module.html#netket.nn.Module" title="netket.nn.Module"><em>Module</em></a><em>]</em><em>, </em><em>Type</em><em>[</em><em>Scope</em><em>]</em><em>, </em><em>Type</em><em>[</em><em>_Sentinel</em><em>]</em><em>]</em><em>]</em>) – </p></li>
 <li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a>) – </p></li>
 </ul>
@@ -510,16 +553,16 @@ argument representing an instance of the Module class:</p>
 <li><p><strong>variables</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Mapping" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]]) – A dictionary containing variables keyed by variable
 collections. See <a class="reference external" href="https://flax.readthedocs.io/en/latest/flax.linen.html#module-flax.core.variables" title="(in Flax)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">flax.core.variables</span></code></a> for more details
 about variables.</p></li>
-<li><p><strong>rngs</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]) – a dict of PRNGKeys to initialize the PRNG sequences.
+<li><p><strong>rngs</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]]) – a dict of PRNGKeys to initialize the PRNG sequences.
 The “params” PRNG sequence is used to initialize parameters.</p></li>
-<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>[…, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]) – A function to call apply on. This is generally a function in the
+<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>[…, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]]) – A function to call apply on. This is generally a function in the
 module. If provided, applies this method. If not provided, applies the
 <code class="docutils literal notranslate"><span class="pre">__call__</span></code> method of the module.</p></li>
-<li><p><strong>mutable</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Container" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Container</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ForwardRef" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ForwardRef</span></code></a>]) – Can be bool, str, or list. Specifies which collections should be
+<li><p><strong>mutable</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Container" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Container</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <code class="xref py py-class docutils literal notranslate"><span class="pre">DenyList</span></code>]) – Can be bool, str, or list. Specifies which collections should be
 treated as mutable: <code class="docutils literal notranslate"><span class="pre">bool</span></code>: all/no collections are mutable.
 <code class="docutils literal notranslate"><span class="pre">str</span></code>: The name of a single mutable collection. <code class="docutils literal notranslate"><span class="pre">list</span></code>: A
 list of names of mutable collections.</p></li>
-<li><p><strong>capture_intermediates</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.ForwardRef" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ForwardRef</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>]]) – If <cite>True</cite>, captures intermediate return values
+<li><p><strong>capture_intermediates</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://flax.readthedocs.io/en/latest/flax.linen.html#flax.linen.Module" title="(in Flax)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>]]) – If <cite>True</cite>, captures intermediate return values
 of all Modules inside the “intermediates” collection. By default only
 the return values of all <code class="docutils literal notranslate"><span class="pre">__call__</span></code> methods are stored. A function can
 be passed to change the filter behavior. The filter function takes
@@ -543,7 +586,7 @@ of the modified collections.</p>
 <code class="sig-name descname"><span class="pre">bind</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">variables</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rngs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mutable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.models.RBMMultiVal.bind" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates an interactive Module instance by binding variables and RNGs.</p>
 <p><code class="docutils literal notranslate"><span class="pre">bind</span></code> provides an “interactive” instance of a Module directly without
-transforming a function with <code class="docutils literal notranslate"><span class="pre">apply</span></code>. This is particulary useful for debugging
+transforming a function with <code class="docutils literal notranslate"><span class="pre">apply</span></code>. This is particalary useful for debugging
 and interactive use cases like notebooks where a function would limit the ability
 split up code into different cells.</p>
 <p>Once the variables (and optionally RNGs) are bound to a <code class="docutils literal notranslate"><span class="pre">Module</span></code> it becomes a
@@ -579,8 +622,8 @@ mutable: Can be bool, str, or list. Specifies which collections should be</p>
 list of names of mutable collections.</p>
 </div></blockquote>
 </p></li>
-<li><p><strong>rngs</strong> (<em>Dict</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>Any</em><em>]</em>) – </p></li>
-<li><p><strong>mutable</strong> (<em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>Container</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>]</em><em>, </em><em>DenyList</em><em>]</em>) – </p></li>
+<li><p><strong>rngs</strong> (<em>Optional</em><em>[</em><em>Dict</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>Any</em><em>]</em><em>]</em>) – </p></li>
+<li><p><strong>mutable</strong> (<em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>, </em><em>Container</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><em>str</em></a><em>]</em><em>, </em><em>flax.core.scope.DenyList</em><em>]</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -662,7 +705,7 @@ collections.</p>
 
 <dl class="py method">
 <dt id="netket.models.RBMMultiVal.init">
-<code class="sig-name descname"><span class="pre">init</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rngs</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.models.RBMMultiVal.init" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">init</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rngs</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mutable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DenyList(deny='intermediates')</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.models.RBMMultiVal.init" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initializes a module method with variables and returns modified variables.</p>
 <p>Jitting <cite>init</cite> initializes a model lazily using only the shapes of the
 provided arguments, and avoids computing the forward pass with actual
@@ -677,6 +720,11 @@ values. Example:</p>
 <li><p><strong>rngs</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]]) – The rngs for the variable collections.</p></li>
 <li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>[…, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]]) – An optional method. If provided, applies this method. If not
 provided, applies the <code class="docutils literal notranslate"><span class="pre">__call__</span></code> method.</p></li>
+<li><p><strong>mutable</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Container" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Container</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <code class="xref py py-class docutils literal notranslate"><span class="pre">DenyList</span></code>]) – Can be bool, str, or list. Specifies which collections should be
+treated as mutable: <code class="docutils literal notranslate"><span class="pre">bool</span></code>: all/no collections are mutable.
+<code class="docutils literal notranslate"><span class="pre">str</span></code>: The name of a single mutable collection. <code class="docutils literal notranslate"><span class="pre">list</span></code>: A
+list of names of mutable collections. By default all collections
+except “intermediates” are mutable.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -690,7 +738,7 @@ provided, applies the <code class="docutils literal notranslate"><span class="pr
 
 <dl class="py method">
 <dt id="netket.models.RBMMultiVal.init_with_output">
-<code class="sig-name descname"><span class="pre">init_with_output</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rngs</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.models.RBMMultiVal.init_with_output" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">init_with_output</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rngs</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mutable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DenyList(deny='intermediates')</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.models.RBMMultiVal.init_with_output" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initializes a module method with variables and returns output and modified variables.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -698,6 +746,11 @@ provided, applies the <code class="docutils literal notranslate"><span class="pr
 <li><p><strong>rngs</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]]) – The rngs for the variable collections.</p></li>
 <li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>[…, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]]) – An optional method. If provided, applies this method. If not
 provided, applies the <code class="docutils literal notranslate"><span class="pre">__call__</span></code> method.</p></li>
+<li><p><strong>mutable</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Container" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Container</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <code class="xref py py-class docutils literal notranslate"><span class="pre">DenyList</span></code>]) – Can be bool, str, or list. Specifies which collections should be
+treated as mutable: <code class="docutils literal notranslate"><span class="pre">bool</span></code>: all/no collections are mutable.
+<code class="docutils literal notranslate"><span class="pre">str</span></code>: The name of a single mutable collection. <code class="docutils literal notranslate"><span class="pre">list</span></code>: A
+list of names of mutable collections. By default all collections
+except “intermediates” are mutable.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -849,9 +902,9 @@ init/reduce function can be passed:</p>
   <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
     <span class="n">init_fn</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="mi">0</span>
     <span class="n">reduce_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">sow</span><span class="p">(</span><span class="s1">&#39;intermediates&#39;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">sow</span><span class="p">(</span><span class="s1">&#39;intermediates&#39;</span><span class="p">,</span> <span class="s1">&#39;h&#39;</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span>
              <span class="n">init_fn</span><span class="o">=</span><span class="n">init_fn</span><span class="p">,</span> <span class="n">reduce_fn</span><span class="o">=</span><span class="n">reduce_fn</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">sow</span><span class="p">(</span><span class="s1">&#39;intermediates&#39;</span><span class="p">,</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">sow</span><span class="p">(</span><span class="s1">&#39;intermediates&#39;</span><span class="p">,</span> <span class="s1">&#39;h&#39;</span><span class="p">,</span> <span class="n">x</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
              <span class="n">init_fn</span><span class="o">=</span><span class="n">init_fn</span><span class="p">,</span> <span class="n">reduce_fn</span><span class="o">=</span><span class="n">reduce_fn</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">x</span>
 <span class="n">y</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">Foo</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">mutable</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;intermediates&#39;</span><span class="p">])</span>
@@ -861,21 +914,21 @@ init/reduce function can be passed:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>col</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the variable collection.</p></li>
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – the name of the variable.</p></li>
+<li><p><strong>col</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the variable collection.</p></li>
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – The name of the variable.</p></li>
+<li><p><strong>value</strong> (<em>~T</em>) – The value of the variable.</p></li>
 <li><p><strong>reduce_fn</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>[[~K, ~T], ~K]) – The function used to combine the existing value with
 the new value the default is to append the value to a tuple.</p></li>
 <li><p><strong>init_fn</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>[[], ~K]) – For the first value stored reduce_fn will be passed
 the result of <cite>init_fn</cite> together with the value to be stored.
 The default is an empty tuple.</p></li>
-<li><p><strong>value</strong> (<em>T</em>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p><cite>True</cite> if the value has been stored succesfully, <cite>False</cite> otherwise.</p>
+<dd class="field-odd"><p><cite>True</cite> if the value has been stored successfully, <cite>False</cite> otherwise.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -888,7 +941,7 @@ The default is an empty tuple.</p></li>
 for a shorthand way to define read-only variables in the “params”
 collection.</p>
 <p>Contrary to <a class="reference internal" href="#netket.models.RBMMultiVal.param" title="netket.models.RBMMultiVal.param"><code class="xref py py-meth docutils literal notranslate"><span class="pre">param()</span></code></a>, all arguments passing using <cite>init_fn</cite> should be
-passed on explictly:</p>
+passed on explicitly:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_rng</span><span class="p">(</span><span class="s1">&#39;stats&#39;</span><span class="p">)</span>
 <span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">variable</span><span class="p">(</span><span class="s1">&#39;stats&#39;</span><span class="p">,</span> <span class="s1">&#39;mean&#39;</span><span class="p">,</span> <span class="n">lecun_normal</span><span class="p">(),</span> <span class="n">key</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 </pre></div>

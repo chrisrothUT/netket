@@ -18,7 +18,7 @@
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
     <script src="../_static/js/rtd_theme.js"></script>
     <link rel="author" title="About these documents" href="../about.html" />
@@ -363,12 +363,16 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <p>Let’s start.</p>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span># Import netket library
+<span></span># ensure we run on the CPU
+import os
+os.environ[&quot;JAX_PLATFORM_NAME&quot;] = &quot;cpu&quot;
+
+# Import netket library
 import netket as nk
 
 # Helper libraries
@@ -376,14 +380,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-WARNING:absl:No GPU/TPU found, falling back to CPU. (Set TF_CPP_MIN_LOG_LEVEL=0 and rerun for more info.)
-</pre></div></div>
 </div>
 </div>
 <div class="section" id="1)-Defining-a-Custom-Hamiltonian">
@@ -514,7 +510,7 @@ sr = nk.optimizer.SR(diag_shift=0.01)
 # We can then specify a Variational Monte Carlo object, using the Hamiltonian, sampler and optimizers chosen.
 # Note that we also specify the method to learn the parameters of the wave-function: here we choose the efficient
 # Stochastic reconfiguration (Sr), here in an iterative setup
-gs = nk.Vmc(hamiltonian=op, optimizer=opt, variational_state=vs, sr=sr)
+gs = nk.VMC(hamiltonian=op, optimizer=opt, variational_state=vs, preconditioner=sr)
 </pre></div>
 </div>
 </div>
@@ -555,12 +551,24 @@ gs.run(out=&#39;test&#39;, n_iter=600, obs={&#39;Structure Factor&#39;: structur
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
+<div class="nboutput docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-100%|██████████| 600/600 [01:16&lt;00:00,  7.82it/s, Energy=-23.0614-0.0001j ± 0.0037 [σ²=0.0136, R̂=1.0024]]
+100%|██████████| 600/600 [01:38&lt;00:00,  6.11it/s, Energy=-23.0617-0.0024j ± 0.0037 [σ²=0.0139, R̂=0.9974]]
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(JsonLog(&#39;test&#39;, mode=write, autoflush_cost=0.005)
+   Runtime cost:
+        Log:    0.33330416679382324
+        Params: 0.003678560256958008,)
 </pre></div></div>
 </div>
 </div>
@@ -578,16 +586,18 @@ import json
 
 data=json.load(open(&quot;test.log&quot;))
 
-# Extract the relevant information
-
-iters=[]
-energy=[]
-sf=[]
-
-for iteration in data[&quot;Output&quot;]:
-    iters.append(iteration[&quot;Iteration&quot;])
-    energy.append(iteration[&quot;Energy&quot;][&quot;Mean&quot;])
-    sf.append(iteration[&quot;Structure Factor&quot;][&quot;Mean&quot;])
+iters = data[&#39;Energy&#39;][&#39;iters&#39;]
+energy=data[&#39;Energy&#39;][&#39;Mean&#39;][&#39;real&#39;]
+sf=data[&#39;Structure Factor&#39;][&#39;Mean&#39;][&#39;real&#39;]
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>
 </pre></div>
 </div>
 </div>
@@ -613,7 +623,7 @@ plt.show()
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/tutorials_j1j2_23_0.png" src="../_images/tutorials_j1j2_23_0.png" />
+<img alt="../_images/tutorials_j1j2_24_0.png" src="../_images/tutorials_j1j2_24_0.png" />
 </div>
 </div>
 <p>Let’s also compute the average of those quantities (energy and neel order) over the last 50 iterations where the optimization seems to have converged.</p>
@@ -633,7 +643,7 @@ print(r&quot;Energy = {0:.3f}({1:.3f})&quot;.format(np.mean(energy[-50:]), np.st
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Structure factor = 3.875(0.035)
+Structure factor = 3.827(0.038)
 Energy = -23.062(0.001)
 </pre></div></div>
 </div>
