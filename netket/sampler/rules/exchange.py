@@ -62,12 +62,6 @@ class ExchangeRule_(MetropolisRule):
 
         # pick a random cluster
 
-        for i in range(n_exchanges):
-            cluster_id = jax.random.randint(
-                key, shape=(n_chains,), minval=0, maxval=rule.clusters.shape[0]
-            )
-            σ = jax.vmap(scalar_update_fun, in_axes=(0, 0), out_axes=0)(σ, cluster_id)
-
         def scalar_update_fun(σ, cluster):
             # sites to be exchanged,
             si = rule.clusters[cluster, 0]
@@ -75,6 +69,12 @@ class ExchangeRule_(MetropolisRule):
 
             σp = jax.ops.index_update(σ, si, σ[sj])
             return jax.ops.index_update(σp, sj, σ[si])
+
+        for i in range(rule.n_exchanges.shape[0]):
+            cluster_id = jax.random.randint(
+                key, shape=(6,n_chains), minval=0, maxval=rule.clusters.shape[0]
+            )
+            σ = jax.vmap(scalar_update_fun, in_axes=(0,0), out_axes=0)(σ, cluster_id[i])
 
         return (
             σ,
@@ -107,6 +107,7 @@ def ExchangeRule(
     clusters: Optional[List[List[int]]] = None,
     graph: Optional[AbstractGraph] = None,
     d_max: int = 1,
+    n_exchanges: int = 1
 ):
     """
     A Rule exchanging the state on a random couple of sites, chosen from a list of
@@ -146,4 +147,4 @@ def ExchangeRule(
                           which clusters will be computed using the maximum distance d_max. """
         )
 
-    return ExchangeRule_(jnp.array(clusters))
+    return ExchangeRule_(jnp.array(clusters),jnp.empty([n_exchanges]))
