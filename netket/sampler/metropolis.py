@@ -412,7 +412,7 @@ from netket.legacy.sampler import MetropolisExchange as LegacyMetropolisExchange
 
 @wraps_legacy(LegacyMetropolisExchange, "machine", AbstractMachine)
 def MetropolisExchange(
-    hilbert, *args, clusters=None, graph=None, d_max=1, **kwargs
+    hilbert, *args, clusters=None, graph=None, d_max=1, n_exchanges=1, **kwargs
 ) -> MetropolisSampler:
     r"""
     This sampler acts locally only on two local degree of freedom :math:`s_i` and :math:`s_j`,
@@ -448,7 +448,7 @@ def MetropolisExchange(
         n_batches: The number of batches of the states to sample (default = 8)
         machine_pow: The power to which the machine should be exponentiated to generate the pdf (default = 2).
         dtype: The dtype of the statees sampled (default = np.float32).
-
+        n_exchanges: Number of exchanges in one update step
 
     Examples:
           Sampling from a RBM machine in a 1D lattice of spin 1/2, using
@@ -467,7 +467,7 @@ def MetropolisExchange(
           >>> print(sa.machine.hilbert.size)
           100
     """
-    rule = ExchangeRule(clusters=clusters, graph=graph, d_max=d_max)
+    rule = ExchangeRule(clusters=clusters, graph=graph, d_max=d_max, n_exchanges=n_exchanges)
     return MetropolisSampler(hilbert, rule, *args, **kwargs)
 
 

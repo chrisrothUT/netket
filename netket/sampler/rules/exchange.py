@@ -54,15 +54,19 @@ class ExchangeRule_(MetropolisRule):
     """
 
     clusters: Any
+    n_exchanges: Any
 
     def transition(rule, sampler, machine, parameters, state, key, σ):
         n_chains = σ.shape[0]
         hilb = sampler.hilbert
 
         # pick a random cluster
-        cluster_id = jax.random.randint(
-            key, shape=(n_chains,), minval=0, maxval=rule.clusters.shape[0]
-        )
+
+        for i in range(n_exchanges):
+            cluster_id = jax.random.randint(
+                key, shape=(n_chains,), minval=0, maxval=rule.clusters.shape[0]
+            )
+            σ = jax.vmap(scalar_update_fun, in_axes=(0, 0), out_axes=0)(σ, cluster_id)
 
         def scalar_update_fun(σ, cluster):
             # sites to be exchanged,
@@ -73,7 +77,7 @@ class ExchangeRule_(MetropolisRule):
             return jax.ops.index_update(σp, sj, σ[si])
 
         return (
-            jax.vmap(scalar_update_fun, in_axes=(0, 0), out_axes=0)(σ, cluster_id),
+            σ,
             None,
         )
 
