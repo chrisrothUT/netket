@@ -232,6 +232,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Edgeless.html">netket.graph.Edgeless</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Hypercube.html">netket.graph.Hypercube</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Lattice.html">netket.graph.Lattice</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.lattice.LatticeSite.html">netket.graph.lattice.LatticeSite</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Chain.html">netket.graph.Chain</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Grid.html">netket.graph.Grid</a></li>
 </ul>
@@ -449,7 +450,7 @@ specified) a constant level shift.</p>
 <p>Constructs a <code class="docutils literal notranslate"><span class="pre">LocalOperator</span></code> without any operators.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netket.hilbert</span> <span class="kn">import</span> <span class="n">CustomHilbert</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">netket.operator</span> <span class="kn">import</span> <span class="n">LocalOperator</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">hi</span> <span class="o">=</span> <span class="n">CustomHilbert</span><span class="p">(</span><span class="n">local_states</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">20</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hi</span> <span class="o">=</span> <span class="n">CustomHilbert</span><span class="p">(</span><span class="n">local_states</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">20</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">empty_hat</span> <span class="o">=</span> <span class="n">LocalOperator</span><span class="p">(</span><span class="n">hi</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">empty_hat</span><span class="o">.</span><span class="n">acting_on</span><span class="p">))</span>
 <span class="go">0</span>

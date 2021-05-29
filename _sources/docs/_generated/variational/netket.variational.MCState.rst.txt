@@ -19,6 +19,7 @@
       .. autoattribute:: MCState.n_discard
       .. autoattribute:: MCState.n_parameters
       .. autoattribute:: MCState.n_samples
+      .. autoattribute:: MCState.n_samples_per_rank
       .. autoattribute:: MCState.parameters
       .. autoattribute:: MCState.sampler
       .. autoattribute:: MCState.samples

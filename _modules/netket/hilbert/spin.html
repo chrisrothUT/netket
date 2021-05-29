@@ -177,9 +177,8 @@
 <span class="sd">        Examples:</span>
 <span class="sd">           Simple spin hilbert space.</span>
 
-<span class="sd">           &gt;&gt;&gt; from netket.hilbert import Spin</span>
-<span class="sd">           &gt;&gt;&gt; g = Hypercube(length=10,n_dim=2,pbc=True)</span>
-<span class="sd">           &gt;&gt;&gt; hi = Spin(s=0.5, N=4)</span>
+<span class="sd">           &gt;&gt;&gt; import netket as nk</span>
+<span class="sd">           &gt;&gt;&gt; hi = nk.hilbert.Spin(s=1/2, N=4)</span>
 <span class="sd">           &gt;&gt;&gt; print(hi.size)</span>
 <span class="sd">           4</span>
 <span class="sd">        &quot;&quot;&quot;</span>

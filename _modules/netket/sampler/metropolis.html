@@ -362,7 +362,9 @@
     <span class="k">def</span> <span class="nf">_init_state</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">machine</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="n">key_state</span><span class="p">,</span> <span class="n">key_rule</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
         <span class="n">rule_state</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">rule</span><span class="o">.</span><span class="n">init_state</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">machine</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">key_rule</span><span class="p">)</span>
-        <span class="n">σ</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">sampler</span><span class="o">.</span><span class="n">n_chains</span><span class="p">,</span> <span class="n">sampler</span><span class="o">.</span><span class="n">hilbert</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">sampler</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">σ</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">n_chains_per_rank</span><span class="p">,</span> <span class="n">sampler</span><span class="o">.</span><span class="n">hilbert</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">sampler</span><span class="o">.</span><span class="n">dtype</span>
+        <span class="p">)</span>
 
         <span class="n">state</span> <span class="o">=</span> <span class="n">MetropolisSamplerState</span><span class="p">(</span><span class="n">σ</span><span class="o">=</span><span class="n">σ</span><span class="p">,</span> <span class="n">rng</span><span class="o">=</span><span class="n">key_state</span><span class="p">,</span> <span class="n">rule_state</span><span class="o">=</span><span class="n">rule_state</span><span class="p">)</span>
 
@@ -395,7 +397,7 @@
         <span class="k">with</span> <span class="n">loops</span><span class="o">.</span><span class="n">Scope</span><span class="p">()</span> <span class="k">as</span> <span class="n">s</span><span class="p">:</span>
             <span class="n">s</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="n">rng</span>
             <span class="n">s</span><span class="o">.</span><span class="n">σ</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">σ</span>
-            <span class="n">s</span><span class="o">.</span><span class="n">log_prob</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">machine_pow</span> <span class="o">*</span> <span class="n">machine</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">σ</span><span class="p">)</span><span class="o">.</span><span class="n">real</span>
+            <span class="n">s</span><span class="o">.</span><span class="n">log_prob</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">machine_pow</span> <span class="o">*</span> <span class="n">machine</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">σ</span><span class="p">)</span><span class="o">.</span><span class="n">real</span>
 
             <span class="c1"># for logging</span>
             <span class="n">s</span><span class="o">.</span><span class="n">accepted</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">n_accepted_proc</span>
@@ -407,9 +409,11 @@
                 <span class="n">σp</span><span class="p">,</span> <span class="n">log_prob_correction</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">rule</span><span class="o">.</span><span class="n">transition</span><span class="p">(</span>
                     <span class="n">sampler</span><span class="p">,</span> <span class="n">machine</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">key1</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">σ</span>
                 <span class="p">)</span>
-                <span class="n">proposal_log_prob</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">machine_pow</span> <span class="o">*</span> <span class="n">machine</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">σp</span><span class="p">)</span><span class="o">.</span><span class="n">real</span>
+                <span class="n">proposal_log_prob</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">sampler</span><span class="o">.</span><span class="n">machine_pow</span> <span class="o">*</span> <span class="n">machine</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">σp</span><span class="p">)</span><span class="o">.</span><span class="n">real</span>
+                <span class="p">)</span>
 
-                <span class="n">uniform</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">key2</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">n_chains</span><span class="p">,))</span>
+                <span class="n">uniform</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">key2</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">n_chains_per_rank</span><span class="p">,))</span>
                 <span class="k">if</span> <span class="n">log_prob_correction</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">do_accept</span> <span class="o">=</span> <span class="n">uniform</span> <span class="o">&lt;</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
                         <span class="n">proposal_log_prob</span> <span class="o">-</span> <span class="n">s</span><span class="o">.</span><span class="n">log_prob</span> <span class="o">+</span> <span class="n">log_prob_correction</span>
@@ -429,7 +433,8 @@
                 <span class="n">rng</span><span class="o">=</span><span class="n">new_rng</span><span class="p">,</span>
                 <span class="n">σ</span><span class="o">=</span><span class="n">s</span><span class="o">.</span><span class="n">σ</span><span class="p">,</span>
                 <span class="n">n_accepted_proc</span><span class="o">=</span><span class="n">s</span><span class="o">.</span><span class="n">accepted</span><span class="p">,</span>
-                <span class="n">n_steps_proc</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">n_steps_proc</span> <span class="o">+</span> <span class="n">sampler</span><span class="o">.</span><span class="n">n_sweeps</span> <span class="o">*</span> <span class="n">sampler</span><span class="o">.</span><span class="n">n_chains</span><span class="p">,</span>
+                <span class="n">n_steps_proc</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">n_steps_proc</span>
+                <span class="o">+</span> <span class="n">sampler</span><span class="o">.</span><span class="n">n_sweeps</span> <span class="o">*</span> <span class="n">sampler</span><span class="o">.</span><span class="n">n_chains_per_rank</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">new_state</span><span class="p">,</span> <span class="n">new_state</span><span class="o">.</span><span class="n">σ</span>
@@ -550,20 +555,17 @@
 
 <span class="sd">    Examples:</span>
 <span class="sd">          Sampling from a RBM machine in a 1D lattice of spin 1/2, using</span>
-<span class="sd">          nearest-neighbours exchanges.</span>
+<span class="sd">          nearest-neighbor exchanges.</span>
 
 <span class="sd">          &gt;&gt;&gt; import netket as nk</span>
 <span class="sd">          &gt;&gt;&gt;</span>
 <span class="sd">          &gt;&gt;&gt; g=nk.graph.Hypercube(length=10,n_dim=2,pbc=True)</span>
-<span class="sd">          &gt;&gt;&gt; hi=nk.hilbert.Spin(s=0.5,graph=g)</span>
-<span class="sd">          &gt;&gt;&gt;</span>
-<span class="sd">          &gt;&gt;&gt; # RBM Spin Machine</span>
-<span class="sd">          &gt;&gt;&gt; ma = nk.machine.RbmSpin(alpha=1, hilbert=hi)</span>
+<span class="sd">          &gt;&gt;&gt; hi=nk.hilbert.Spin(s=0.5, N=g.n_nodes)</span>
 <span class="sd">          &gt;&gt;&gt;</span>
 <span class="sd">          &gt;&gt;&gt; # Construct a MetropolisExchange Sampler</span>
-<span class="sd">          &gt;&gt;&gt; sa = nk.sampler.MetropolisExchange(machine=ma)</span>
-<span class="sd">          &gt;&gt;&gt; print(sa.machine.hilbert.size)</span>
-<span class="sd">          100</span>
+<span class="sd">          &gt;&gt;&gt; sa = nk.sampler.MetropolisExchange(hi, graph=g)</span>
+<span class="sd">          &gt;&gt;&gt; print(sa)</span>
+<span class="sd">          MetropolisSampler(rule = ExchangeRule(# of clusters: 200), n_chains = 16, machine_power = 2, n_sweeps = 100, dtype = &lt;class &#39;numpy.float64&#39;&gt;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">rule</span> <span class="o">=</span> <span class="n">ExchangeRule</span><span class="p">(</span><span class="n">clusters</span><span class="o">=</span><span class="n">clusters</span><span class="p">,</span> <span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">,</span> <span class="n">d_max</span><span class="o">=</span><span class="n">d_max</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">MetropolisSampler</span><span class="p">(</span><span class="n">hilbert</span><span class="p">,</span> <span class="n">rule</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
@@ -610,16 +612,15 @@
 <span class="sd">       &gt;&gt;&gt; import netket as nk</span>
 <span class="sd">       &gt;&gt;&gt;</span>
 <span class="sd">       &gt;&gt;&gt; g=nk.graph.Hypercube(length=10,n_dim=2,pbc=True)</span>
-<span class="sd">       &gt;&gt;&gt; hi=nk.hilbert.Spin(s=0.5,graph=g)</span>
-<span class="sd">       &gt;&gt;&gt;</span>
-<span class="sd">       &gt;&gt;&gt; # RBM Spin Machine</span>
-<span class="sd">       &gt;&gt;&gt; ma = nk.machine.RbmSpin(alpha=1, hilbert=hi)</span>
+<span class="sd">       &gt;&gt;&gt; hi=nk.hilbert.Spin(s=0.5, N=g.n_nodes)</span>
 <span class="sd">       &gt;&gt;&gt;</span>
 <span class="sd">       &gt;&gt;&gt; # Transverse-field Ising Hamiltonian</span>
-<span class="sd">       &gt;&gt;&gt; ha = nk.operator.Ising(hilbert=hi, h=1.0)</span>
+<span class="sd">       &gt;&gt;&gt; ha = nk.operator.Ising(hilbert=hi, h=1.0, graph=g)</span>
 <span class="sd">       &gt;&gt;&gt;</span>
-<span class="sd">       &gt;&gt;&gt; # Construct a MetropolisHamiltonian Sampler</span>
-<span class="sd">       &gt;&gt;&gt; sa = nk.sampler.MetropolisHamiltonian(machine=ma,hamiltonian=ha)</span>
+<span class="sd">       &gt;&gt;&gt; # Construct a MetropolisExchange Sampler</span>
+<span class="sd">       &gt;&gt;&gt; sa = nk.sampler.MetropolisHamiltonian(hi, hamiltonian=ha)</span>
+<span class="sd">       &gt;&gt;&gt; print(sa)</span>
+<span class="sd">       MetropolisSampler(rule = HamiltonianRule(Ising(J=1.0, h=1.0; dim=100)), n_chains = 16, machine_power = 2, n_sweeps = 100, dtype = &lt;class &#39;numpy.float64&#39;&gt;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">rule</span> <span class="o">=</span> <span class="n">HamiltonianRule</span><span class="p">(</span><span class="n">hamiltonian</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">MetropolisSampler</span><span class="p">(</span><span class="n">hilbert</span><span class="p">,</span> <span class="n">rule</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>

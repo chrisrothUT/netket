@@ -16,6 +16,7 @@
       .. autoattribute:: ExactSampler.machine_pow
       .. autoattribute:: ExactSampler.n_batches
       .. autoattribute:: ExactSampler.n_chains
+      .. autoattribute:: ExactSampler.n_chains_per_rank
    
       
    .. rst-class:: class-dl-groups

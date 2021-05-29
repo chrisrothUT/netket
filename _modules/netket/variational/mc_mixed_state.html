@@ -169,7 +169,8 @@
         <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">sampler_diag</span><span class="p">:</span> <span class="n">Sampler</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">n_samples_diag</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">n_samples_diag</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">n_samples_per_rank_diag</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">n_discard_diag</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">sampler_seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -183,9 +184,16 @@
 <span class="sd">        Arguments:</span>
 <span class="sd">            sampler: The sampler</span>
 <span class="sd">            model: (Optional) The model. If not provided, you must provide init_fun and apply_fun.</span>
-
 <span class="sd">            n_samples: the total number of samples across chains and processes when sampling (default=1000).</span>
+<span class="sd">            n_samples_per_rank: the total number of samples across chains on one process when sampling. Cannot be</span>
+<span class="sd">                specified together with n_samples (default=None).</span>
 <span class="sd">            n_discard: number of discarded samples at the beginning of each monte-carlo chain (default=n_samples/10).</span>
+<span class="sd">            n_samples_diag: the total number of samples across chains and processes when sampling the diagonal</span>
+<span class="sd">                of the density matrix (default=1000).</span>
+<span class="sd">            n_samples_per_rank_diag: the total number of samples across chains on one process when sampling the diagonal.</span>
+<span class="sd">                Cannot be specified together with `n_samples_diag` (default=None).</span>
+<span class="sd">            n_discard_diag: number of discarded samples at the beginning of each monte-carlo chain used when sampling</span>
+<span class="sd">                the diagonal of the density matrix for observables (default=n_samples_diag/10).</span>
 <span class="sd">            parameters: Optional PyTree of weights from which to start.</span>
 <span class="sd">            seed: rng seed used to generate a set of parameters (only if parameters is not passed). Defaults to a random one.</span>
 <span class="sd">            sampler_seed: rng seed used to initialise the sampler. Defaults to a random one.</span>
@@ -239,6 +247,7 @@
             <span class="n">sampler_diag</span><span class="p">,</span>
             <span class="n">apply_fun</span><span class="o">=</span><span class="n">diagonal_apply_fun</span><span class="p">,</span>
             <span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples_diag</span><span class="p">,</span>
+            <span class="n">n_samples_per_rank</span><span class="o">=</span><span class="n">n_samples_per_rank_diag</span><span class="p">,</span>
             <span class="n">n_discard</span><span class="o">=</span><span class="n">n_discard_diag</span><span class="p">,</span>
             <span class="n">variables</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">,</span>
             <span class="n">seed</span><span class="o">=</span><span class="n">seed_diag</span><span class="p">,</span>

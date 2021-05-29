@@ -154,7 +154,7 @@
 <span class="sd">        s</span>
 <span class="sd">        &gt;&gt;&gt; import netket as nk</span>
 <span class="sd">        &gt;&gt;&gt; hi = nk.hilbert.Spin(s=1/2)**8</span>
-<span class="sd">        &gt;&gt;&gt; hamiltonian = nk.operator.Ising(hi, h=1.0)</span>
+<span class="sd">        &gt;&gt;&gt; hamiltonian = nk.operator.Ising(hi, h=1.0, graph=nk.graph.Chain(8))</span>
 <span class="sd">        &gt;&gt;&gt; w = nk.exact.lanczos_ed(hamiltonian, k=3)</span>
 <span class="sd">        &gt;&gt;&gt; w</span>
 <span class="sd">        array([-10.25166179, -10.05467898,  -8.69093921])</span>
@@ -198,8 +198,8 @@
 <span class="sd">        Test for 1D Ising chain with 8 sites.</span>
 
 <span class="sd">        &gt;&gt;&gt; import netket as nk</span>
-<span class="sd">        &gt;&gt;&gt; hi = nk.hilbert.Spin(nk.graph.Chain(8), s=1/2)</span>
-<span class="sd">        &gt;&gt;&gt; hamiltonian = nk.operator.Ising(hi, h=1.0)</span>
+<span class="sd">        &gt;&gt;&gt; hi = nk.hilbert.Spin(s=1/2)**8</span>
+<span class="sd">        &gt;&gt;&gt; hamiltonian = nk.operator.Ising(hi, h=1.0, graph=nk.graph.Chain(8))</span>
 <span class="sd">        &gt;&gt;&gt; w = nk.exact.full_ed(hamiltonian)</span>
 <span class="sd">        &gt;&gt;&gt; w.shape</span>
 <span class="sd">        (256,)</span>

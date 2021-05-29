@@ -16,6 +16,7 @@
       .. autoattribute:: MetropolisPtSampler.machine_pow
       .. autoattribute:: MetropolisPtSampler.n_batches
       .. autoattribute:: MetropolisPtSampler.n_chains
+      .. autoattribute:: MetropolisPtSampler.n_chains_per_rank
       .. autoattribute:: MetropolisPtSampler.n_replicas
       .. autoattribute:: MetropolisPtSampler.n_sweeps
       .. autoattribute:: MetropolisPtSampler.reset_chains

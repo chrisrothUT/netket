@@ -158,7 +158,7 @@
 <span class="sd">             The default is None. Note that if no bond_ops are</span>
 <span class="sd">             specified, the user must give a list of site operators.</span>
 <span class="sd">         bond_ops_colors: A list of edge colors, specifying the color each</span>
-<span class="sd">             bond operator acts on. The defualt is an empty list.</span>
+<span class="sd">             bond operator acts on. The default is an empty list.</span>
 
 <span class="sd">        Examples:</span>
 <span class="sd">         Constructs a ``GraphOperator`` operator for a 2D system.</span>
@@ -169,12 +169,12 @@
 <span class="sd">         &gt;&gt;&gt; edges = [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 8],</span>
 <span class="sd">         ... [8, 9], [9, 10], [10, 11], [11, 12], [12, 13], [13, 14], [14, 15],</span>
 <span class="sd">         ... [15, 16], [16, 17], [17, 18], [18, 19], [19, 0]]</span>
-<span class="sd">         &gt;&gt;&gt; g = nk.graph.CustomGraph(edges=edges)</span>
-<span class="sd">         &gt;&gt;&gt; hi = nk.hilbert.CustomHilbert(local_states=[-1, 1], graph=g)</span>
+<span class="sd">         &gt;&gt;&gt; g = nk.graph.Graph(edges=edges)</span>
+<span class="sd">         &gt;&gt;&gt; hi = nk.hilbert.CustomHilbert(local_states=[-1, 1], N=g.n_nodes)</span>
 <span class="sd">         &gt;&gt;&gt; op = nk.operator.GraphOperator(</span>
-<span class="sd">         ... hi, site_ops=[sigmax], bond_ops=[mszsz])</span>
-<span class="sd">         &gt;&gt;&gt; print(op.hilbert.size)</span>
-<span class="sd">         20</span>
+<span class="sd">         ... hi, site_ops=[sigmax], bond_ops=[mszsz], graph=g)</span>
+<span class="sd">         &gt;&gt;&gt; print(op)</span>
+<span class="sd">         GraphOperator(dim=20, #acting_on=40 locations, constant=0, dtype=float64, graph=NetworkX(n_nodes=20))</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">graph</span><span class="o">.</span><span class="n">n_nodes</span> <span class="o">!=</span> <span class="n">hilbert</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
@@ -185,7 +185,7 @@
 
         <span class="c1"># Ensure that at least one of SiteOps and BondOps was initialized</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bond_ops</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">site_ops</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">InvalidInputError</span><span class="p">(</span><span class="s2">&quot;Must input at least site_ops or bond_ops.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must input at least site_ops or bond_ops.&quot;</span><span class="p">)</span>
 
         <span class="c1"># Create the local operator as the sum of all site and bond operators</span>
         <span class="n">operators</span> <span class="o">=</span> <span class="p">[]</span>
@@ -201,7 +201,7 @@
         <span class="c1"># Bond operators</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bond_ops_colors</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">bond_ops</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bond_ops_colors</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="n">InvalidInputError</span><span class="p">(</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="sd">&quot;&quot;&quot;The GraphHamiltonian definition is inconsistent.</span>
 <span class="sd">                    The sizes of bond_ops and bond_ops_colors do not match.&quot;&quot;&quot;</span>
                 <span class="p">)</span>

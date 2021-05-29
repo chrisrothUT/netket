@@ -24,6 +24,7 @@
       .. autoattribute:: MCMixedState.n_parameters
       .. autoattribute:: MCMixedState.n_samples
       .. autoattribute:: MCMixedState.n_samples_diag
+      .. autoattribute:: MCMixedState.n_samples_per_rank
       .. autoattribute:: MCMixedState.parameters
       .. autoattribute:: MCMixedState.sampler
       .. autoattribute:: MCMixedState.sampler_diag

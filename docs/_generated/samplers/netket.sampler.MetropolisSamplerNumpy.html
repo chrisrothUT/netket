@@ -230,6 +230,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Edgeless.html">netket.graph.Edgeless</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Hypercube.html">netket.graph.Hypercube</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Lattice.html">netket.graph.Lattice</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.lattice.LatticeSite.html">netket.graph.lattice.LatticeSite</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Chain.html">netket.graph.Chain</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Grid.html">netket.graph.Grid</a></li>
 </ul>
@@ -461,7 +462,7 @@ If None, sweep_size is equal to the number of degrees of freedom being sampled
 <dt>Attributes</dt><dd><dl class="py attribute">
 <dt id="netket.sampler.MetropolisSamplerNumpy.machine_pow">
 <code class="sig-name descname"><span class="pre">machine_pow</span></code><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><span class="pre">int</span></a></em><em class="property"> <span class="pre">=</span> <span class="pre">2</span></em><a class="headerlink" href="#netket.sampler.MetropolisSamplerNumpy.machine_pow" title="Permalink to this definition">¶</a></dt>
-<dd><p>Exponent of the pdf sampled</p>
+<dd><p>Exponent of the pdf sampled.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -478,8 +479,20 @@ If None, sweep_size is equal to the number of degrees of freedom being sampled
 
 <dl class="py attribute">
 <dt id="netket.sampler.MetropolisSamplerNumpy.n_chains">
-<code class="sig-name descname"><span class="pre">n_chains</span></code><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><span class="pre">int</span></a></em><em class="property"> <span class="pre">=</span> <span class="pre">16</span></em><a class="headerlink" href="#netket.sampler.MetropolisSamplerNumpy.n_chains" title="Permalink to this definition">¶</a></dt>
-<dd><p>Number of batches along the chain</p>
+<code class="sig-name descname"><span class="pre">n_chains</span></code><a class="headerlink" href="#netket.sampler.MetropolisSamplerNumpy.n_chains" title="Permalink to this definition">¶</a></dt>
+<dd><p>The total number of chains across all MPI ranks.</p>
+<p>If you are not using MPI, this is equal to <cite>n_chains_per_rank</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="netket.sampler.MetropolisSamplerNumpy.n_chains_per_rank">
+<code class="sig-name descname"><span class="pre">n_chains_per_rank</span></code><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><span class="pre">int</span></a></em><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#netket.sampler.MetropolisSamplerNumpy.n_chains_per_rank" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of independent chains on every MPI rank.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -597,11 +610,11 @@ the signature <code class="code docutils literal notranslate"><span class="pre">
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The new state of the sampler
-σ: The next batch of samples.</p>
+<dd class="field-even"><p>The next batch of samples.
+state: The new state of the sampler</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>state</p>
+<dd class="field-odd"><p>σ</p>
 </dd>
 </dl>
 </dd></dl>

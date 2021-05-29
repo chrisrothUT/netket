@@ -321,7 +321,7 @@
 
 <span class="sd">           &gt;&gt;&gt; from netket.hilbert import CustomHilbert</span>
 <span class="sd">           &gt;&gt;&gt; from netket.operator import LocalOperator</span>
-<span class="sd">           &gt;&gt;&gt; hi = CustomHilbert(local_states=[1, -1])**20</span>
+<span class="sd">           &gt;&gt;&gt; hi = CustomHilbert(local_states=[-1, 1])**20</span>
 <span class="sd">           &gt;&gt;&gt; empty_hat = LocalOperator(hi)</span>
 <span class="sd">           &gt;&gt;&gt; print(len(empty_hat.acting_on))</span>
 <span class="sd">           0</span>

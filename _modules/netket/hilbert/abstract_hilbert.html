@@ -291,11 +291,14 @@
 
 <span class="sd">        Example:</span>
 
+<span class="sd">            &gt;&gt;&gt; import netket, jax</span>
 <span class="sd">            &gt;&gt;&gt; hi = netket.hilbert.Qubit(N=2)</span>
-<span class="sd">            &gt;&gt;&gt; hi.random_state(jax.random.PRNGKey(0))</span>
-<span class="sd">            array([0., 1.])</span>
-<span class="sd">            &gt;&gt;&gt; hi.random_state(size=2)</span>
-<span class="sd">            array([[0., 0.], [1., 0.]])</span>
+<span class="sd">            &gt;&gt;&gt; k1, k2 = jax.random.split(jax.random.PRNGKey(1))</span>
+<span class="sd">            &gt;&gt;&gt; print(hi.random_state(key=k1))</span>
+<span class="sd">            [1. 0.]</span>
+<span class="sd">            &gt;&gt;&gt; print(hi.random_state(key=k2, size=2))</span>
+<span class="sd">            [[0. 0.]</span>
+<span class="sd">             [0. 1.]]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># legacy support</span>
         <span class="c1"># TODO: Remove in 3.1</span>

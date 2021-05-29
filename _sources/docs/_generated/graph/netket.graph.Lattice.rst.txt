@@ -14,10 +14,17 @@
 
    Attributes
       .. autoattribute:: Lattice.atoms_coord
+      .. autoattribute:: Lattice.basis_coords
       .. autoattribute:: Lattice.basis_vectors
-      .. autoattribute:: Lattice.coords
+      .. autoattribute:: Lattice.coordinates
+      .. autoattribute:: Lattice.extent
       .. autoattribute:: Lattice.n_edges
       .. autoattribute:: Lattice.n_nodes
+      .. autoattribute:: Lattice.ndim
+      .. autoattribute:: Lattice.pbc
+      .. autoattribute:: Lattice.positions
+      .. autoattribute:: Lattice.site_offsets
+      .. autoattribute:: Lattice.sites
    
       
    .. rst-class:: class-dl-groups
@@ -27,14 +34,16 @@
       .. automethod:: Lattice.atom_label
       .. automethod:: Lattice.automorphisms
       .. automethod:: Lattice.basis_translations
-      .. automethod:: Lattice.coord_to_site
       .. automethod:: Lattice.distances
       .. automethod:: Lattice.draw
       .. automethod:: Lattice.edges
+      .. automethod:: Lattice.id_from_basis_coords
+      .. automethod:: Lattice.id_from_position
       .. automethod:: Lattice.is_bipartite
       .. automethod:: Lattice.is_connected
       .. automethod:: Lattice.nodes
       .. automethod:: Lattice.planar_rotations
+      .. automethod:: Lattice.position_from_basis_coords
       .. automethod:: Lattice.reflection_perm
       .. automethod:: Lattice.reflections
       .. automethod:: Lattice.rotation_perm
@@ -42,5 +51,6 @@
       .. automethod:: Lattice.site_to_vector
       .. automethod:: Lattice.translation_perm
       .. automethod:: Lattice.vector_to_coord
+      .. automethod:: Lattice.vector_to_site
 
    

@@ -157,7 +157,7 @@
 
     <span class="k">def</span> <span class="nf">_reset</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">machine</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
         <span class="n">pdf</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span>
-            <span class="n">to_array</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">hilbert</span><span class="p">,</span> <span class="n">machine</span><span class="p">,</span> <span class="n">parameters</span><span class="p">)</span> <span class="o">**</span> <span class="n">sampler</span><span class="o">.</span><span class="n">machine_pow</span>
+            <span class="n">to_array</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">hilbert</span><span class="p">,</span> <span class="n">machine</span><span class="o">.</span><span class="n">apply</span><span class="p">,</span> <span class="n">parameters</span><span class="p">)</span> <span class="o">**</span> <span class="n">sampler</span><span class="o">.</span><span class="n">machine_pow</span>
         <span class="p">)</span>
         <span class="n">pdf</span> <span class="o">=</span> <span class="n">pdf</span> <span class="o">/</span> <span class="n">pdf</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
 
@@ -168,7 +168,7 @@
         <span class="n">numbers</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
             <span class="n">rng</span><span class="p">,</span>
             <span class="n">sampler</span><span class="o">.</span><span class="n">hilbert</span><span class="o">.</span><span class="n">n_states</span><span class="p">,</span>
-            <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">n_chains</span><span class="p">,),</span>
+            <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">n_chains_per_rank</span><span class="p">,),</span>
             <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
             <span class="n">p</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">pdf</span><span class="p">,</span>
         <span class="p">)</span>
@@ -182,7 +182,7 @@
             <span class="n">numbers_to_states</span><span class="p">,</span>
             <span class="n">numbers</span><span class="p">,</span>
             <span class="n">result_shape</span><span class="o">=</span><span class="n">jax</span><span class="o">.</span><span class="n">ShapeDtypeStruct</span><span class="p">(</span>
-                <span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">n_chains</span><span class="p">,</span> <span class="n">sampler</span><span class="o">.</span><span class="n">hilbert</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">float64</span>
+                <span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">n_chains_per_rank</span><span class="p">,</span> <span class="n">sampler</span><span class="o">.</span><span class="n">hilbert</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">float64</span>
             <span class="p">),</span>
         <span class="p">)</span>
 
@@ -205,7 +205,7 @@
         <span class="k">return</span> <span class="p">(</span>
             <span class="s2">&quot;ExactSampler(&quot;</span>
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  hilbert = </span><span class="si">{}</span><span class="s2">,&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">hilbert</span><span class="p">)</span>
-            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  n_chains = </span><span class="si">{}</span><span class="s2">,&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">n_chains</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  n_chains_per_rank = </span><span class="si">{}</span><span class="s2">,&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">n_chains_per_rank</span><span class="p">)</span>
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  machine_power = </span><span class="si">{}</span><span class="s2">,&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">machine_pow</span><span class="p">)</span>
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  dtype = </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
         <span class="p">)</span>
@@ -213,7 +213,7 @@
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="n">sampler</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="s2">&quot;ExactSampler(&quot;</span>
-            <span class="o">+</span> <span class="s2">&quot;n_chains = </span><span class="si">{}</span><span class="s2">, &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">n_chains</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;n_chains_per_rank = </span><span class="si">{}</span><span class="s2">, &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">n_chains_per_rank</span><span class="p">)</span>
             <span class="o">+</span> <span class="s2">&quot;machine_power = </span><span class="si">{}</span><span class="s2">, &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">machine_pow</span><span class="p">)</span>
             <span class="o">+</span> <span class="s2">&quot;dtype = </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
         <span class="p">)</span></div>
@@ -231,7 +231,7 @@
     <span class="n">numbers</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span>
         <span class="n">rng</span><span class="p">,</span>
         <span class="n">sampler</span><span class="o">.</span><span class="n">hilbert</span><span class="o">.</span><span class="n">n_states</span><span class="p">,</span>
-        <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">chain_length</span> <span class="o">*</span> <span class="n">sampler</span><span class="o">.</span><span class="n">n_chains</span><span class="p">,),</span>
+        <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">chain_length</span> <span class="o">*</span> <span class="n">sampler</span><span class="o">.</span><span class="n">n_chains_per_rank</span><span class="p">,),</span>
         <span class="n">replace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">p</span><span class="o">=</span><span class="n">state</span><span class="o">.</span><span class="n">pdf</span><span class="p">,</span>
     <span class="p">)</span>
@@ -245,11 +245,12 @@
         <span class="n">numbers_to_states</span><span class="p">,</span>
         <span class="n">numbers</span><span class="p">,</span>
         <span class="n">result_shape</span><span class="o">=</span><span class="n">jax</span><span class="o">.</span><span class="n">ShapeDtypeStruct</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">chain_length</span> <span class="o">*</span> <span class="n">sampler</span><span class="o">.</span><span class="n">n_chains</span><span class="p">,</span> <span class="n">sampler</span><span class="o">.</span><span class="n">hilbert</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="n">jnp</span><span class="o">.</span><span class="n">float64</span>
+            <span class="p">(</span><span class="n">chain_length</span> <span class="o">*</span> <span class="n">sampler</span><span class="o">.</span><span class="n">n_chains_per_rank</span><span class="p">,</span> <span class="n">sampler</span><span class="o">.</span><span class="n">hilbert</span><span class="o">.</span><span class="n">size</span><span class="p">),</span>
+            <span class="n">jnp</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
         <span class="p">),</span>
     <span class="p">)</span>
     <span class="n">samples</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">sampler</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
-        <span class="n">chain_length</span><span class="p">,</span> <span class="n">sampler</span><span class="o">.</span><span class="n">n_chains</span><span class="p">,</span> <span class="n">sampler</span><span class="o">.</span><span class="n">hilbert</span><span class="o">.</span><span class="n">size</span>
+        <span class="n">chain_length</span><span class="p">,</span> <span class="n">sampler</span><span class="o">.</span><span class="n">n_chains_per_rank</span><span class="p">,</span> <span class="n">sampler</span><span class="o">.</span><span class="n">hilbert</span><span class="o">.</span><span class="n">size</span>
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">samples</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">rng</span><span class="o">=</span><span class="n">new_rng</span><span class="p">)</span>

@@ -132,7 +132,7 @@
 <span class="kn">from</span> <span class="nn">netket.hilbert</span> <span class="kn">import</span> <span class="n">AbstractHilbert</span>
 <span class="kn">from</span> <span class="nn">netket.sampler</span> <span class="kn">import</span> <span class="n">Sampler</span><span class="p">,</span> <span class="n">SamplerState</span><span class="p">,</span> <span class="n">ExactSampler</span>
 <span class="kn">from</span> <span class="nn">netket.stats</span> <span class="kn">import</span> <span class="n">Stats</span><span class="p">,</span> <span class="n">statistics</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">sum_inplace</span>
-<span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">maybe_wrap_module</span><span class="p">,</span> <span class="n">deprecated</span><span class="p">,</span> <span class="n">mpi</span>
+<span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">maybe_wrap_module</span><span class="p">,</span> <span class="n">deprecated</span><span class="p">,</span> <span class="n">mpi</span><span class="p">,</span> <span class="n">wrap_afun</span>
 <span class="kn">from</span> <span class="nn">netket.utils.types</span> <span class="kn">import</span> <span class="n">PyTree</span><span class="p">,</span> <span class="n">PRNGKeyT</span><span class="p">,</span> <span class="n">SeedT</span><span class="p">,</span> <span class="n">Shape</span><span class="p">,</span> <span class="n">NNInitFunc</span>
 <span class="kn">from</span> <span class="nn">netket.optimizer</span> <span class="kn">import</span> <span class="n">LinearOperator</span>
 <span class="kn">from</span> <span class="nn">netket.optimizer.qgt</span> <span class="kn">import</span> <span class="n">QGTAuto</span>
@@ -158,7 +158,6 @@
     <span class="k">if</span> <span class="n">n_samples</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid number of samples: n_samples=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">n_samples</span><span class="p">))</span>
 
-    <span class="n">n_chains</span> <span class="o">=</span> <span class="n">n_chains</span> <span class="o">*</span> <span class="n">mpi</span><span class="o">.</span><span class="n">n_nodes</span>
     <span class="n">chain_length</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">n_samples</span> <span class="o">/</span> <span class="n">n_chains</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">chain_length</span>
 
@@ -209,7 +208,8 @@
         <span class="n">sampler</span><span class="p">:</span> <span class="n">Sampler</span><span class="p">,</span>
         <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">n_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">n_samples</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">n_samples_per_rank</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">n_discard</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">variables</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PyTree</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">init_fun</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -227,6 +227,8 @@
 <span class="sd">            sampler: The sampler</span>
 <span class="sd">            model: (Optional) The model. If not provided, you must provide init_fun and apply_fun.</span>
 <span class="sd">            n_samples: the total number of samples across chains and processes when sampling (default=1000).</span>
+<span class="sd">            n_samples_per_rank: the total number of samples across chains on one process when sampling. Cannot be</span>
+<span class="sd">                specified together with n_samples (default=None).</span>
 <span class="sd">            n_discard: number of discarded samples at the beginning of each monte-carlo chain (default=n_samples/10).</span>
 <span class="sd">            parameters: Optional PyTree of weights from which to start.</span>
 <span class="sd">            seed: rng seed used to generate a set of parameters (only if parameters is not passed). Defaults to a random one.</span>
@@ -247,7 +249,7 @@
 
         <span class="c1"># Init type 1: pass in a model</span>
         <span class="k">if</span> <span class="n">model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># exetract init and apply functions</span>
+            <span class="c1"># extract init and apply functions</span>
             <span class="c1"># Wrap it in an HashablePartial because if two instances of the same model are provided,</span>
             <span class="c1"># model.apply and model2.apply will be different methods forcing recompilation, but</span>
             <span class="c1"># model and model2 will have the same hash.</span>
@@ -271,10 +273,22 @@
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="s2">&quot;If you don&#39;t provide variables, you must pass a valid init_fun.&quot;</span>
                 <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">wrap_afun</span><span class="p">(</span><span class="n">apply_fun</span><span class="p">)</span>
+
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;Must either pass the model or apply_fun, otherwise how do you think we&quot;</span>
                 <span class="s2">&quot;gonna evaluate the model?&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># default argument for n_samples/n_samples_per_rank</span>
+        <span class="k">if</span> <span class="n">n_samples</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">n_samples_per_rank</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">n_samples</span> <span class="o">=</span> <span class="mi">1000</span>
+        <span class="k">elif</span> <span class="n">n_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">n_samples_per_rank</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidInputError</span><span class="p">(</span>
+                <span class="s2">&quot;Only one argument between `n_samples` and `n_samples_per_rank`&quot;</span>
+                <span class="s2">&quot;can be specified at the same time.&quot;</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">sample_fun</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -297,7 +311,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_sampler_seed</span> <span class="o">=</span> <span class="n">sampler_seed</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span> <span class="o">=</span> <span class="n">sampler</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span> <span class="o">=</span> <span class="n">n_samples</span>
+        <span class="k">if</span> <span class="n">n_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span> <span class="o">=</span> <span class="n">n_samples</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_samples_per_rank</span> <span class="o">=</span> <span class="n">n_samples_per_rank</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">n_discard</span> <span class="o">=</span> <span class="n">n_discard</span></div>
 
 <div class="viewcode-block" id="MCState.init"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.variational.MCState.html#netket.variational.MCState.init">[docs]</a>    <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -336,7 +354,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span> <span class="o">=</span> <span class="n">sampler</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sampler_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">init_state</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_apply_fun</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sampler_seed</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_sampler_seed</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
@@ -349,13 +367,22 @@
     <span class="k">def</span> <span class="nf">n_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="n">chain_length</span> <span class="o">=</span> <span class="n">compute_chain_length</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">n_chains</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">)</span>
 
-        <span class="n">n_samples_per_node</span> <span class="o">=</span> <span class="n">chain_length</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">n_chains</span>
-        <span class="n">n_samples</span> <span class="o">=</span> <span class="n">n_samples_per_node</span> <span class="o">*</span> <span class="n">mpi</span><span class="o">.</span><span class="n">n_nodes</span>
+        <span class="n">n_samples_per_node</span> <span class="o">=</span> <span class="n">chain_length</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">n_chains_per_rank</span>
+        <span class="n">n_samples</span> <span class="o">=</span> <span class="n">chain_length</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">n_chains</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_n_samples</span> <span class="o">=</span> <span class="n">n_samples</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_chain_length</span> <span class="o">=</span> <span class="n">chain_length</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_n_samples_per_node</span> <span class="o">=</span> <span class="n">n_samples_per_node</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">n_samples_per_rank</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The number of samples generated on one MPI rank at every sampling step.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chain_length</span> <span class="o">*</span> <span class="n">mpi</span><span class="o">.</span><span class="n">n_nodes</span>
+
+    <span class="nd">@n_samples_per_rank</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">n_samples_per_rank</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_samples_per_rank</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span> <span class="o">=</span> <span class="n">n_samples_per_rank</span> <span class="o">*</span> <span class="n">mpi</span><span class="o">.</span><span class="n">n_nodes</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">chain_length</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -431,19 +458,19 @@
             <span class="n">n_discard</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_discard</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">sampler_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_apply_fun</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler_state</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler_state</span>
         <span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_discard</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_apply_fun</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">,</span>
                 <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler_state</span><span class="p">,</span>
                 <span class="n">chain_length</span><span class="o">=</span><span class="n">n_discard</span><span class="p">,</span>
             <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_samples</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_apply_fun</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">,</span>
             <span class="n">state</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler_state</span><span class="p">,</span>
             <span class="n">chain_length</span><span class="o">=</span><span class="n">chain_length</span><span class="p">,</span>
@@ -744,8 +771,8 @@
     <span class="k">if</span> <span class="ow">not</span> <span class="n">config</span><span class="o">.</span><span class="n">FLAGS</span><span class="p">[</span><span class="s2">&quot;NETKET_EXPERIMENTAL&quot;</span><span class="p">]:</span>
         <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
             <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">                           Computing the gradient of a squared or non hermitian </span>
-<span class="sd">                           operator is an experimental feature under development </span>
+<span class="sd">                           Computing the gradient of a squared or non hermitian</span>
+<span class="sd">                           operator is an experimental feature under development</span>
 <span class="sd">                           and is known not to return wrong values sometimes.</span>
 
 <span class="sd">                           If you want to debug it, set the environment variable</span>
