@@ -84,7 +84,7 @@ def vstate(request):
 
     sa = nk.sampler.ExactSampler(hilbert=hi, n_chains=16)
 
-    vs = nk.variational.MCState(sa, ma, n_samples=1000, seed=SEED)
+    vs = nk.vqs.MCState(sa, ma, n_samples=1000, seed=SEED)
 
     return vs
 
@@ -103,7 +103,7 @@ def test_n_samples_api(vstate):
     with raises(
         ValueError,
     ):
-        vstate.n_discard = -1
+        vstate.n_discard_per_chain = -1
 
     vstate.n_samples = 2
     assert vstate.samples.shape[0:2] == (1, vstate.sampler.n_chains)
@@ -113,12 +113,27 @@ def test_n_samples_api(vstate):
     assert vstate.samples.shape[0:2] == (2, vstate.sampler.n_chains)
 
     vstate.n_samples = 1000
-    vstate.n_discard = None
-    assert vstate.n_discard == 0
+    vstate.n_discard_per_chain = None
+    assert vstate.n_discard_per_chain == 0
 
     vstate.sampler = nk.sampler.MetropolisLocal(hilbert=hi, n_chains=16)
-    vstate.n_discard = None
-    assert vstate.n_discard == vstate.n_samples // 10
+    vstate.n_discard_per_chain = None
+    assert vstate.n_discard_per_chain == vstate.n_samples // 10
+
+
+def test_deprecations(vstate):
+    vstate.sampler = nk.sampler.MetropolisLocal(hilbert=hi, n_chains=16)
+
+    # deprecation
+    with pytest.warns(FutureWarning):
+        vstate.n_discard = 10
+
+    with pytest.warns(FutureWarning):
+        vstate.n_discard
+
+    vstate.n_discard = 10
+    assert vstate.n_discard == 10
+    assert vstate.n_discard_per_chain == 10
 
 
 def test_serialization(vstate):
@@ -129,18 +144,16 @@ def test_serialization(vstate):
     old_params = vstate.parameters
     old_samples = vstate.samples
     old_nsamples = vstate.n_samples
-    old_ndiscard = vstate.n_discard
+    old_ndiscard = vstate.n_discard_per_chain
 
-    vstate = nk.variational.MCState(
-        vstate.sampler, vstate.model, n_samples=10, seed=SEED + 100
-    )
+    vstate = nk.vqs.MCState(vstate.sampler, vstate.model, n_samples=10, seed=SEED + 100)
 
     vstate = serialization.from_bytes(vstate, bdata)
 
     jax.tree_multimap(np.testing.assert_allclose, vstate.parameters, old_params)
     np.testing.assert_allclose(vstate.samples, old_samples)
     assert vstate.n_samples == old_nsamples
-    assert vstate.n_discard == old_ndiscard
+    assert vstate.n_discard_per_chain == old_ndiscard
 
 
 def test_init_parameters(vstate):
@@ -190,7 +203,7 @@ def test_expect_numpysampler_works(vstate, operator):
 def test_expect(vstate, operator):
     #  Use lots of samples
     vstate.n_samples = 5 * 1e5
-    vstate.n_discard = 1e3
+    vstate.n_discard_per_chain = 1e3
 
     # sample the expectation value and gradient with tons of samples
     O_stat1 = vstate.expect(operator)

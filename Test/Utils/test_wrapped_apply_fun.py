@@ -12,14 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .rbm import RBM, RBMModPhase, RBMMultiVal, RBMSymm
-from .equivariant import GCNN
-from .jastrow import Jastrow
-from .mps import MPSPeriodic
+from netket.utils.jax import WrappedApplyFun
 
-from .ndm import NDM
-from .autoreg import ARNN, ARNNDense, ARNNConv1D
 
-from netket.utils import _hide_submodules
+def test_WrappedApplyFun():
+    def fun():
+        return 42
 
-_hide_submodules(__name__)
+    wrapped = WrappedApplyFun(fun)
+    assert wrapped.apply() == 42
+
+    wrapped2 = WrappedApplyFun(fun)
+    assert wrapped is not wrapped2
+    assert wrapped == wrapped2
+    assert hash(wrapped) == hash(wrapped2)

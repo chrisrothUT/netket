@@ -264,7 +264,9 @@ class MetropolisSampler(Sampler):
     def _init_state(sampler, machine, params, key):
         key_state, key_rule = jax.random.split(key, 2)
         rule_state = sampler.rule.init_state(sampler, machine, params, key_rule)
-        σ = jnp.zeros((sampler.n_chains, sampler.hilbert.size), dtype=sampler.dtype)
+        σ = jnp.zeros(
+            (sampler.n_chains_per_rank, sampler.hilbert.size), dtype=sampler.dtype
+        )
 
         state = MetropolisSamplerState(σ=σ, rng=key_state, rule_state=rule_state)
 
@@ -297,7 +299,7 @@ class MetropolisSampler(Sampler):
         with loops.Scope() as s:
             s.key = rng
             s.σ = state.σ
-            s.log_prob = sampler.machine_pow * machine(parameters, state.σ).real
+            s.log_prob = sampler.machine_pow * machine.apply(parameters, state.σ).real
 
             # for logging
             s.accepted = state.n_accepted_proc
@@ -309,9 +311,11 @@ class MetropolisSampler(Sampler):
                 σp, log_prob_correction = sampler.rule.transition(
                     sampler, machine, parameters, state, key1, s.σ
                 )
-                proposal_log_prob = sampler.machine_pow * machine(parameters, σp).real
+                proposal_log_prob = (
+                    sampler.machine_pow * machine.apply(parameters, σp).real
+                )
 
-                uniform = jax.random.uniform(key2, shape=(sampler.n_chains,))
+                uniform = jax.random.uniform(key2, shape=(sampler.n_chains_per_rank,))
                 if log_prob_correction is not None:
                     do_accept = uniform < jnp.exp(
                         proposal_log_prob - s.log_prob + log_prob_correction
@@ -331,7 +335,8 @@ class MetropolisSampler(Sampler):
                 rng=new_rng,
                 σ=s.σ,
                 n_accepted_proc=s.accepted,
-                n_steps_proc=state.n_steps_proc + sampler.n_sweeps * sampler.n_chains,
+                n_steps_proc=state.n_steps_proc
+                + sampler.n_sweeps * sampler.n_chains_per_rank,
             )
 
         return new_state, new_state.σ
@@ -452,20 +457,17 @@ def MetropolisExchange(
 
     Examples:
           Sampling from a RBM machine in a 1D lattice of spin 1/2, using
-          nearest-neighbours exchanges.
+          nearest-neighbor exchanges.
 
           >>> import netket as nk
           >>>
           >>> g=nk.graph.Hypercube(length=10,n_dim=2,pbc=True)
-          >>> hi=nk.hilbert.Spin(s=0.5,graph=g)
-          >>>
-          >>> # RBM Spin Machine
-          >>> ma = nk.machine.RbmSpin(alpha=1, hilbert=hi)
+          >>> hi=nk.hilbert.Spin(s=0.5, N=g.n_nodes)
           >>>
           >>> # Construct a MetropolisExchange Sampler
-          >>> sa = nk.sampler.MetropolisExchange(machine=ma)
-          >>> print(sa.machine.hilbert.size)
-          100
+          >>> sa = nk.sampler.MetropolisExchange(hi, graph=g)
+          >>> print(sa)
+          MetropolisSampler(rule = ExchangeRule(# of clusters: 200), n_chains = 16, machine_power = 2, n_sweeps = 100, dtype = <class 'numpy.float64'>)
     """
     rule = ExchangeRule(clusters=clusters, graph=graph, d_max=d_max, n_exchanges=n_exchanges)
     return MetropolisSampler(hilbert, rule, *args, **kwargs)
@@ -512,16 +514,15 @@ def MetropolisHamiltonian(hilbert, hamiltonian, *args, **kwargs) -> MetropolisSa
        >>> import netket as nk
        >>>
        >>> g=nk.graph.Hypercube(length=10,n_dim=2,pbc=True)
-       >>> hi=nk.hilbert.Spin(s=0.5,graph=g)
-       >>>
-       >>> # RBM Spin Machine
-       >>> ma = nk.machine.RbmSpin(alpha=1, hilbert=hi)
+       >>> hi=nk.hilbert.Spin(s=0.5, N=g.n_nodes)
        >>>
        >>> # Transverse-field Ising Hamiltonian
-       >>> ha = nk.operator.Ising(hilbert=hi, h=1.0)
+       >>> ha = nk.operator.Ising(hilbert=hi, h=1.0, graph=g)
        >>>
-       >>> # Construct a MetropolisHamiltonian Sampler
-       >>> sa = nk.sampler.MetropolisHamiltonian(machine=ma,hamiltonian=ha)
+       >>> # Construct a MetropolisExchange Sampler
+       >>> sa = nk.sampler.MetropolisHamiltonian(hi, hamiltonian=ha)
+       >>> print(sa)
+       MetropolisSampler(rule = HamiltonianRule(Ising(J=1.0, h=1.0; dim=100)), n_chains = 16, machine_power = 2, n_sweeps = 100, dtype = <class 'numpy.float64'>)
     """
     rule = HamiltonianRule(hamiltonian)
     return MetropolisSampler(hilbert, rule, *args, **kwargs)

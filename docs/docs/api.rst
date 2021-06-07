@@ -22,6 +22,7 @@ Graph
    netket.graph.Edgeless
    netket.graph.Hypercube
    netket.graph.Lattice
+   netket.graph.lattice.LatticeSite
    netket.graph.Chain
    netket.graph.Grid
 
@@ -35,10 +36,11 @@ Hilbert
    :nosignatures:
 
    netket.hilbert.AbstractHilbert
-   netket.hilbert.Qubit
-   netket.hilbert.Spin
    netket.hilbert.CustomHilbert
    netket.hilbert.DoubledHilbert
+   netket.hilbert.Fock
+   netket.hilbert.Qubit
+   netket.hilbert.Spin
 
 .. _operators-api:
 
@@ -114,7 +116,7 @@ List of Samplers
 This is a list of all available samplers.
 Please note that samplers with `Numpy` in their name are implemented in
 Numpy and not in pure jax, and they will convert from numpy<->jax at every
-sampling step the state. 
+sampling step the state.
 If you are using GPUs, this conversion can be very costly. On CPUs, while the
 conversion is cheap, the dispatch cost of jax is considerate for small systems.
 
@@ -141,11 +143,13 @@ This is because it is not possible to implement all transition rules in Jax.
    netket.sampler.MetropolisLocalPt
    netket.sampler.MetropolisExchangePt
 
+   netket.sampler.ARDirectSampler
+
 Transition Rules
 ~~~~~~~~~~~~~~~~
 
 Those are the transition rules that can be used with the Metropolis
-Sampler. Rules with `Numpy` in their name can only be used with 
+Sampler. Rules with `Numpy` in their name can only be used with
 :class:`netket.sampler.MetropolisSamplerNumpy`.
 
 .. autosummary::
@@ -190,6 +194,8 @@ neural quantum states.
    netket.models.MPSPeriodic
    netket.models.NDM
    netket.models.GCNN
+   netket.models.ARNN
+   netket.models.ARNNDense
 
 
 Model tools
@@ -217,6 +223,10 @@ Linear Modules
    netket.nn.DenseEquivariant
    netket.nn.Conv
    netket.nn.Embed
+
+   netket.nn.MaskedDense1D
+   netket.nn.MaskedConv1D
+   netket.nn.MaskedConv2D
 
 
 Activation functions
@@ -253,9 +263,9 @@ Variational State Interface
   :toctree: _generated/variational
   :nosignatures:
 
-  netket.variational.VariationalState
-  netket.variational.MCState
-  netket.variational.MCMixedState
+  netket.vqs.VariationalState
+  netket.vqs.MCState
+  netket.vqs.MCMixedState
 
 
 .. _optimizer-api:
@@ -273,15 +283,15 @@ as SR.
 Optimizers
 ~~~~~~~~~~
 
-Optimizers in NetKet are simple wrappers of `optax <https://github.com/deepmind/optax>`_ 
-optimizers. If you want to write a custom optimizer or use more advanced ones, we suggest 
+Optimizers in NetKet are simple wrappers of `optax <https://github.com/deepmind/optax>`_
+optimizers. If you want to write a custom optimizer or use more advanced ones, we suggest
 you have a look at optax documentation.
 
 Check it out for up-to-date informations on available optimisers.
 
 .. warning::
 
-  Even if optimisers in `netket.optimizer` are optax optimisers, they have slightly different 
+  Even if optimisers in `netket.optimizer` are optax optimisers, they have slightly different
   names (they are capitalised) and the argument names have been rearranged and renamed.
   This was chosen in order not to break our API from previous versions
 
@@ -308,7 +318,7 @@ gradient preconditioner.
 .. autosummary::
    :toctree: _generated/optim
    :nosignatures:
-   
+
    netket.optimizer.SR
 
 Quantum Geometric Tensor
@@ -319,7 +329,7 @@ It also provides the following implementation of the quantum geometric tensor:
 .. autosummary::
    :toctree: _generated/optim
    :nosignatures:
-   
+
    netket.optimizer.qgt.QGTAuto
    netket.optimizer.qgt.QGTOnTheFly
    netket.optimizer.qgt.QGTJacobianPyTree
@@ -333,7 +343,7 @@ And the following dense solvers for Stochastic Reconfiguration:
 .. autosummary::
    :toctree: _generated/optim
    :nosignatures:
-   
+
    netket.optimizer.solver.svd
    netket.optimizer.solver.cholesky
    netket.optimizer.solver.LU

@@ -111,7 +111,7 @@ class MetropolisPtSampler(MetropolisSampler):
                 """
                                Parallel Tempering samplers are under development and
                                are known not to work.
-                               
+
                                If you want to debug it, set the environment variable
                                NETKET_EXPERIMENTAL=1
                                """
@@ -199,7 +199,7 @@ class MetropolisPtSampler(MetropolisSampler):
         with loops.Scope() as s:
             s.key = rng
             s.σ = state.σ
-            s.log_prob = sampler.machine_pow * machine(parameters, state.σ).real
+            s.log_prob = sampler.machine_pow * machine.apply(parameters, state.σ).real
             s.beta = state.beta
 
             # for logging
@@ -226,7 +226,9 @@ class MetropolisPtSampler(MetropolisSampler):
                 σp, log_prob_correction = sampler.rule.transition(
                     sampler, machine, parameters, state, key1, s.σ
                 )
-                proposal_log_prob = sampler.machine_pow * machine(parameters, σp).real
+                proposal_log_prob = (
+                    sampler.machine_pow * machine.apply(parameters, σp).real
+                )
 
                 uniform = jax.random.uniform(key2, shape=(sampler.n_batches,))
                 if log_prob_correction is not None:
@@ -518,18 +520,17 @@ def MetropolisExchangePt(hilbert, *args, clusters=None, graph=None, d_max=1, **k
           Sampling from a RBM machine in a 1D lattice of spin 1/2, using
           nearest-neighbours exchanges.
 
+          >>> import pytest; pytest.skip("EXPERIMENTAL")
           >>> import netket as nk
+          >>> import netket.sampler.metropolis_pt as mpt
           >>>
           >>> g=nk.graph.Hypercube(length=10,n_dim=2,pbc=True)
-          >>> hi=nk.hilbert.Spin(s=0.5,graph=g)
-          >>>
-          >>> # RBM Spin Machine
-          >>> ma = nk.machine.RbmSpin(alpha=1, hilbert=hi)
+          >>> hi=nk.hilbert.Spin(s=0.5, N=g.n_nodes)
           >>>
           >>> # Construct a MetropolisExchange Sampler
-          >>> sa = nk.sampler.MetropolisExchange(machine=ma)
-          >>> print(sa.machine.hilbert.size)
-          100
+          >>> sa = mpt.MetropolisExchangePt(hi, graph=g)
+          >>> print(sa)
+          MetropolisSampler(rule = ExchangeRule(# of clusters: 200), n_chains = 16, machine_power = 2, n_sweeps = 100, dtype = <class 'numpy.float64'>)
     """
     rule = ExchangeRule(clusters=clusters, graph=graph, d_max=d_max)
     return MetropolisPtSampler(hilbert, rule, *args, **kwargs)
@@ -572,19 +573,20 @@ def MetropolisHamiltonianPt(hilbert, hamiltonian, *args, **kwargs):
     Examples:
        Sampling from a RBM machine in a 1D lattice of spin 1/2
 
+       >>> import pytest; pytest.skip("EXPERIMENTAL")
        >>> import netket as nk
+       >>> import netket.sampler.metropolis_pt as mpt
        >>>
        >>> g=nk.graph.Hypercube(length=10,n_dim=2,pbc=True)
-       >>> hi=nk.hilbert.Spin(s=0.5,graph=g)
-       >>>
-       >>> # RBM Spin Machine
-       >>> ma = nk.machine.RbmSpin(alpha=1, hilbert=hi)
+       >>> hi=nk.hilbert.Spin(s=0.5, N=g.n_nodes)
        >>>
        >>> # Transverse-field Ising Hamiltonian
-       >>> ha = nk.operator.Ising(hilbert=hi, h=1.0)
+       >>> ha = nk.operator.Ising(hilbert=hi, h=1.0, graph=g)
        >>>
-       >>> # Construct a MetropolisHamiltonian Sampler
-       >>> sa = nk.sampler.MetropolisHamiltonian(machine=ma,hamiltonian=ha)
+       >>> # Construct a MetropolisExchange Sampler
+       >>> sa = mpt.MetropolisHamiltonianPt(hi, hamiltonian=ha)
+       >>> print(sa)
+       MetropolisSampler(rule = HamiltonianRule(Ising(J=1.0, h=1.0; dim=100)), n_chains = 16, machine_power = 2, n_sweeps = 100, dtype = <class 'numpy.float64'>)
     """
     rule = HamiltonianRule(hamiltonian)
     return MetropolisPtSampler(hilbert, rule, *args, **kwargs)

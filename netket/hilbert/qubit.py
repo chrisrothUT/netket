@@ -19,11 +19,11 @@ from jax import numpy as jnp
 
 from netket.graph import AbstractGraph
 
-from .custom_hilbert import CustomHilbert
+from .homogeneous import HomogeneousHilbert
 from ._deprecations import graph_to_N_depwarn
 
 
-class Qubit(CustomHilbert):
+class Qubit(HomogeneousHilbert):
     r"""Hilbert space obtained as tensor product of local qubit states."""
 
     def __init__(self, N: int = 1, graph: Optional[AbstractGraph] = None):
@@ -36,10 +36,8 @@ class Qubit(CustomHilbert):
         Examples:
             Simple spin hilbert space.
 
-            >>> from netket.graph import Hypercube
             >>> from netket.hilbert import Qubit
-            >>> g = Hypercube(length=10,n_dim=2,pbc=True)
-            >>> hi = Qubit(graph=g)
+            >>> hi = Qubit(N=100)
             >>> print(hi.size)
             100
         """

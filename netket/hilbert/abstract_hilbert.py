@@ -193,11 +193,14 @@ class AbstractHilbert(abc.ABC):
 
         Example:
 
+            >>> import netket, jax
             >>> hi = netket.hilbert.Qubit(N=2)
-            >>> hi.random_state(jax.random.PRNGKey(0))
-            array([0., 1.])
-            >>> hi.random_state(size=2)
-            array([[0., 0.], [1., 0.]])
+            >>> k1, k2 = jax.random.split(jax.random.PRNGKey(1))
+            >>> print(hi.random_state(key=k1))
+            [1. 0.]
+            >>> print(hi.random_state(key=k2, size=2))
+            [[0. 0.]
+             [0. 1.]]
         """
         # legacy support
         # TODO: Remove in 3.1
@@ -254,7 +257,7 @@ class AbstractHilbert(abc.ABC):
 
     @property
     def is_indexable(self) -> bool:
-        """"Whever the space can be indexed with an integer"""
+        """Whever the space can be indexed with an integer"""
         if not self.is_discrete:
             return False
 
