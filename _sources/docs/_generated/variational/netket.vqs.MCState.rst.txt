@@ -1,7 +1,7 @@
-﻿netket.variational.MCState
-==========================
+﻿netket.vqs.MCState
+==================
 
-.. currentmodule:: netket.variational
+.. currentmodule:: netket.vqs
 
 .. autoclass:: MCState
    :show-inheritance:
@@ -17,6 +17,7 @@
       .. autoattribute:: MCState.hilbert
       .. autoattribute:: MCState.model_state
       .. autoattribute:: MCState.n_discard
+      .. autoattribute:: MCState.n_discard_per_chain
       .. autoattribute:: MCState.n_parameters
       .. autoattribute:: MCState.n_samples
       .. autoattribute:: MCState.n_samples_per_rank

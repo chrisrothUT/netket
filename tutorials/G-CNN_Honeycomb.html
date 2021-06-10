@@ -676,7 +676,7 @@ print(len(symmetries))
 #Redefine everything on bigger graph
 ma = nk.models.GCNN(symmetries = symmetries, layers = num_layers, features = feature_dims)
 sa = nk.sampler.MetropolisExchange(hilbert = hi, graph=graph, d_max=2)
-vstate = nk.variational.MCState(sampler=sa, model=ma, n_samples=100, n_discard=100)
+vstate = nk.variational.MCState(sampler=sa, model=ma, n_samples=100, n_discard_per_chain=100)
 gs = nk.driver.VMC(ha, op, sr=sr, variational_state=vstate)
 </pre></div>
 </div>

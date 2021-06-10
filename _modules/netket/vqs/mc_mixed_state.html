@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>netket.variational.mc_mixed_state &#8212; netket v3.0 documentation</title>
+    <title>netket.vqs.mc_mixed_state &#8212; netket v3.0 documentation</title>
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
@@ -95,7 +95,7 @@
   <div class="row">
     <div class="body col-md-12 content" role="main">
       
-  <h1>Source code for netket.variational.mc_mixed_state</h1><div class="highlight"><pre>
+  <h1>Source code for netket.vqs.mc_mixed_state</h1><div class="highlight"><pre>
 <span></span><span class="c1"># Copyright 2021 The NetKet Authors - All rights reserved.</span>
 <span class="c1">#</span>
 <span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
@@ -131,7 +131,7 @@
 <span class="kn">from</span> <span class="nn">netket.hilbert</span> <span class="kn">import</span> <span class="n">AbstractHilbert</span>
 <span class="kn">from</span> <span class="nn">netket.sampler</span> <span class="kn">import</span> <span class="n">Sampler</span><span class="p">,</span> <span class="n">SamplerState</span><span class="p">,</span> <span class="n">ExactSampler</span>
 <span class="kn">from</span> <span class="nn">netket.stats</span> <span class="kn">import</span> <span class="n">Stats</span><span class="p">,</span> <span class="n">statistics</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">sum_inplace</span>
-<span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">maybe_wrap_module</span>
+<span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">maybe_wrap_module</span><span class="p">,</span> <span class="n">warn_deprecation</span>
 <span class="kn">from</span> <span class="nn">netket.utils.types</span> <span class="kn">import</span> <span class="n">DType</span><span class="p">,</span> <span class="n">Array</span><span class="p">,</span> <span class="n">PyTree</span><span class="p">,</span> <span class="n">PRNGKeyT</span><span class="p">,</span> <span class="n">Shape</span><span class="p">,</span> <span class="n">NNInitFunc</span>
 <span class="kn">from</span> <span class="nn">netket.optimizer</span> <span class="kn">import</span> <span class="n">SR</span>
 <span class="kn">from</span> <span class="nn">netket.operator</span> <span class="kn">import</span> <span class="p">(</span>
@@ -156,14 +156,14 @@
     <span class="k">return</span> <span class="n">bare_afun</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="MCMixedState"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.variational.MCMixedState.html#netket.variational.MCMixedState">[docs]</a><span class="k">class</span> <span class="nc">MCMixedState</span><span class="p">(</span><span class="n">VariationalMixedState</span><span class="p">,</span> <span class="n">MCState</span><span class="p">):</span>
+<div class="viewcode-block" id="MCMixedState"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.vqs.MCMixedState.html#netket.vqs.MCMixedState">[docs]</a><span class="k">class</span> <span class="nc">MCMixedState</span><span class="p">(</span><span class="n">VariationalMixedState</span><span class="p">,</span> <span class="n">MCState</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Variational State for a Mixed Variational Neural Quantum State.</span>
 
 <span class="sd">    The state is sampled according to the provided sampler, and it&#39;s diagonal is sampled</span>
 <span class="sd">    according to another sampler.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="MCMixedState.__init__"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.variational.MCMixedState.html#netket.variational.MCMixedState.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+<div class="viewcode-block" id="MCMixedState.__init__"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.vqs.MCMixedState.html#netket.vqs.MCMixedState.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">sampler</span><span class="p">,</span>
         <span class="n">model</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -171,7 +171,8 @@
         <span class="n">sampler_diag</span><span class="p">:</span> <span class="n">Sampler</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">n_samples_diag</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">n_samples_per_rank_diag</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">n_discard_diag</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">n_discard_per_chain_diag</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">n_discard_diag</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># deprecated</span>
         <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">sampler_seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">variables</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -187,12 +188,12 @@
 <span class="sd">            n_samples: the total number of samples across chains and processes when sampling (default=1000).</span>
 <span class="sd">            n_samples_per_rank: the total number of samples across chains on one process when sampling. Cannot be</span>
 <span class="sd">                specified together with n_samples (default=None).</span>
-<span class="sd">            n_discard: number of discarded samples at the beginning of each monte-carlo chain (default=n_samples/10).</span>
+<span class="sd">            n_discard_per_chain: number of discarded samples at the beginning of each monte-carlo chain (default=n_samples/10).</span>
 <span class="sd">            n_samples_diag: the total number of samples across chains and processes when sampling the diagonal</span>
 <span class="sd">                of the density matrix (default=1000).</span>
 <span class="sd">            n_samples_per_rank_diag: the total number of samples across chains on one process when sampling the diagonal.</span>
 <span class="sd">                Cannot be specified together with `n_samples_diag` (default=None).</span>
-<span class="sd">            n_discard_diag: number of discarded samples at the beginning of each monte-carlo chain used when sampling</span>
+<span class="sd">            n_discard_per_chain_diag: number of discarded samples at the beginning of each monte-carlo chain used when sampling</span>
 <span class="sd">                the diagonal of the density matrix for observables (default=n_samples_diag/10).</span>
 <span class="sd">            parameters: Optional PyTree of weights from which to start.</span>
 <span class="sd">            seed: rng seed used to generate a set of parameters (only if parameters is not passed). Defaults to a random one.</span>
@@ -239,16 +240,33 @@
 
         <span class="n">diagonal_apply_fun</span> <span class="o">=</span> <span class="n">nkjax</span><span class="o">.</span><span class="n">HashablePartial</span><span class="p">(</span><span class="n">apply_diagonal</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_fun</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">kw</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;n_samples&quot;</span><span class="p">,</span> <span class="s2">&quot;n_discard&quot;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">kw</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="s2">&quot;n_samples&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;n_discard&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;n_discard_per_chain&quot;</span><span class="p">,</span>
+        <span class="p">]:</span>  <span class="c1"># TODO remove n_discard after deprecation.</span>
             <span class="k">if</span> <span class="n">kw</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
                 <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">kw</span><span class="p">)</span>
+
+        <span class="c1"># TODO: remove deprecation.</span>
+        <span class="k">if</span> <span class="n">n_discard_diag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">n_discard_per_chain_diag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">InvalidInputError</span><span class="p">(</span>
+                <span class="s2">&quot;`n_discard_diag` has been renamed to `n_discard_per_chain_diag` and deprecated.&quot;</span>
+                <span class="s2">&quot;Specify only `n_discard_per_chain_diag`.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">n_discard_diag</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">warn_deprecation</span><span class="p">(</span>
+                <span class="s2">&quot;`n_discard_diag` has been renamed to `n_discard_per_chain_diag` and deprecated.&quot;</span>
+                <span class="s2">&quot;Please update your code to `n_discard_per_chain_diag`.&quot;</span>
+            <span class="p">)</span>
+            <span class="n">n_discard_per_chain_diag</span> <span class="o">=</span> <span class="n">n_discard_diag</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_diagonal</span> <span class="o">=</span> <span class="n">MCState</span><span class="p">(</span>
             <span class="n">sampler_diag</span><span class="p">,</span>
             <span class="n">apply_fun</span><span class="o">=</span><span class="n">diagonal_apply_fun</span><span class="p">,</span>
             <span class="n">n_samples</span><span class="o">=</span><span class="n">n_samples_diag</span><span class="p">,</span>
             <span class="n">n_samples_per_rank</span><span class="o">=</span><span class="n">n_samples_per_rank_diag</span><span class="p">,</span>
-            <span class="n">n_discard</span><span class="o">=</span><span class="n">n_discard_diag</span><span class="p">,</span>
+            <span class="n">n_discard_per_chain</span><span class="o">=</span><span class="n">n_discard_per_chain_diag</span><span class="p">,</span>
             <span class="n">variables</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">,</span>
             <span class="n">seed</span><span class="o">=</span><span class="n">seed_diag</span><span class="p">,</span>
             <span class="n">sampler_seed</span><span class="o">=</span><span class="n">sampler_seed_diag</span><span class="p">,</span>
@@ -300,15 +318,38 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">diagonal</span><span class="o">.</span><span class="n">chain_length</span> <span class="o">=</span> <span class="n">length</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">n_discard_diag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">n_discard_per_chain_diag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Number of discarded samples at the beginning of the markov chain used to</span>
 <span class="sd">        sample the diagonal of this mixed state.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagonal</span><span class="o">.</span><span class="n">n_discard</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagonal</span><span class="o">.</span><span class="n">n_discard_per_chain</span>
+
+    <span class="nd">@n_discard_per_chain_diag</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">n_discard_per_chain_diag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_discard_per_chain</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">diagonal</span><span class="o">.</span><span class="n">n_discard_per_chain</span> <span class="o">=</span> <span class="n">n_discard_per_chain</span>
+
+    <span class="c1"># TODO: deprecate</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">n_discard_diag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        DEPRECATED: Use `n_discard_per_chain_diag` instead.</span>
+
+<span class="sd">        Number of discarded samples at the beginning of the markov chain.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">warn_deprecation</span><span class="p">(</span>
+            <span class="s2">&quot;`n_discard_diag` has been renamed to `n_discard_per_chain_diag` and deprecated.&quot;</span>
+            <span class="s2">&quot;Please update your code to use `n_discard_per_chain_diag`.&quot;</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_discard_per_chain_diag</span>
 
     <span class="nd">@n_discard_diag</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">n_discard_diag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_discard</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">diagonal</span><span class="o">.</span><span class="n">n_discard</span> <span class="o">=</span> <span class="n">n_discard</span>
+    <span class="k">def</span> <span class="nf">n_discard_diag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="n">warn_deprecation</span><span class="p">(</span>
+            <span class="s2">&quot;`n_discard_diag` has been renamed to `n_discard_per_chain_diag` and deprecated.&quot;</span>
+            <span class="s2">&quot;Please update your code to use `n_discard_per_chain_diag`.&quot;</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_discard_per_chain_diag</span> <span class="o">=</span> <span class="n">val</span>
 
     <span class="nd">@MCState</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">setter</span>
     <span class="k">def</span> <span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pars</span><span class="p">:</span> <span class="n">PyTree</span><span class="p">):</span>
@@ -322,12 +363,12 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagonal</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">diagonal</span><span class="o">.</span><span class="n">model_state</span> <span class="o">=</span> <span class="n">state</span>
 
-<div class="viewcode-block" id="MCMixedState.reset"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.variational.MCMixedState.html#netket.variational.MCMixedState.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="MCMixedState.reset"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.vqs.MCMixedState.html#netket.vqs.MCMixedState.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagonal</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">diagonal</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="MCMixedState.expect_operator"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.variational.MCMixedState.html#netket.variational.MCMixedState.expect_operator">[docs]</a>    <span class="k">def</span> <span class="nf">expect_operator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Ô</span><span class="p">:</span> <span class="n">AbstractOperator</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Stats</span><span class="p">:</span>
+<div class="viewcode-block" id="MCMixedState.expect_operator"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.vqs.MCMixedState.html#netket.vqs.MCMixedState.expect_operator">[docs]</a>    <span class="k">def</span> <span class="nf">expect_operator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Ô</span><span class="p">:</span> <span class="n">AbstractOperator</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Stats</span><span class="p">:</span>
         <span class="n">σ</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">diagonal</span><span class="o">.</span><span class="n">samples</span>
         <span class="n">σ_shape</span> <span class="o">=</span> <span class="n">σ</span><span class="o">.</span><span class="n">shape</span>
         <span class="n">σ</span> <span class="o">=</span> <span class="n">σ</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">σ</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
@@ -349,12 +390,12 @@
         <span class="c1"># that the first index is the batch index.</span>
         <span class="k">return</span> <span class="n">statistics</span><span class="p">(</span><span class="n">O_loc</span><span class="o">.</span><span class="n">T</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="MCMixedState.expect_and_grad_operator"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.variational.MCMixedState.html#netket.variational.MCMixedState.expect_and_grad_operator">[docs]</a>    <span class="k">def</span> <span class="nf">expect_and_grad_operator</span><span class="p">(</span>
+<div class="viewcode-block" id="MCMixedState.expect_and_grad_operator"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.vqs.MCMixedState.html#netket.vqs.MCMixedState.expect_and_grad_operator">[docs]</a>    <span class="k">def</span> <span class="nf">expect_and_grad_operator</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">Ô</span><span class="p">:</span> <span class="n">AbstractOperator</span><span class="p">,</span> <span class="n">is_hermitian</span><span class="o">=</span><span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Stats</span><span class="p">,</span> <span class="n">PyTree</span><span class="p">]:</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-<div class="viewcode-block" id="MCMixedState.to_matrix"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.variational.MCMixedState.html#netket.variational.MCMixedState.to_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">to_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<div class="viewcode-block" id="MCMixedState.to_matrix"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.vqs.MCMixedState.html#netket.vqs.MCMixedState.to_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">to_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">netket</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">to_matrix</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">hilbert</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_fun</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">,</span> <span class="n">normalize</span><span class="o">=</span><span class="n">normalize</span>
         <span class="p">)</span></div>
@@ -365,11 +406,11 @@
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  hilbert = </span><span class="si">{}</span><span class="s2">,&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hilbert</span><span class="p">)</span>
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  sampler = </span><span class="si">{}</span><span class="s2">,&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler</span><span class="p">)</span>
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  n_samples = </span><span class="si">{}</span><span class="s2">,&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span><span class="p">)</span>
-            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  n_discard = </span><span class="si">{}</span><span class="s2">,&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_discard</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  n_discard_per_chain = </span><span class="si">{}</span><span class="s2">,&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_discard_per_chain</span><span class="p">)</span>
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  sampler_state = </span><span class="si">{}</span><span class="s2">,&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler_state</span><span class="p">)</span>
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  sampler_diag = </span><span class="si">{}</span><span class="s2">,&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler_diag</span><span class="p">)</span>
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  n_samples_diag = </span><span class="si">{}</span><span class="s2">,&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_samples_diag</span><span class="p">)</span>
-            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  n_discard_diag = </span><span class="si">{}</span><span class="s2">,&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_discard_diag</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  n_discard_per_chain_diag = </span><span class="si">{}</span><span class="s2">,&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_discard_per_chain_diag</span><span class="p">)</span>
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  sampler_state_diag = </span><span class="si">{}</span><span class="s2">,&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">diagonal</span><span class="o">.</span><span class="n">sampler_state</span><span class="p">)</span>
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  n_parameters = </span><span class="si">{}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_parameters</span><span class="p">)</span>
         <span class="p">)</span>
@@ -392,7 +433,7 @@
         <span class="s2">&quot;sampler_state&quot;</span><span class="p">:</span> <span class="n">serialization</span><span class="o">.</span><span class="n">to_state_dict</span><span class="p">(</span><span class="n">vstate</span><span class="o">.</span><span class="n">sampler_state</span><span class="p">),</span>
         <span class="s2">&quot;diagonal&quot;</span><span class="p">:</span> <span class="n">serialization</span><span class="o">.</span><span class="n">to_state_dict</span><span class="p">(</span><span class="n">vstate</span><span class="o">.</span><span class="n">diagonal</span><span class="p">),</span>
         <span class="s2">&quot;n_samples&quot;</span><span class="p">:</span> <span class="n">vstate</span><span class="o">.</span><span class="n">n_samples</span><span class="p">,</span>
-        <span class="s2">&quot;n_discard&quot;</span><span class="p">:</span> <span class="n">vstate</span><span class="o">.</span><span class="n">n_discard</span><span class="p">,</span>
+        <span class="s2">&quot;n_discard_per_chain&quot;</span><span class="p">:</span> <span class="n">vstate</span><span class="o">.</span><span class="n">n_discard_per_chain</span><span class="p">,</span>
     <span class="p">}</span>
     <span class="k">return</span> <span class="n">state_dict</span>
 
@@ -415,7 +456,7 @@
         <span class="n">vstate</span><span class="o">.</span><span class="n">sampler_state</span><span class="p">,</span> <span class="n">state_dict</span><span class="p">[</span><span class="s2">&quot;sampler_state&quot;</span><span class="p">]</span>
     <span class="p">)</span>
     <span class="n">new_vstate</span><span class="o">.</span><span class="n">n_samples</span> <span class="o">=</span> <span class="n">state_dict</span><span class="p">[</span><span class="s2">&quot;n_samples&quot;</span><span class="p">]</span>
-    <span class="n">new_vstate</span><span class="o">.</span><span class="n">n_discard</span> <span class="o">=</span> <span class="n">state_dict</span><span class="p">[</span><span class="s2">&quot;n_discard&quot;</span><span class="p">]</span>
+    <span class="n">new_vstate</span><span class="o">.</span><span class="n">n_discard_per_chain</span> <span class="o">=</span> <span class="n">state_dict</span><span class="p">[</span><span class="s2">&quot;n_discard_per_chain&quot;</span><span class="p">]</span>
 
     <span class="k">return</span> <span class="n">new_vstate</span>
 

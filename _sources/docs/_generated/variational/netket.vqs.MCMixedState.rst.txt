@@ -1,7 +1,7 @@
-﻿netket.variational.MCMixedState
-===============================
+﻿netket.vqs.MCMixedState
+=======================
 
-.. currentmodule:: netket.variational
+.. currentmodule:: netket.vqs
 
 .. autoclass:: MCMixedState
    :show-inheritance:
@@ -21,6 +21,8 @@
       .. autoattribute:: MCMixedState.model_state
       .. autoattribute:: MCMixedState.n_discard
       .. autoattribute:: MCMixedState.n_discard_diag
+      .. autoattribute:: MCMixedState.n_discard_per_chain
+      .. autoattribute:: MCMixedState.n_discard_per_chain_diag
       .. autoattribute:: MCMixedState.n_parameters
       .. autoattribute:: MCMixedState.n_samples
       .. autoattribute:: MCMixedState.n_samples_diag

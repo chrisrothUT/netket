@@ -13,6 +13,7 @@
    .. rst-class:: class-dl-groups
 
    Attributes
+      .. autoattribute:: MetropolisSamplerNumpy.is_exact
       .. autoattribute:: MetropolisSamplerNumpy.machine_pow
       .. autoattribute:: MetropolisSamplerNumpy.n_batches
       .. autoattribute:: MetropolisSamplerNumpy.n_chains

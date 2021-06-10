@@ -119,8 +119,8 @@
 
 <span class="kn">from</span> <span class="nn">netket.nn.initializers</span> <span class="kn">import</span> <span class="n">normal</span><span class="p">,</span> <span class="n">zeros</span>
 <span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">HashableArray</span>
-<span class="kn">from</span> <span class="nn">netket.utils.semigroup</span> <span class="kn">import</span> <span class="n">PermutationGroup</span>
 <span class="kn">from</span> <span class="nn">netket.utils.types</span> <span class="kn">import</span> <span class="n">Array</span><span class="p">,</span> <span class="n">DType</span><span class="p">,</span> <span class="n">PRNGKeyT</span><span class="p">,</span> <span class="n">Shape</span>
+<span class="kn">from</span> <span class="nn">netket.utils.group</span> <span class="kn">import</span> <span class="n">PermutationGroup</span>
 
 <span class="n">default_kernel_init</span> <span class="o">=</span> <span class="n">normal</span><span class="p">(</span><span class="n">stddev</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
 
@@ -250,14 +250,8 @@
 
 <span class="sd">        C^i_g = \sum_h {\bf W}_{g^{-1} h} \cdot {\bf f}_h</span>
 
-<span class="sd">    Symmetry poses that are linked by the same symmetry element are connected</span>
-<span class="sd">    by the same filter. The output symmetry group is an involution over the</span>
-<span class="sd">    input symmetry group, i.e. the symmetry group is inverted by G-convolution</span>
-
-<span class="sd">    .. math ::</span>
-
-<span class="sd">        {\bf C}*(g) = C(g^{-1})</span>
-
+<span class="sd">    Group elements that differ by the same symmetry operation (i.e. :math:`g = xh`</span>
+<span class="sd">    and :math:`g&#39; = xh&#39;`) are connected by the same filter.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">symmetry_info</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">HashableArray</span><span class="p">,</span> <span class="n">PermutationGroup</span><span class="p">]</span>

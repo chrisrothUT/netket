@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>netket.utils.semigroup.PermutationGroup &#8212; netket v3.0 documentation</title>
+    <title>netket.vqs.VariationalState &#8212; netket v3.0 documentation</title>
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
@@ -18,14 +18,12 @@
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
     <script src="../../../_static/js/rtd_theme.js"></script>
     <link rel="author" title="About these documents" href="../../../about.html" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="netket.callbacks.EarlyStopping" href="../callbacks/netket.callbacks.EarlyStopping.html" />
-    <link rel="prev" title="netket.utils.semigroup.SemiGroup" href="netket.utils.semigroup.SemiGroup.html" />
+    <link rel="next" title="netket.vqs.MCState" href="netket.vqs.MCState.html" />
+    <link rel="prev" title="netket.nn.logcosh" href="../nn/netket.nn.logcosh.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -127,10 +125,16 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Change Log</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-0b2-unreleased">NetKet 3.0b2 (unreleased)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-0b3-unreleased">NetKet 3.0b3 (unreleased)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#new-features">New features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#breaking-changes">Breaking Changes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#bug-fixes">Bug Fixes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-0b2-published-on-31-may-2021">NetKet 3.0b2 (published on 31 May 2021)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id1">New features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id2">Breaking Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id3">Bug Fixes</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-0b1-published-beta-release">NetKet 3.0b1 (published beta release)</a><ul>
@@ -228,7 +232,6 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../../api.html">Public API: netket package</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#graph">Graph</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.AbstractGraph.html">netket.graph.AbstractGraph</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.NetworkX.html">netket.graph.NetworkX</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Edgeless.html">netket.graph.Edgeless</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Hypercube.html">netket.graph.Hypercube</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Lattice.html">netket.graph.Lattice</a></li>
@@ -239,10 +242,11 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#hilbert">Hilbert</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../hilbert/netket.hilbert.AbstractHilbert.html">netket.hilbert.AbstractHilbert</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../hilbert/netket.hilbert.Qubit.html">netket.hilbert.Qubit</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../hilbert/netket.hilbert.Spin.html">netket.hilbert.Spin</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../hilbert/netket.hilbert.CustomHilbert.html">netket.hilbert.CustomHilbert</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../hilbert/netket.hilbert.DoubledHilbert.html">netket.hilbert.DoubledHilbert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../hilbert/netket.hilbert.Fock.html">netket.hilbert.Fock</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../hilbert/netket.hilbert.Qubit.html">netket.hilbert.Qubit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../hilbert/netket.hilbert.Spin.html">netket.hilbert.Spin</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#operators">Operators</a><ul>
@@ -294,6 +298,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../samplers/netket.sampler.MetropolisHamiltonian.html">netket.sampler.MetropolisHamiltonian</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../samplers/netket.sampler.MetropolisLocalPt.html">netket.sampler.MetropolisLocalPt</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../samplers/netket.sampler.MetropolisExchangePt.html">netket.sampler.MetropolisExchangePt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../samplers/netket.sampler.ARDirectSampler.html">netket.sampler.ARDirectSampler</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../api.html#transition-rules">Transition Rules</a><ul>
@@ -321,6 +326,8 @@
 <li class="toctree-l3"><a class="reference internal" href="../models/netket.models.MPSPeriodic.html">netket.models.MPSPeriodic</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../models/netket.models.NDM.html">netket.models.NDM</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../models/netket.models.GCNN.html">netket.models.GCNN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../models/netket.models.ARNN.html">netket.models.ARNN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../models/netket.models.ARNNDense.html">netket.models.ARNNDense</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#model-tools">Model tools</a><ul>
@@ -332,6 +339,9 @@
 <li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.DenseEquivariant.html">netket.nn.DenseEquivariant</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.Conv.html">netket.nn.Conv</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.Embed.html">netket.nn.Embed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.MaskedDense1D.html">netket.nn.MaskedDense1D</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.MaskedConv1D.html">netket.nn.MaskedConv1D</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.MaskedConv2D.html">netket.nn.MaskedConv2D</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="../../api.html#activation-functions">Activation functions</a><ul>
@@ -352,10 +362,10 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../../api.html#variational-state-interface">Variational State Interface</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../variational/netket.variational.VariationalState.html">netket.variational.VariationalState</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../variational/netket.variational.MCState.html">netket.variational.MCState</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../variational/netket.variational.MCMixedState.html">netket.variational.MCMixedState</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../api.html#variational-state-interface">Variational State Interface</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">netket.vqs.VariationalState</a></li>
+<li class="toctree-l3"><a class="reference internal" href="netket.vqs.MCState.html">netket.vqs.MCState</a></li>
+<li class="toctree-l3"><a class="reference internal" href="netket.vqs.MCMixedState.html">netket.vqs.MCMixedState</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#optimizer-module">Optimizer Module</a><ul>
@@ -400,10 +410,8 @@
 <li class="toctree-l3"><a class="reference internal" href="../driver/netket.logging.TBLog.html">netket.logging.TBLog</a></li>
 </ul>
 </li>
-<li class="toctree-l2 current"><a class="reference internal" href="../../api.html#utils">Utils</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="netket.utils.HashableArray.html">netket.utils.HashableArray</a></li>
-<li class="toctree-l3"><a class="reference internal" href="netket.utils.semigroup.SemiGroup.html">netket.utils.semigroup.SemiGroup</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">netket.utils.semigroup.PermutationGroup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api.html#utils">Utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../utils/netket.utils.HashableArray.html">netket.utils.HashableArray</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#callbacks">Callbacks</a><ul>
@@ -421,60 +429,85 @@
       </div>
     <div class="body col-md-9 content" role="main">
       
-  <div class="section" id="netket-utils-semigroup-permutationgroup">
-<h1>netket.utils.semigroup.PermutationGroup<a class="headerlink" href="#netket-utils-semigroup-permutationgroup" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="netket-vqs-variationalstate">
+<h1>netket.vqs.VariationalState<a class="headerlink" href="#netket-vqs-variationalstate" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
-<dt id="netket.utils.semigroup.PermutationGroup">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">netket.utils.semigroup.</span></code><code class="sig-name descname"><span class="pre">PermutationGroup</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">__skip_preprocess</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/utils/semigroup.html#PermutationGroup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.utils.semigroup.PermutationGroup" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="netket.utils.semigroup.SemiGroup.html#netket.utils.semigroup.SemiGroup" title="netket.utils.semigroup.SemiGroup"><code class="xref py py-class docutils literal notranslate"><span class="pre">netket.utils.semigroup.SemiGroup</span></code></a></p>
-<p>Collection of permutation operations acting on sequences of length <code class="code docutils literal notranslate"><span class="pre">degree</span></code>.
-Note that the group elements do not need to be of type <span class="xref std std-ref">netket.utils.semigroup.Permutation</span>,
-only act as such on a sequence when called.</p>
-<p>Note that this class can contain elements that are distinct as objects (e.g.,
-<code class="code docutils literal notranslate"><span class="pre">Identity()</span></code> and <code class="code docutils literal notranslate"><span class="pre">Translation((0,))</span></code>) but have identical action.
-Those can be removed by calling <code class="code docutils literal notranslate"><span class="pre">remove_duplicates</span></code>.</p>
+<dt id="netket.vqs.VariationalState">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">netket.vqs.</span></code><code class="sig-name descname"><span class="pre">VariationalState</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hilbert</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/vqs/base.html#VariationalState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.vqs.VariationalState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
+<p>Abstract class for variational states representing either pure states
+or mixed quantum states.</p>
+<p>A variational state is a quantum state depending on a set of
+parameters, and that supports operations such
+as computing quantum expectation values and their gradients.</p>
+<p>A Variational stat can be serialized using flax’s msgpack machinery.
+See <a class="reference external" href="https://flax.readthedocs.io/en/latest/flax.serialization.html">their docs</a>.</p>
 <dl class="py method">
-<dt id="netket.utils.semigroup.PermutationGroup.__init__">
-<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">__skip_preprocess</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.utils.semigroup.PermutationGroup.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+<dt id="netket.vqs.VariationalState.__init__">
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hilbert</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/vqs/base.html#VariationalState.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.vqs.VariationalState.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the Abstract base class of a Variational State defined
+on an hilbert space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>hilbert</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractHilbert</span></code>) – The hilbert space upon which this state is defined.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="class-dl-groups">
 <dt>Attributes</dt><dd><dl class="py attribute">
-<dt id="netket.utils.semigroup.PermutationGroup.inverse">
-<code class="sig-name descname"><span class="pre">inverse</span></code><a class="headerlink" href="#netket.utils.semigroup.PermutationGroup.inverse" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the indices of the inverse of each element.</p>
-<p>If <code class="code docutils literal notranslate"><span class="pre">g</span> <span class="pre">=</span> <span class="pre">self[idx_g]</span></code> and <code class="code docutils literal notranslate"><span class="pre">h</span> <span class="pre">=</span> <span class="pre">self[self.inverse[idx_g]]</span></code>, then
-<code class="code docutils literal notranslate"><span class="pre">gh</span> <span class="pre">=</span> <span class="pre">product(g,</span> <span class="pre">h)</span></code> will act as the identity on any sequence,
-i.e., <code class="code docutils literal notranslate"><span class="pre">np.all(gh(seq)</span> <span class="pre">==</span> <span class="pre">seq)</span></code>.</p>
+<dt id="netket.vqs.VariationalState.hilbert">
+<code class="sig-name descname"><span class="pre">hilbert</span></code><a class="headerlink" href="#netket.vqs.VariationalState.hilbert" title="Permalink to this definition">¶</a></dt>
+<dd><p>The descriptor of the Hilbert space
+on which this variational state is defined.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.20)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>, <a class="reference external" href="https://jax.readthedocs.io/en/latest/jax.numpy.html#jaxlib.xla_extension.DeviceArray" title="(in JAX)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeviceArray</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Tracer</span></code>]</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractHilbert</span></code></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="netket.utils.semigroup.PermutationGroup.product_table">
-<code class="sig-name descname"><span class="pre">product_table</span></code><a class="headerlink" href="#netket.utils.semigroup.PermutationGroup.product_table" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a table of indices corresponding to <span class="math notranslate nohighlight">\(g^{-1} h\)</span> over the group.</p>
-<p>That is, if <code class="code docutils literal notranslate"><span class="pre">g</span> <span class="pre">=</span> <span class="pre">self[idx_g]',</span> <span class="pre">:code:`h</span> <span class="pre">=</span> <span class="pre">self[idx_h]</span></code>, and
-<code class="code docutils literal notranslate"><span class="pre">idx_u</span> <span class="pre">=</span> <span class="pre">self.product_table[idx_g,</span> <span class="pre">idx_h]</span></code>, then <code class="code docutils literal notranslate"><span class="pre">self[idx_u]</span></code>
-corresponds to <span class="math notranslate nohighlight">\(u = g^{-1} h\)</span>.</p>
+<dt id="netket.vqs.VariationalState.model_state">
+<code class="sig-name descname"><span class="pre">model_state</span></code><a class="headerlink" href="#netket.vqs.VariationalState.model_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>The optional pytree with the mutable state of the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.20)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>, <a class="reference external" href="https://jax.readthedocs.io/en/latest/jax.numpy.html#jaxlib.xla_extension.DeviceArray" title="(in JAX)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeviceArray</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Tracer</span></code>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="netket.utils.semigroup.PermutationGroup.shape">
-<code class="sig-name descname"><span class="pre">shape</span></code><a class="headerlink" href="#netket.utils.semigroup.PermutationGroup.shape" title="Permalink to this definition">¶</a></dt>
-<dd><p>Tuple <cite>(&lt;# of group elements&gt;, &lt;degree&gt;)</cite>, same as <code class="code docutils literal notranslate"><span class="pre">self.to_array().shape</span></code>.</p>
+<dt id="netket.vqs.VariationalState.n_parameters">
+<code class="sig-name descname"><span class="pre">n_parameters</span></code><a class="headerlink" href="#netket.vqs.VariationalState.n_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>The total number of parameters in the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="netket.vqs.VariationalState.parameters">
+<code class="sig-name descname"><span class="pre">parameters</span></code><a class="headerlink" href="#netket.vqs.VariationalState.parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>The pytree of the parameters of the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="netket.vqs.VariationalState.variables">
+<code class="sig-name descname"><span class="pre">variables</span></code><a class="headerlink" href="#netket.vqs.VariationalState.variables" title="Permalink to this definition">¶</a></dt>
+<dd><p>The PyTreee containing the paramters and state of the model,
+used when evaluating it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -483,55 +516,144 @@ corresponds to <span class="math notranslate nohighlight">\(u = g^{-1} h\)</span
 </dl>
 <dl class="class-dl-groups">
 <dt>Methods</dt><dd><dl class="py method">
-<dt id="netket.utils.semigroup.PermutationGroup.__call__">
-<code class="sig-name descname"><span class="pre">__call__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">initial</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.utils.semigroup.PermutationGroup.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply all group elements to all entries of <cite>initial</cite> along the last axis.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="netket.utils.semigroup.PermutationGroup.remove_duplicates">
-<code class="sig-name descname"><span class="pre">remove_duplicates</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_inverse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/utils/semigroup.html#PermutationGroup.remove_duplicates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.utils.semigroup.PermutationGroup.remove_duplicates" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a new <code class="code docutils literal notranslate"><span class="pre">PermutationGroup</span></code> with duplicate elements (that is, elements which
-represent identical permutations) removed.</p>
+<dt id="netket.vqs.VariationalState.expect">
+<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">expect</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ô</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/vqs/base.html#VariationalState.expect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.vqs.VariationalState.expect" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Estimates the quantum expectation value for a given operator O.</dt><dd><p>In the case of a pure state $psi$, this is $&lt;O&gt;= &lt;Psi|O|Psi&gt;/&lt;Psi|Psi&gt;$
+otherwise for a mixed state $rho$, this is $&lt;O&gt; = Tr[rho hat{O}/Tr[rho]$.</p>
+</dd>
+</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>return_inverse</strong> – If True, also return indices to reconstruct the original
-group from the result.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Ô</strong> – the operator O.</p></li>
+<li><p><strong>Ô</strong> (<em>netket.operator._abstract_operator.AbstractOperator</em>) – </p></li>
+</ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><p>the permutation group with duplicate elements removed.
-return_inverse: Indices to reconstruct the original group from the result.</p>
-<blockquote>
-<div><p>Only returned if <cite>return_inverse</cite> is True.</p>
-</div></blockquote>
-</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Stats</span></code></p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>group</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An estimation of the quantum expectation value &lt;O&gt;.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="netket.utils.semigroup.PermutationGroup.replace">
-<code class="sig-name descname"><span class="pre">replace</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">updates</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.utils.semigroup.PermutationGroup.replace" title="Permalink to this definition">¶</a></dt>
-<dd><p>“Returns a new object replacing the specified fields with new values.</p>
+<dt id="netket.vqs.VariationalState.expect_and_grad">
+<code class="sig-name descname"><span class="pre">expect_and_grad</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ô</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mutable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_hermitian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/vqs/base.html#VariationalState.expect_and_grad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.vqs.VariationalState.expect_and_grad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimates both the gradient of the quantum expectation value of a given operator O.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Ô</strong> – the operator Ô for which we compute the expectation value and it’s gradient</p></li>
+<li><p><strong>mutable</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]) – Can be bool, str, or list. Specifies which collections in the model_state should
+be treated as  mutable: bool: all/no collections are mutable. str: The name of a
+single mutable  collection. list: A list of names of mutable collections.
+This is used to mutate the state of the model while you train it (for example
+to implement BatchNorm. Consult
+<a class="reference external" href="https://flax.readthedocs.io/en/latest/_modules/flax/linen/module.html#Module.apply">Flax’s Module.apply documentation</a>
+for a more in-depth exaplanation).</p></li>
+<li><p><strong>is_hermitian</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>]) – optional override for whever to use or not the hermitian logic. By default
+it’s automatically detected.</p></li>
+<li><p><strong>Ô</strong> (<em>netket.operator._abstract_operator.AbstractOperator</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Stats</span></code>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An estimation of the quantum expectation value &lt;O&gt;.
+An estimation of the average gradient of the quantum expectation value &lt;O&gt;.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="netket.utils.semigroup.PermutationGroup.to_array">
-<code class="sig-name descname"><span class="pre">to_array</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/utils/semigroup.html#PermutationGroup.to_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.utils.semigroup.PermutationGroup.to_array" title="Permalink to this definition">¶</a></dt>
-<dd><p>Convert the abstract group operations to an array of permutation indices,
-such that the <cite>i</cite>-th row contains the indices corresponding to the <cite>i</cite>-th group
-element (i.e., <cite>self.to_array()[i, j]</cite> is <span class="math notranslate nohighlight">\(g_i(j)\)</span>) and
-(for <code class="code docutils literal notranslate"><span class="pre">G</span> <span class="pre">=</span> <span class="pre">self</span></code>):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">degree</span><span class="p">)</span>
-<span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">G</span><span class="p">(</span><span class="n">V</span><span class="p">)</span> <span class="o">==</span> <span class="n">V</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">G</span><span class="o">.</span><span class="n">to_array</span><span class="p">()])</span>
-</pre></div>
+<dt id="netket.vqs.VariationalState.grad">
+<code class="sig-name descname"><span class="pre">grad</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ô</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_hermitian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mutable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/vqs/base.html#VariationalState.grad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.vqs.VariationalState.grad" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimates the gradient of the quantum expectation value of a given operator O.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>op</strong> (<a class="reference internal" href="../operator/netket.operator.AbstractOperator.html#netket.operator.AbstractOperator" title="netket.operator.AbstractOperator"><em>netket.operator.AbstractOperator</em></a>) – the operator O.</p></li>
+<li><p><strong>is_hermitian</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>]) – optional override for whever to use or not the hermitian logic. By default
+it’s automatically detected.</p></li>
+<li><p><strong>mutable</strong> (<em>Optional</em><em>[</em><em>Any</em><em>]</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An estimation of the average gradient of the quantum expectation value &lt;O&gt;.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>array</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.vqs.VariationalState.init_parameters">
+<code class="sig-name descname"><span class="pre">init_parameters</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_fun</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/vqs/base.html#VariationalState.init_parameters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.vqs.VariationalState.init_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Re-initializes all the parameters with the provided initialization function, defaulting to
+the normal distribution of standard deviation 0.01.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The init function will not change the dtype of the parameters, which is determined by the
+model. DO NOT SPECIFY IT INSIDE THE INIT FUNCTION</p>
 </div>
 <dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>init_fun</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.20)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>, <a class="reference external" href="https://jax.readthedocs.io/en/latest/jax.numpy.html#jaxlib.xla_extension.DeviceArray" title="(in JAX)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeviceArray</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Tracer</span></code>]]]) – a jax initializer such as <span class="xref std std-ref">netket.nn.initializers.normal</span>. Must be a Callable
+taking 3 inputs, the jax PRNG key, the shape and the dtype, and outputting an array with
+the valid dtype and shape. If left unspecified, defaults to <code class="code docutils literal notranslate"><span class="pre">netket.nn.initializers.normal(stddev=0.01)</span></code></p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]) – Optional seed to be used. The seed is synced across all MPI processes. If unspecified, uses
+a random seed.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.vqs.VariationalState.quantum_geometric_tensor">
+<code class="sig-name descname"><span class="pre">quantum_geometric_tensor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qgt_T</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/vqs/base.html#VariationalState.quantum_geometric_tensor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.vqs.VariationalState.quantum_geometric_tensor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes an estimate of the quantum geometric tensor G_ij.</p>
+<p>This function returns a linear operator that can be used to apply G_ij to a given vector
+or can be converted to a full matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>qgt_T</strong> – the optional type of the quantum geometric tensor. By default it’s automatically selected.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A linear operator representing the quantum geometric tensor.</p>
+</dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.20)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>, <a class="reference external" href="https://jax.readthedocs.io/en/latest/jax.numpy.html#jaxlib.xla_extension.DeviceArray" title="(in JAX)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeviceArray</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Tracer</span></code>]</p>
+<dd class="field-odd"><p>nk.optimizer.LinearOperator</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.vqs.VariationalState.reset">
+<code class="sig-name descname"><span class="pre">reset</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/vqs/base.html#VariationalState.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.vqs.VariationalState.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the internal cache of th variational state.
+Called automatically when the parameters/state is updated.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.vqs.VariationalState.to_array">
+<code class="sig-name descname"><span class="pre">to_array</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/vqs/base.html#VariationalState.to_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.vqs.VariationalState.to_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the dense-vector representation of this state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>normalize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – If True, the vector is normalized to have L2-norm 1.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An exponentially large vector representing the state in the computational
+basis.</p>
 </dd>
 </dl>
 </dd></dl>

@@ -117,11 +117,11 @@
 
 <span class="kn">from</span> <span class="nn">netket.graph</span> <span class="kn">import</span> <span class="n">AbstractGraph</span>
 
-<span class="kn">from</span> <span class="nn">.custom_hilbert</span> <span class="kn">import</span> <span class="n">CustomHilbert</span>
+<span class="kn">from</span> <span class="nn">.homogeneous</span> <span class="kn">import</span> <span class="n">HomogeneousHilbert</span>
 <span class="kn">from</span> <span class="nn">._deprecations</span> <span class="kn">import</span> <span class="n">graph_to_N_depwarn</span>
 
 
-<div class="viewcode-block" id="Qubit"><a class="viewcode-back" href="../../../docs/_generated/hilbert/netket.hilbert.Qubit.html#netket.hilbert.Qubit">[docs]</a><span class="k">class</span> <span class="nc">Qubit</span><span class="p">(</span><span class="n">CustomHilbert</span><span class="p">):</span>
+<div class="viewcode-block" id="Qubit"><a class="viewcode-back" href="../../../docs/_generated/hilbert/netket.hilbert.Qubit.html#netket.hilbert.Qubit">[docs]</a><span class="k">class</span> <span class="nc">Qubit</span><span class="p">(</span><span class="n">HomogeneousHilbert</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Hilbert space obtained as tensor product of local qubit states.&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="Qubit.__init__"><a class="viewcode-back" href="../../../docs/_generated/hilbert/netket.hilbert.Qubit.html#netket.hilbert.Qubit.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">graph</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">AbstractGraph</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>

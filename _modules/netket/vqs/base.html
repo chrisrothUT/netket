@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>netket.variational.base &#8212; netket v3.0 documentation</title>
+    <title>netket.vqs.base &#8212; netket v3.0 documentation</title>
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
@@ -95,7 +95,7 @@
   <div class="row">
     <div class="body col-md-12 content" role="main">
       
-  <h1>Source code for netket.variational.base</h1><div class="highlight"><pre>
+  <h1>Source code for netket.vqs.base</h1><div class="highlight"><pre>
 <span></span><span class="c1"># Copyright 2021 The NetKet Authors - All rights reserved.</span>
 <span class="c1">#</span>
 <span class="c1"># Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);</span>
@@ -128,7 +128,7 @@
 <span class="kn">from</span> <span class="nn">netket.stats</span> <span class="kn">import</span> <span class="n">Stats</span>
 
 
-<div class="viewcode-block" id="VariationalState"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.variational.VariationalState.html#netket.variational.VariationalState">[docs]</a><span class="k">class</span> <span class="nc">VariationalState</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
+<div class="viewcode-block" id="VariationalState"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.vqs.VariationalState.html#netket.vqs.VariationalState">[docs]</a><span class="k">class</span> <span class="nc">VariationalState</span><span class="p">(</span><span class="n">abc</span><span class="o">.</span><span class="n">ABC</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Abstract class for variational states representing either pure states</span>
 <span class="sd">    or mixed quantum states.</span>
 
@@ -141,7 +141,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="VariationalState.__init__"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.variational.VariationalState.html#netket.variational.VariationalState.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hilbert</span><span class="p">:</span> <span class="n">AbstractHilbert</span><span class="p">):</span>
+<div class="viewcode-block" id="VariationalState.__init__"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.vqs.VariationalState.html#netket.vqs.VariationalState.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hilbert</span><span class="p">:</span> <span class="n">AbstractHilbert</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Initialize the Abstract base class of a Variational State defined</span>
 <span class="sd">        on an hilbert space.</span>
 
@@ -208,7 +208,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">model_state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="nb">vars</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;params&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="VariationalState.init_parameters"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.variational.VariationalState.html#netket.variational.VariationalState.init_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">init_parameters</span><span class="p">(</span>
+<div class="viewcode-block" id="VariationalState.init_parameters"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.vqs.VariationalState.html#netket.vqs.VariationalState.init_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">init_parameters</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">init_fun</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">NNInitFunc</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PRNGKeyT</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -240,13 +240,13 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">tree_map</span><span class="p">(</span><span class="n">new_pars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="VariationalState.reset"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.variational.VariationalState.html#netket.variational.VariationalState.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="VariationalState.reset"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.vqs.VariationalState.html#netket.vqs.VariationalState.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Resets the internal cache of th variational state.</span>
 <span class="sd">        Called automatically when the parameters/state is updated.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div>
 
-<div class="viewcode-block" id="VariationalState.expect"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.variational.VariationalState.html#netket.variational.VariationalState.expect">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+<div class="viewcode-block" id="VariationalState.expect"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.vqs.VariationalState.html#netket.vqs.VariationalState.expect">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
     <span class="k">def</span> <span class="nf">expect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Ô</span><span class="p">:</span> <span class="n">AbstractOperator</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Stats</span><span class="p">:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Estimates the quantum expectation value for a given operator O.</span>
 <span class="sd">            In the case of a pure state $\psi$, this is $&lt;O&gt;= &lt;Psi|O|Psi&gt;/&lt;Psi|Psi&gt;$</span>
@@ -260,7 +260,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-<div class="viewcode-block" id="VariationalState.grad"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.variational.VariationalState.html#netket.variational.VariationalState.grad">[docs]</a>    <span class="k">def</span> <span class="nf">grad</span><span class="p">(</span>
+<div class="viewcode-block" id="VariationalState.grad"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.vqs.VariationalState.html#netket.vqs.VariationalState.grad">[docs]</a>    <span class="k">def</span> <span class="nf">grad</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">Ô</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">is_hermitian</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mutable</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyTree</span><span class="p">:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Estimates the gradient of the quantum expectation value of a given operator O.</span>
@@ -275,7 +275,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">expect_and_grad</span><span class="p">(</span><span class="n">Ô</span><span class="p">,</span> <span class="n">mutable</span><span class="o">=</span><span class="n">mutable</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span></div>
 
-<div class="viewcode-block" id="VariationalState.expect_and_grad"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.variational.VariationalState.html#netket.variational.VariationalState.expect_and_grad">[docs]</a>    <span class="k">def</span> <span class="nf">expect_and_grad</span><span class="p">(</span>
+<div class="viewcode-block" id="VariationalState.expect_and_grad"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.vqs.VariationalState.html#netket.vqs.VariationalState.expect_and_grad">[docs]</a>    <span class="k">def</span> <span class="nf">expect_and_grad</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">Ô</span><span class="p">:</span> <span class="n">AbstractOperator</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
@@ -303,7 +303,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
     <span class="c1"># @abc.abstractmethod</span>
-<div class="viewcode-block" id="VariationalState.quantum_geometric_tensor"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.variational.VariationalState.html#netket.variational.VariationalState.quantum_geometric_tensor">[docs]</a>    <span class="k">def</span> <span class="nf">quantum_geometric_tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qgt_T</span><span class="p">):</span>
+<div class="viewcode-block" id="VariationalState.quantum_geometric_tensor"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.vqs.VariationalState.html#netket.vqs.VariationalState.quantum_geometric_tensor">[docs]</a>    <span class="k">def</span> <span class="nf">quantum_geometric_tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qgt_T</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Computes an estimate of the quantum geometric tensor G_ij.</span>
 
 <span class="sd">        This function returns a linear operator that can be used to apply G_ij to a given vector</span>
@@ -317,7 +317,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
-<div class="viewcode-block" id="VariationalState.to_array"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.variational.VariationalState.html#netket.variational.VariationalState.to_array">[docs]</a>    <span class="k">def</span> <span class="nf">to_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<div class="viewcode-block" id="VariationalState.to_array"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.vqs.VariationalState.html#netket.vqs.VariationalState.to_array">[docs]</a>    <span class="k">def</span> <span class="nf">to_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the dense-vector representation of this state.</span>
 

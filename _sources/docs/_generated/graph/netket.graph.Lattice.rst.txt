@@ -33,23 +33,27 @@
       .. automethod:: Lattice.adjacency_list
       .. automethod:: Lattice.atom_label
       .. automethod:: Lattice.automorphisms
-      .. automethod:: Lattice.basis_translations
       .. automethod:: Lattice.distances
       .. automethod:: Lattice.draw
       .. automethod:: Lattice.edges
+      .. automethod:: Lattice.from_igraph
+      .. automethod:: Lattice.from_networkx
       .. automethod:: Lattice.id_from_basis_coords
       .. automethod:: Lattice.id_from_position
       .. automethod:: Lattice.is_bipartite
       .. automethod:: Lattice.is_connected
       .. automethod:: Lattice.nodes
-      .. automethod:: Lattice.planar_rotations
+      .. automethod:: Lattice.point_group
       .. automethod:: Lattice.position_from_basis_coords
-      .. automethod:: Lattice.reflection_perm
-      .. automethod:: Lattice.reflections
-      .. automethod:: Lattice.rotation_perm
+      .. automethod:: Lattice.rotation_group
       .. automethod:: Lattice.site_to_coord
       .. automethod:: Lattice.site_to_vector
-      .. automethod:: Lattice.translation_perm
+      .. automethod:: Lattice.space_group
+      .. automethod:: Lattice.space_group_builder
+      .. automethod:: Lattice.to_igraph
+      .. automethod:: Lattice.to_networkx
+      .. automethod:: Lattice.to_reciprocal_lattice
+      .. automethod:: Lattice.translation_group
       .. automethod:: Lattice.vector_to_coord
       .. automethod:: Lattice.vector_to_site
 

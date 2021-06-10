@@ -116,9 +116,12 @@
 <span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">jnp</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
+<span class="kn">from</span> <span class="nn">netket.utils.dispatch</span> <span class="kn">import</span> <span class="n">parametric</span>
+
 <span class="kn">from</span> <span class="nn">.abstract_hilbert</span> <span class="kn">import</span> <span class="n">AbstractHilbert</span>
 
 
+<span class="c1"># TODO: Create parametric class</span>
 <div class="viewcode-block" id="DoubledHilbert"><a class="viewcode-back" href="../../../docs/_generated/hilbert/netket.hilbert.DoubledHilbert.html#netket.hilbert.DoubledHilbert">[docs]</a><span class="k">class</span> <span class="nc">DoubledHilbert</span><span class="p">(</span><span class="n">AbstractHilbert</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Superoperatorial hilbert space for states living in the</span>
 <span class="sd">    tensorised state H\otimes H, encoded according to Choi&#39;s isomorphism.&quot;&quot;&quot;</span>

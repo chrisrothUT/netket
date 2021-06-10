@@ -127,10 +127,16 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#netket-3-0b2-unreleased">NetKet 3.0b2 (unreleased)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#netket-3-0b3-unreleased">NetKet 3.0b3 (unreleased)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="changelog.html#new-features">New features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="changelog.html#breaking-changes">Breaking Changes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="changelog.html#bug-fixes">Bug Fixes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#netket-3-0b2-published-on-31-may-2021">NetKet 3.0b2 (published on 31 May 2021)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id1">New features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id2">Breaking Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id3">Bug Fixes</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#netket-3-0b1-published-beta-release">NetKet 3.0b1 (published beta release)</a><ul>
@@ -228,7 +234,6 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Public API: netket package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#graph">Graph</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.AbstractGraph.html">netket.graph.AbstractGraph</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.NetworkX.html">netket.graph.NetworkX</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Edgeless.html">netket.graph.Edgeless</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Hypercube.html">netket.graph.Hypercube</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Lattice.html">netket.graph.Lattice</a></li>
@@ -239,10 +244,11 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#hilbert">Hilbert</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="_generated/hilbert/netket.hilbert.AbstractHilbert.html">netket.hilbert.AbstractHilbert</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/hilbert/netket.hilbert.Qubit.html">netket.hilbert.Qubit</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/hilbert/netket.hilbert.Spin.html">netket.hilbert.Spin</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/hilbert/netket.hilbert.CustomHilbert.html">netket.hilbert.CustomHilbert</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/hilbert/netket.hilbert.DoubledHilbert.html">netket.hilbert.DoubledHilbert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/hilbert/netket.hilbert.Fock.html">netket.hilbert.Fock</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/hilbert/netket.hilbert.Qubit.html">netket.hilbert.Qubit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/hilbert/netket.hilbert.Spin.html">netket.hilbert.Spin</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#operators">Operators</a><ul>
@@ -294,6 +300,7 @@
 <li class="toctree-l4"><a class="reference internal" href="_generated/samplers/netket.sampler.MetropolisHamiltonian.html">netket.sampler.MetropolisHamiltonian</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_generated/samplers/netket.sampler.MetropolisLocalPt.html">netket.sampler.MetropolisLocalPt</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_generated/samplers/netket.sampler.MetropolisExchangePt.html">netket.sampler.MetropolisExchangePt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/samplers/netket.sampler.ARDirectSampler.html">netket.sampler.ARDirectSampler</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#transition-rules">Transition Rules</a><ul>
@@ -321,6 +328,8 @@
 <li class="toctree-l3"><a class="reference internal" href="_generated/models/netket.models.MPSPeriodic.html">netket.models.MPSPeriodic</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/models/netket.models.NDM.html">netket.models.NDM</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/models/netket.models.GCNN.html">netket.models.GCNN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/models/netket.models.ARNN.html">netket.models.ARNN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/models/netket.models.ARNNDense.html">netket.models.ARNNDense</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#model-tools">Model tools</a><ul>
@@ -332,6 +341,9 @@
 <li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.DenseEquivariant.html">netket.nn.DenseEquivariant</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.Conv.html">netket.nn.Conv</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.Embed.html">netket.nn.Embed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.MaskedDense1D.html">netket.nn.MaskedDense1D</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.MaskedConv1D.html">netket.nn.MaskedConv1D</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.MaskedConv2D.html">netket.nn.MaskedConv2D</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#activation-functions">Activation functions</a><ul>
@@ -353,9 +365,9 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#variational-state-interface">Variational State Interface</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.variational.VariationalState.html">netket.variational.VariationalState</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.variational.MCState.html">netket.variational.MCState</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.variational.MCMixedState.html">netket.variational.MCMixedState</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.vqs.VariationalState.html">netket.vqs.VariationalState</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.vqs.MCState.html">netket.vqs.MCState</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.vqs.MCMixedState.html">netket.vqs.MCMixedState</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#optimizer-module">Optimizer Module</a><ul>
@@ -402,8 +414,6 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#utils">Utils</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="_generated/utils/netket.utils.HashableArray.html">netket.utils.HashableArray</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/utils/netket.utils.semigroup.SemiGroup.html">netket.utils.semigroup.SemiGroup</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/utils/netket.utils.semigroup.PermutationGroup.html">netket.utils.semigroup.PermutationGroup</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#callbacks">Callbacks</a><ul>
@@ -434,26 +444,23 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="_generated/graph/netket.graph.AbstractGraph.html#netket.graph.AbstractGraph" title="netket.graph.AbstractGraph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.AbstractGraph</span></code></a></p></td>
 <td><p>Abstract class for NetKet graph objects.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/graph/netket.graph.NetworkX.html#netket.graph.NetworkX" title="netket.graph.NetworkX"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.NetworkX</span></code></a></p></td>
-<td><p>Wrapper for a networkx graph</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/graph/netket.graph.Edgeless.html#netket.graph.Edgeless" title="netket.graph.Edgeless"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.Edgeless</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/graph/netket.graph.Edgeless.html#netket.graph.Edgeless" title="netket.graph.Edgeless"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.Edgeless</span></code></a></p></td>
 <td><p>Construct a set graph (collection of unconnected vertices).</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/graph/netket.graph.Hypercube.html#netket.graph.Hypercube" title="netket.graph.Hypercube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.Hypercube</span></code></a></p></td>
-<td><p>A hypercube lattice of side L in d dimensions.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/graph/netket.graph.Hypercube.html#netket.graph.Hypercube" title="netket.graph.Hypercube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.Hypercube</span></code></a></p></td>
+<td><p>Constructs a hypercubic lattice with equal side length in all dimensions.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/graph/netket.graph.Lattice.html#netket.graph.Lattice" title="netket.graph.Lattice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.Lattice</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/graph/netket.graph.Lattice.html#netket.graph.Lattice" title="netket.graph.Lattice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.Lattice</span></code></a></p></td>
 <td><p>A lattice built by periodic arrangement of a given unit cell.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/graph/netket.graph.lattice.LatticeSite.html#netket.graph.lattice.LatticeSite" title="netket.graph.lattice.LatticeSite"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.lattice.LatticeSite</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/graph/netket.graph.lattice.LatticeSite.html#netket.graph.lattice.LatticeSite" title="netket.graph.lattice.LatticeSite"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.lattice.LatticeSite</span></code></a></p></td>
 <td><p>Contains information about a single <a class="reference internal" href="_generated/graph/netket.graph.Lattice.html#netket.graph.Lattice" title="netket.graph.Lattice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Lattice</span></code></a> site.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/graph/netket.graph.Chain.html#netket.graph.Chain" title="netket.graph.Chain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.Chain</span></code></a></p></td>
-<td><p>A chain of L sites.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/graph/netket.graph.Chain.html#netket.graph.Chain" title="netket.graph.Chain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.Chain</span></code></a></p></td>
+<td><p>Constructs a chain of <cite>length</cite> sites.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/graph/netket.graph.Grid.html#netket.graph.Grid" title="netket.graph.Grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.Grid</span></code></a></p></td>
-<td><p>A Grid lattice of d dimensions, and possibly different sizes of each dimension.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/graph/netket.graph.Grid.html#netket.graph.Grid" title="netket.graph.Grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.Grid</span></code></a></p></td>
+<td><p>Constructs a hypercubic lattice given its extent in all dimensions.</p></td>
 </tr>
 </tbody>
 </table>
@@ -469,17 +476,20 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="_generated/hilbert/netket.hilbert.AbstractHilbert.html#netket.hilbert.AbstractHilbert" title="netket.hilbert.AbstractHilbert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.hilbert.AbstractHilbert</span></code></a></p></td>
 <td><p>Abstract class for NetKet hilbert objects.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/hilbert/netket.hilbert.Qubit.html#netket.hilbert.Qubit" title="netket.hilbert.Qubit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.hilbert.Qubit</span></code></a></p></td>
-<td><p>Hilbert space obtained as tensor product of local qubit states.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/hilbert/netket.hilbert.Spin.html#netket.hilbert.Spin" title="netket.hilbert.Spin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.hilbert.Spin</span></code></a></p></td>
-<td><p>Hilbert space obtained as tensor product of local spin states.</p></td>
-</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="_generated/hilbert/netket.hilbert.CustomHilbert.html#netket.hilbert.CustomHilbert" title="netket.hilbert.CustomHilbert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.hilbert.CustomHilbert</span></code></a></p></td>
 <td><p>A custom hilbert space with discrete local quantum numbers.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="_generated/hilbert/netket.hilbert.DoubledHilbert.html#netket.hilbert.DoubledHilbert" title="netket.hilbert.DoubledHilbert"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.hilbert.DoubledHilbert</span></code></a></p></td>
 <td><p>Superoperatorial hilbert space for states living in the tensorised state Hotimes H, encoded according to Choi’s isomorphism.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/hilbert/netket.hilbert.Fock.html#netket.hilbert.Fock" title="netket.hilbert.Fock"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.hilbert.Fock</span></code></a></p></td>
+<td><p>Hilbert space obtained as tensor product of local fock basis.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/hilbert/netket.hilbert.Qubit.html#netket.hilbert.Qubit" title="netket.hilbert.Qubit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.hilbert.Qubit</span></code></a></p></td>
+<td><p>Hilbert space obtained as tensor product of local qubit states.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/hilbert/netket.hilbert.Spin.html#netket.hilbert.Spin" title="netket.hilbert.Spin"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.hilbert.Spin</span></code></a></p></td>
+<td><p>Hilbert space obtained as tensor product of local spin states.</p></td>
 </tr>
 </tbody>
 </table>
@@ -653,6 +663,9 @@ have a much higher overhead for small to moderate (for GPUs) system sizes.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="_generated/samplers/netket.sampler.MetropolisExchangePt.html#netket.sampler.MetropolisExchangePt" title="netket.sampler.MetropolisExchangePt"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.sampler.MetropolisExchangePt</span></code></a></p></td>
 <td><p>This sampler acts locally only on two local degree of freedom <span class="math notranslate nohighlight">\(s_i\)</span> and <span class="math notranslate nohighlight">\(s_j\)</span>, and proposes a new state: <span class="math notranslate nohighlight">\(s_1 \dots s^\prime_i \dots s^\prime_j \dots s_N\)</span>, where in general <span class="math notranslate nohighlight">\(s^\prime_i \neq s_i\)</span> and <span class="math notranslate nohighlight">\(s^\prime_j \neq s_j\)</span>.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/samplers/netket.sampler.ARDirectSampler.html#netket.sampler.ARDirectSampler" title="netket.sampler.ARDirectSampler"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.sampler.ARDirectSampler</span></code></a></p></td>
+<td><p>Direct sampler for autoregressive neural networks.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -741,6 +754,12 @@ neural quantum states.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="_generated/models/netket.models.GCNN.html#netket.models.GCNN" title="netket.models.GCNN"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.models.GCNN</span></code></a></p></td>
 <td><p>Implements a Group Convolutional Neural Network (G-CNN) that outputs a wavefunction that is invariant over a specified symmetry group.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/models/netket.models.ARNN.html#netket.models.ARNN" title="netket.models.ARNN"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.models.ARNN</span></code></a></p></td>
+<td><p>Base class for autoregressive neural networks.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/models/netket.models.ARNNDense.html#netket.models.ARNNDense" title="netket.models.ARNNDense"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.models.ARNNDense</span></code></a></p></td>
+<td><p>Autoregressive neural network with dense layers.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -784,6 +803,15 @@ Read more about the design goal of this module in their <a class="reference exte
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="_generated/nn/netket.nn.Embed.html#netket.nn.Embed" title="netket.nn.Embed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.nn.Embed</span></code></a></p></td>
 <td><p>Embedding Module.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/nn/netket.nn.MaskedDense1D.html#netket.nn.MaskedDense1D" title="netket.nn.MaskedDense1D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.nn.MaskedDense1D</span></code></a></p></td>
+<td><p>1D linear transformation module with mask for autoregressive NN.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/nn/netket.nn.MaskedConv1D.html#netket.nn.MaskedConv1D" title="netket.nn.MaskedConv1D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.nn.MaskedConv1D</span></code></a></p></td>
+<td><p>1D convolution module with mask for autoregressive NN.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/nn/netket.nn.MaskedConv2D.html#netket.nn.MaskedConv2D" title="netket.nn.MaskedConv2D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.nn.MaskedConv2D</span></code></a></p></td>
+<td><p>2D convolution module with mask for autoregressive NN.</p></td>
 </tr>
 </tbody>
 </table>
@@ -847,13 +875,13 @@ Read more about the design goal of this module in their <a class="reference exte
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/variational/netket.variational.VariationalState.html#netket.variational.VariationalState" title="netket.variational.VariationalState"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.variational.VariationalState</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/variational/netket.vqs.VariationalState.html#netket.vqs.VariationalState" title="netket.vqs.VariationalState"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.vqs.VariationalState</span></code></a></p></td>
 <td><p>Abstract class for variational states representing either pure states or mixed quantum states.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/variational/netket.variational.MCState.html#netket.variational.MCState" title="netket.variational.MCState"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.variational.MCState</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/variational/netket.vqs.MCState.html#netket.vqs.MCState" title="netket.vqs.MCState"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.vqs.MCState</span></code></a></p></td>
 <td><p>Variational State for a Variational Neural Quantum State.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/variational/netket.variational.MCMixedState.html#netket.variational.MCMixedState" title="netket.variational.MCMixedState"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.variational.MCMixedState</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/variational/netket.vqs.MCMixedState.html#netket.vqs.MCMixedState" title="netket.vqs.MCMixedState"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.vqs.MCMixedState</span></code></a></p></td>
 <td><p>Variational State for a Mixed Variational Neural Quantum State.</p></td>
 </tr>
 </tbody>
@@ -1023,12 +1051,6 @@ gradient preconditioner.</p>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="_generated/utils/netket.utils.HashableArray.html#netket.utils.HashableArray" title="netket.utils.HashableArray"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.utils.HashableArray</span></code></a></p></td>
 <td><p>This class wraps a numpy or jax array in order to make it hashable and equality comparable (which is necessary since a well-defined hashable object needs to satisfy <code class="code docutils literal notranslate"><span class="pre">obj1</span> <span class="pre">==</span> <span class="pre">obj2</span></code> whenever <code class="code docutils literal notranslate"><span class="pre">hash(obj1)</span> <span class="pre">==</span> <span class="pre">hash(obj2)</span></code>.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/utils/netket.utils.semigroup.SemiGroup.html#netket.utils.semigroup.SemiGroup" title="netket.utils.semigroup.SemiGroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.utils.semigroup.SemiGroup</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/utils/netket.utils.semigroup.PermutationGroup.html#netket.utils.semigroup.PermutationGroup" title="netket.utils.semigroup.PermutationGroup"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.utils.semigroup.PermutationGroup</span></code></a></p></td>
-<td><p>Collection of permutation operations acting on sequences of length <code class="code docutils literal notranslate"><span class="pre">degree</span></code>.</p></td>
 </tr>
 </tbody>
 </table>

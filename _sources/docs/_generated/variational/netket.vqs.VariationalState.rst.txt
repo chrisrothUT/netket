@@ -1,7 +1,7 @@
-﻿netket.variational.VariationalState
-===================================
+﻿netket.vqs.VariationalState
+===========================
 
-.. currentmodule:: netket.variational
+.. currentmodule:: netket.vqs
 
 .. autoclass:: VariationalState
    :show-inheritance:

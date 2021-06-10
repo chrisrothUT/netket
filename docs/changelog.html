@@ -125,10 +125,16 @@
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Change Log</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#netket-3-0b2-unreleased">NetKet 3.0b2 (unreleased)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#netket-3-0b3-unreleased">NetKet 3.0b3 (unreleased)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#new-features">New features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#breaking-changes">Breaking Changes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#bug-fixes">Bug Fixes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#netket-3-0b2-published-on-31-may-2021">NetKet 3.0b2 (published on 31 May 2021)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">New features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Breaking Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Bug Fixes</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#netket-3-0b1-published-beta-release">NetKet 3.0b1 (published beta release)</a><ul>
@@ -226,7 +232,6 @@
 <li class="toctree-l1"><a class="reference internal" href="api.html">Public API: netket package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api.html#graph">Graph</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.AbstractGraph.html">netket.graph.AbstractGraph</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.NetworkX.html">netket.graph.NetworkX</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Edgeless.html">netket.graph.Edgeless</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Hypercube.html">netket.graph.Hypercube</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Lattice.html">netket.graph.Lattice</a></li>
@@ -237,10 +242,11 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#hilbert">Hilbert</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="_generated/hilbert/netket.hilbert.AbstractHilbert.html">netket.hilbert.AbstractHilbert</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/hilbert/netket.hilbert.Qubit.html">netket.hilbert.Qubit</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/hilbert/netket.hilbert.Spin.html">netket.hilbert.Spin</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/hilbert/netket.hilbert.CustomHilbert.html">netket.hilbert.CustomHilbert</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/hilbert/netket.hilbert.DoubledHilbert.html">netket.hilbert.DoubledHilbert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/hilbert/netket.hilbert.Fock.html">netket.hilbert.Fock</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/hilbert/netket.hilbert.Qubit.html">netket.hilbert.Qubit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/hilbert/netket.hilbert.Spin.html">netket.hilbert.Spin</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#operators">Operators</a><ul>
@@ -292,6 +298,7 @@
 <li class="toctree-l4"><a class="reference internal" href="_generated/samplers/netket.sampler.MetropolisHamiltonian.html">netket.sampler.MetropolisHamiltonian</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_generated/samplers/netket.sampler.MetropolisLocalPt.html">netket.sampler.MetropolisLocalPt</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_generated/samplers/netket.sampler.MetropolisExchangePt.html">netket.sampler.MetropolisExchangePt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/samplers/netket.sampler.ARDirectSampler.html">netket.sampler.ARDirectSampler</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#transition-rules">Transition Rules</a><ul>
@@ -319,6 +326,8 @@
 <li class="toctree-l3"><a class="reference internal" href="_generated/models/netket.models.MPSPeriodic.html">netket.models.MPSPeriodic</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/models/netket.models.NDM.html">netket.models.NDM</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/models/netket.models.GCNN.html">netket.models.GCNN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/models/netket.models.ARNN.html">netket.models.ARNN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/models/netket.models.ARNNDense.html">netket.models.ARNNDense</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#model-tools">Model tools</a><ul>
@@ -330,6 +339,9 @@
 <li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.DenseEquivariant.html">netket.nn.DenseEquivariant</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.Conv.html">netket.nn.Conv</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.Embed.html">netket.nn.Embed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.MaskedDense1D.html">netket.nn.MaskedDense1D</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.MaskedConv1D.html">netket.nn.MaskedConv1D</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.MaskedConv2D.html">netket.nn.MaskedConv2D</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="api.html#activation-functions">Activation functions</a><ul>
@@ -351,9 +363,9 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#variational-state-interface">Variational State Interface</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.variational.VariationalState.html">netket.variational.VariationalState</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.variational.MCState.html">netket.variational.MCState</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.variational.MCMixedState.html">netket.variational.MCMixedState</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.vqs.VariationalState.html">netket.vqs.VariationalState</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.vqs.MCState.html">netket.vqs.MCState</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/variational/netket.vqs.MCMixedState.html">netket.vqs.MCMixedState</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#optimizer-module">Optimizer Module</a><ul>
@@ -400,8 +412,6 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#utils">Utils</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="_generated/utils/netket.utils.HashableArray.html">netket.utils.HashableArray</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/utils/netket.utils.semigroup.SemiGroup.html">netket.utils.semigroup.SemiGroup</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/utils/netket.utils.semigroup.PermutationGroup.html">netket.utils.semigroup.PermutationGroup</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#callbacks">Callbacks</a><ul>
@@ -421,11 +431,35 @@
       
   <div class="section" id="change-log">
 <h1>Change Log<a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="netket-3-0b2-unreleased">
-<h2>NetKet 3.0b2 (unreleased)<a class="headerlink" href="#netket-3-0b2-unreleased" title="Permalink to this headline">¶</a></h2>
-<p><a class="reference external" href="https://github.com/netket/netket/compare/v3.0b1...master">GitHub commits</a>.</p>
+<div class="section" id="netket-3-0b3-unreleased">
+<h2>NetKet 3.0b3 (unreleased)<a class="headerlink" href="#netket-3-0b3-unreleased" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://github.com/netket/netket/compare/v3.0b2...master">GitHub commits</a>.</p>
 <div class="section" id="new-features">
 <h3>New features<a class="headerlink" href="#new-features" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>The <span class="xref std std-ref">utils.group</span> submodule provides utilities for geometrical and permutation groups. <code class="docutils literal notranslate"><span class="pre">Lattice</span></code> (and its specialisations like <code class="docutils literal notranslate"><span class="pre">Grid</span></code>) use these to automatically construct the space groups of lattices, as well as their character tables for generating wave functions with broken symmetry. <a class="reference external" href="https://github.com/netket/netket/pull/724">#724</a></p></li>
+<li><p>Autoregressive neural networks, sampler, and masked linear layers have been added to <code class="docutils literal notranslate"><span class="pre">models</span></code>, <code class="docutils literal notranslate"><span class="pre">sampler</span></code> and <code class="docutils literal notranslate"><span class="pre">nn</span></code> <a class="reference external" href="https://github.com/netket/netket/pull/705">#705</a>.</p></li>
+</ul>
+</div>
+<div class="section" id="breaking-changes">
+<h3>Breaking Changes<a class="headerlink" href="#breaking-changes" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">graph.Grid</span></code> class has been removed. <span class="xref std std-ref">graph.Grid</span> will now return an instance of <span class="xref std std-ref">graph.Lattice</span> supporting the same API but with new functionalities related to spatial symmetries. The <code class="docutils literal notranslate"><span class="pre">color_edges</span></code> optional keyword argument has been removed without deprecation. <a class="reference external" href="https://github.com/netket/netket/pull/724">#724</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MCState.n_discard</span></code> has been renamed <code class="docutils literal notranslate"><span class="pre">MCState.n_discard_per_chain</span></code> and the old binding has been deprecated <a class="reference external" href="https://github.com/netket/netket/pull/739">#739</a>.</p></li>
+</ul>
+</div>
+<div class="section" id="bug-fixes">
+<h3>Bug Fixes<a class="headerlink" href="#bug-fixes" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">nn.to_array</span></code> and <code class="docutils literal notranslate"><span class="pre">MCState.to_array</span></code>, if <code class="docutils literal notranslate"><span class="pre">normalize=False</span></code>, do not subtract the logarithm of the maximum value from the state  <a class="reference external" href="https://github.com/netket/netket/pull/705">#705</a>.</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="netket-3-0b2-published-on-31-may-2021">
+<h2>NetKet 3.0b2 (published on 31 May 2021)<a class="headerlink" href="#netket-3-0b2-published-on-31-may-2021" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://github.com/netket/netket/compare/v3.0b1...v3.0b2">GitHub commits</a>.</p>
+<div class="section" id="id1">
+<h3>New features<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Group Equivariant Neural Networks have been added to <code class="docutils literal notranslate"><span class="pre">models</span></code> <a class="reference external" href="https://github.com/netket/netket/pull/620">#620</a></p></li>
 <li><p>Permutation invariant RBM and Permutation invariant dense layer have been added to <code class="docutils literal notranslate"><span class="pre">models</span></code>
@@ -449,8 +483,8 @@ on your model and the solver to pick one.
 This might affect SR performance. <a class="reference external" href="https://github.com/netket/netket/pull/674">#674</a></p></li>
 </ul>
 </div>
-<div class="section" id="breaking-changes">
-<h3>Breaking Changes<a class="headerlink" href="#breaking-changes" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id2">
+<h3>Breaking Changes<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>For all samplers, <code class="docutils literal notranslate"><span class="pre">n_chains</span></code> now sets the <em>total</em> number of chains across all MPI ranks. This is a breaking change
 compared to the old API, where <code class="docutils literal notranslate"><span class="pre">n_chains</span></code> would set the number of chains on a single MPI rank. It is still possible to
@@ -468,10 +502,11 @@ favour of the correct <code class="docutils literal notranslate"><span class="pr
 inside the closure or <code class="docutils literal notranslate"><span class="pre">functools.partial</span></code> passed as <code class="docutils literal notranslate"><span class="pre">solver</span></code> argument.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">nk.optimizer.sr.SRLazyCG</span></code> and <code class="docutils literal notranslate"><span class="pre">nk.optimizer.sr.SRLazyGMRES</span></code> have been deprecated and will soon be removed.</p></li>
 <li><p>Parts of the <code class="docutils literal notranslate"><span class="pre">Lattice</span></code> API have been overhauled, with deprecations of several methods in favor of a consistent usage of <code class="docutils literal notranslate"><span class="pre">Lattice.position</span></code> for real-space location of sites and <code class="docutils literal notranslate"><span class="pre">Lattice.basis_coords</span></code> for location of sites in terms of basis vectors. <code class="docutils literal notranslate"><span class="pre">Lattice.sites</span></code> has been added, which provides a sequence of <code class="docutils literal notranslate"><span class="pre">LatticeSite</span></code> objects combining all site properties. Furthermore, <code class="docutils literal notranslate"><span class="pre">Lattice</span></code> now provides lookup of sites from their position via <code class="docutils literal notranslate"><span class="pre">id_from_position</span></code> using a hashing scheme that works across periodic boundaries. <a class="reference external" href="https://github.com/netket/netket/pull/703">#703</a> <a class="reference external" href="https://github.com/netket/netket/pull/715">#715</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">nk.variational</span></code> has been renamed to <code class="docutils literal notranslate"><span class="pre">nk.vqs</span></code> and will be removed in a future release.</p></li>
 </ul>
 </div>
-<div class="section" id="bug-fixes">
-<h3>Bug Fixes<a class="headerlink" href="#bug-fixes" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id3">
+<h3>Bug Fixes<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Fix <code class="docutils literal notranslate"><span class="pre">operator.BoseHubbard</span></code> usage under jax Hamiltonian Sampling <a class="reference external" href="https://github.com/netket/netket/pull/662">#662</a></p></li>
 <li><p>Fix <code class="docutils literal notranslate"><span class="pre">SROnTheFly</span></code> for <code class="docutils literal notranslate"><span class="pre">R-&gt;C</span></code> models with non homogeneous parameters <a class="reference external" href="https://github.com/netket/netket/pull/661">#661</a></p></li>
@@ -497,13 +532,13 @@ inside the closure or <code class="docutils literal notranslate"><span class="pr
 <li><p>Doing an operation in-place <code class="code docutils literal notranslate"><span class="pre">+=,</span> <span class="pre">-=,</span> <span class="pre">*=</span></code> on a real-valued operator will now fail if the other is complex. While this might seem annoying, it’s useful to ensure that smaller types such as <code class="docutils literal notranslate"><span class="pre">float32</span></code> or <code class="docutils literal notranslate"><span class="pre">complex64</span></code> are preserved if the user desires to do so.</p></li>
 </ul>
 </li>
-<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractMachine</span></code> has been removed. It’s functionality is now split among the model itself, which is defined by the user and <a class="reference internal" href="_generated/variational/netket.variational.MCState.html#netket.variational.MCState" title="netket.variational.MCState"><code class="xref py py-class docutils literal notranslate"><span class="pre">variational.MCState</span></code></a> for pure states or <a class="reference internal" href="_generated/variational/netket.variational.MCMixedState.html#netket.variational.MCMixedState" title="netket.variational.MCMixedState"><code class="xref py py-class docutils literal notranslate"><span class="pre">variational.MCMixedState</span></code></a> for mixed states.</p>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractMachine</span></code> has been removed. It’s functionality is now split among the model itself, which is defined by the user and <code class="xref py py-class docutils literal notranslate"><span class="pre">variational.MCState</span></code> for pure states or <code class="xref py py-class docutils literal notranslate"><span class="pre">variational.MCMixedState</span></code> for mixed states.</p>
 <ul>
 <li><p>The model, in general is composed by two functions, or an object with two functions: an <code class="docutils literal notranslate"><span class="pre">init(rng,</span> <span class="pre">sample_val)</span></code> function, accepting a <span class="xref std std-ref">jax.random.PRNGKey</span> object and an input, returning the parameters and the state of the model for that particular sample shape, and a <code class="code docutils literal notranslate"><span class="pre">apply(params,</span> <span class="pre">samples,</span> <span class="pre">**kwargs)</span></code> function, evaluating the model for the given parameters and inputs.</p></li>
 <li><p>Some models (previously machines) such as the RBM (Restricted Boltzmann Machine) Machine, NDM (Neural Density Matrix) or MPS (Matrix Product State ansatz) are available in <a class="reference internal" href="api.html#pre-built-models"><span class="std std-ref">Pre-built models</span></a>.</p></li>
 <li><p>Machines, now called models, should be written using <a class="reference external" href="https://flax.readthedocs.io/en/latest">Flax</a> or another jax framework.</p></li>
 <li><p>Serialization and deserialization functionality has now been moved to <span class="xref std std-ref">variational.MCState</span>, which support the standard Flax interface through MsgPack. See <a class="reference external" href="https://flax.readthedocs.io/en/latest/flax.serialization.html">Flax docs</a> for more information</p></li>
-<li><p><code class="code docutils literal notranslate"><span class="pre">AbstractMachine.init_random_parameters</span></code> functionality has now been absorbed into <a class="reference internal" href="_generated/variational/netket.variational.VariationalState.html#netket.variational.VariationalState.init_parameters" title="netket.variational.VariationalState.init_parameters"><code class="xref py py-meth docutils literal notranslate"><span class="pre">netket.variational.VariationalState.init_parameters()</span></code></a>, which however has a different syntax.</p></li>
+<li><p><code class="code docutils literal notranslate"><span class="pre">AbstractMachine.init_random_parameters</span></code> functionality has now been absorbed into <a class="reference internal" href="_generated/variational/netket.vqs.VariationalState.html#netket.vqs.VariationalState.init_parameters" title="netket.vqs.VariationalState.init_parameters"><code class="xref py py-meth docutils literal notranslate"><span class="pre">netket.vqs.VariationalState.init_parameters()</span></code></a>, which however has a different syntax.</p></li>
 </ul>
 </li>
 <li><p><a class="reference internal" href="api.html#sampler"><span class="std std-ref">Samplers</span></a> now require the Hilbert space upon which they sample to be passed in to the constructor.
@@ -513,7 +548,7 @@ Also note that several keyword arguments of the samplers have changed, and new o
 <li><p><a class="reference internal" href="api.html#sampler"><span class="std std-ref">Samplers</span></a> are now immutable (frozen) <code class="docutils literal notranslate"><span class="pre">dataclasses</span></code> (defined through <code class="docutils literal notranslate"><span class="pre">flax.struct.dataclass</span></code>) that only hold the sampling parameters. As a consequence it is no longer possible to change their settings such as <code class="docutils literal notranslate"><span class="pre">n_chains</span></code> or <code class="docutils literal notranslate"><span class="pre">n_sweeps</span></code> without creating a new sampler. If you wish to update only one parameter, it is possible to construct the new sampler with the updated value by using the <code class="docutils literal notranslate"><span class="pre">sampler.replace(parameter=new_value)</span></code> function.</p></li>
 <li><p><a class="reference internal" href="api.html#sampler"><span class="std std-ref">Samplers</span></a> are no longer stateful objects. Instead, they can construct an immutable state object <span class="xref std std-ref">sampler.init_state</span>, which can be passed to sampling functions such as <span class="xref std std-ref">sampler.sample</span>, which now return also the updated state. However, unless you have particular use-cases we advise you use the variational state <a class="reference internal" href="varstate.html#mcstate"><span class="std std-ref">MCState</span></a> instead.</p></li>
 <li><p>The <span class="xref std std-ref">Optimizer</span> module has been overhauled, and now only re-exports flax optim module. We advise not to use netket’s optimizer but instead to use <a class="reference external" href="https://github.com/deepmind/optax%3E">optax</a> .</p></li>
-<li><p>The <span class="xref std std-ref">SR</span> object now is only a set of options used to compute the SR matrix. The SR matrix, now called <code class="docutils literal notranslate"><span class="pre">quantum_geometric_tensor</span></code> can be obtained by calling <a class="reference internal" href="_generated/variational/netket.variational.MCState.html#netket.variational.MCState.quantum_geometric_tensor" title="netket.variational.MCState.quantum_geometric_tensor"><code class="xref py py-meth docutils literal notranslate"><span class="pre">variational.MCState.quantum_geometric_tensor()</span></code></a>. Depending on the settings, this can be a lazy object.</p></li>
+<li><p>The <span class="xref std std-ref">SR</span> object now is only a set of options used to compute the SR matrix. The SR matrix, now called <code class="docutils literal notranslate"><span class="pre">quantum_geometric_tensor</span></code> can be obtained by calling <code class="xref py py-meth docutils literal notranslate"><span class="pre">variational.MCState.quantum_geometric_tensor()</span></code>. Depending on the settings, this can be a lazy object.</p></li>
 <li><p><span class="xref std std-ref">netket.Vmc</span> has been renamed to <span class="xref std std-ref">netkt.VMC</span></p></li>
 <li><p><a class="reference internal" href="_generated/models/netket.models.RBM.html#netket-models-rbm"><span class="std std-ref">netket.models.RBM</span></a> replaces the old <code class="code docutils literal notranslate"><span class="pre">RBM</span></code> machine, but has real parameters by default.</p></li>
 <li><p>As we rely on Jax, using <code class="code docutils literal notranslate"><span class="pre">dtype=float</span></code> or <code class="code docutils literal notranslate"><span class="pre">dtype=complex</span></code>, which are weak types, will sometimes lead to loss of precision because they might be converted to <code class="docutils literal notranslate"><span class="pre">float32</span></code>. Use <code class="code docutils literal notranslate"><span class="pre">np.float64</span></code> or <code class="code docutils literal notranslate"><span class="pre">np.complex128</span></code> instead if you want double precision when defining your models.</p></li>

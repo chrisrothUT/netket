@@ -13,6 +13,7 @@
    .. rst-class:: class-dl-groups
 
    Attributes
+      .. autoattribute:: Sampler.is_exact
       .. autoattribute:: Sampler.machine_pow
       .. autoattribute:: Sampler.n_batches
       .. autoattribute:: Sampler.n_chains
