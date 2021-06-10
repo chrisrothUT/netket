@@ -181,11 +181,13 @@ class DenseEquivariant(Module):
     def setup(self):
         # pylint: disable=attribute-defined-outside-init
         if isinstance(self.symmetry_info, PermutationGroup):
-            self.symmetry_info = HashableArray(self.symmetry_info.product_table.ravel())
-        if not np.asarray(self.symmetry_info).ndim == 1:
+            self.fpt = HashableArray(self.symmetry_info.product_table.ravel())
+        else:
+            self.fpt = self.symmetry_info
+        if not np.asarray(self.fpt).ndim == 1:
             raise ValueError("Product table should be flattened")
 
-        self.n_symm = int(np.sqrt(np.asarray(self.symmetry_info).shape[0]))
+        self.n_symm = int(np.sqrt(np.asarray(self.fpt).shape[0]))
 
     def full_kernel(self, kernel):
         """
@@ -193,7 +195,7 @@ class DenseEquivariant(Module):
         the full Dense kernel of shape (n_sites, features * n_symm).
         """
 
-        result = jnp.take(kernel, self.symmetry_info, 0)
+        result = jnp.take(kernel, self.fpt, 0)
         result = result.reshape(
             self.n_symm, self.n_symm, self.in_features, self.out_features
         )
@@ -240,6 +242,144 @@ class DenseEquivariant(Module):
         if self.use_bias:
             bias = self.param("bias", self.bias_init, (self.out_features,), self.dtype)
             bias = jnp.asarray(self.full_bias(bias), dtype)
+            y += bias
+
+        return y
+
+class DenseEquivariantFT(Module):
+    r"""A group convolution operation that is equivariant over a symmetry group
+
+    Acts on a feature map of shape [batch_size, in_features, n_symm] and 
+    returns a feature map of shape [batch_size, out_features, n_symm]. 
+    The input and the output are related by
+    :: math ::
+        y^{(i)}_g = \sum_{h,j} f^{(j)}_h W^{(ij)}_{h^{-1}g}.
+    Note that this is different from the convention of Cohen et al. that is used, 
+    in DenseEquivariant. As a result the output feature map is an involution.
+    The convolution is implemented in terms of a group Fourier transform.
+    Therefore, the group structure is represented internally as the set of its
+    irrep matrices. After Fourier transforming, the convolution translates to
+    :: math ::
+        y^{(i)}_\rho = \sum_j f^{(j)}_\rho W^{(ij)}_\rho,
+    where all terms are d x d matrices rather than numbers, and the juxtaposition
+    stands for matrix multiplication.
+    """ 
+
+    symmetry_info: Union[Tuple[HashableArray], PermutationGroup]
+    """Either a PermutationGroup or the irreducible representations of the 
+    symmetry group, given by a Pytree of tensors with shapes [n_symm,d,d]"""
+    in_features: int
+    """The number of symmetry-reduced input features. The full input size
+    is n_symm*in_features."""
+    out_features: int
+    """The number of symmetry-reduced output features. The full output size
+    is n_symm*out_features."""
+    use_bias: bool = True
+    """Whether to add a bias to the output (default: True)."""
+    dtype: Any = jnp.complex128
+    """The dtype of the weights."""
+    precision: Any = None
+    """numerical precision of the computation see `jax.lax.Precision`for details."""
+
+    kernel_init: Callable[[PRNGKeyT, Shape, DType], Array] = default_kernel_init
+    """Initializer for the Dense layer matrix."""
+    bias_init: Callable[[PRNGKeyT, Shape, DType], Array] = zeros
+    """Initializer for the bias."""
+    
+    def setup(self):
+        if isinstance(self.symmetry_info, PermutationGroup):
+            self.irreps = self.vectorize_irreps(self.symmetry_info.irrep_matrices())
+        elif self.irreps[0].ndim == 3:
+            self.irreps = self.vectorize_irreps(self.symmetry_info)
+        else:  
+            self.irreps = self.symmetry_info
+
+        self.n_symm = self.irreps[0].shape[1]    
+
+    def vectorize_irreps(self, irreps):
+        vec_irreps = []
+        for n,irrep in enumerate(irreps):
+            if n == 0:
+                cur_dim = irrep.shape[-1]
+                cur_vec = jnp.expand_dims(jnp.array(irrep),0)
+            else:
+                if irrep.shape[-1] == cur_dim:
+                    cur_vec = jnp.concatenate((cur_vec,jnp.expand_dims(jnp.array(irrep),0)),0)
+            else:
+                vec_irreps.append(cur_vec)
+                cur_vec = jnp.expand_dims(jnp.array(irrep),0)
+        
+        vec_irreps.append(cur_vec)
+
+        return tuple(vec_irreps)
+
+    def forward_ft(self, inputs: Array, dtype: DType) -> PyTree:
+        """Performs a forward group Fourier transform on the input. 
+        This is defined by
+        :: math ::
+            \hat{f}_\rho = \sum_g f(g) \rho(g),
+        where :math:`\rho` is an irrep of the group.
+        The Fourier transform is performed over the last index, and is returned
+        as a tuple of arrays, each entry corresponding to the entry of `irreps`
+        in the same position, and the last dimension of length `n_symm` replaced
+        by two dimensions of length `d` each.
+        """
+
+        inputs = jnp.array(inputs,dtype)
+        return jax.tree_map(lambda x: lax.dot_general(inputs,x,(((2,), (1,)), ((), ()))), self.irreps)
+
+    def inverse_ft(self, inputs: PyTree, dtype: DType) -> Array:
+        """Performs an inverse group Fourier transform on the input.
+        This is defined by
+        :: math ::
+            f(g) = \frac{1}{|G|} \sum_\rho d_\rho {\rm Tr}(\rho(g^{-1}) \hat{f}_\rho)
+        where the sum runs over all irreps of the group.
+        The input is a tuple of arrays whose the last two dimensions match the
+        dimensions of each irrep. The inverse Fourier transform is performed 
+        over these indices and is returned as an array where those dimensions
+        are replaced by a single dimension of length `n_symm`
+        """
+        return jnp.asarray(
+            jax.tree_util.tree_reduce(
+                jnp.add,
+                jax.tree_multimap(
+                    lambda x,y: lax.dot_general(x.shape[-1]*x,y.conj(),(((0,3,4), (0,2,3)), ((), ()))),
+                    inputs, self.irreps
+                )
+            ),
+            # Irrep matrices might be complex, so `result` might be complex
+            # even if the inputs are real
+            dtype=dtype
+        ) / self.n_symm 
+
+    @compact
+    def __call__(self, inputs: Array) -> Array:
+        """Applies the equivariant transform to the inputs along the last two
+        dimensions (-2: features, -1: group elements)
+        """
+        
+        dtype = jnp.promote_types(inputs.dtype, self.dtype)
+        inputs = jnp.asarray(inputs, dtype)
+        inputs = self.forward_ft(inputs,dtype=dtype)
+
+        kernel = self.param(
+            "kernel",
+            normal(1./np.sqrt(2*self.in_features*self.n_symm)),
+            (self.in_features, self.out_features, self.n_symm),
+            dtype,
+        )
+
+        kernel = self.forward_ft(kernel,dtype=dtype)
+
+        y = jax.tree_multimap(
+                lambda x,y: lax.dot_general(x,y,(((1,4),(0,3)),((2,),(2,)))).transpose(0,1,3,2,4),
+                inputs, kernel
+            )
+
+        y = self.inverse_ft(y,dtype)
+
+        if self.use_bias:
+            bias = self.param("bias", self.bias_init, (self.out_features, 1), dtype)
             y += bias
 
         return y
