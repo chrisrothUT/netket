@@ -3,23 +3,24 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>netket.exact.steady_state &#8212; netket v3.0 documentation</title>
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/jumbo-style.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/all.min.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/rtd_theme.css" />
-    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script src="../../../_static/js/rtd_theme.js"></script>
     <link rel="author" title="About these documents" href="../../../about.html" />
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -234,6 +235,7 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../../api.html">Public API: netket package</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#graph">Graph</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.AbstractGraph.html">netket.graph.AbstractGraph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Graph.html">netket.graph.Graph</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Edgeless.html">netket.graph.Edgeless</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Hypercube.html">netket.graph.Hypercube</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Lattice.html">netket.graph.Lattice</a></li>
@@ -359,7 +361,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.softmax.html">netket.nn.softmax</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.softplus.html">netket.nn.softplus</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.swish.html">netket.nn.swish</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.logcosh.html">netket.nn.logcosh</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.log_cosh.html">netket.nn.log_cosh</a></li>
 </ul>
 </li>
 </ul>
@@ -431,11 +433,11 @@
       </div>
     <div class="body col-md-9 content" role="main">
       
-  <div class="section" id="netket-exact-steady-state">
+  <section id="netket-exact-steady-state">
 <h1>netket.exact.steady_state<a class="headerlink" href="#netket-exact-steady-state" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
-<dt id="netket.exact.steady_state">
-<code class="sig-prename descclassname"><span class="pre">netket.exact.</span></code><code class="sig-name descname"><span class="pre">steady_state</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lindblad</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sparse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ed'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/exact.html#steady_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.exact.steady_state" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.exact.steady_state">
+<span class="sig-prename descclassname"><span class="pre">netket.exact.</span></span><span class="sig-name descname"><span class="pre">steady_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lindblad</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sparse</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'ed'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rho0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/exact.html#steady_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.exact.steady_state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes the numerically exact steady-state of a lindblad master equation.
 The computation is performed either through the exact diagonalization of the
 hermitian <span class="math notranslate nohighlight">\(L^\dagger L\)</span> matrix, or by means of an iterative solver (bicgstabl)
@@ -449,10 +451,11 @@ should be set to a lower value if the steady state has non-trivial correlations.
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>lindblad</strong> – The lindbladian encoding the master equation.</p></li>
-<li><p><strong>sparse</strong> – Whever to use sparse matrices (default: False for ed, True for iterative)</p></li>
+<li><p><strong>sparse</strong> – Whever to use sparse matrices (default: False for ed, True for
+iterative)</p></li>
 <li><p><strong>method</strong> – ‘ed’ (exact diagonalization) or ‘iterative’ (iterative bicgstabl)</p></li>
 <li><p><strong>rho0</strong> – starting density matrix for the iterative diagonalization (default: None)</p></li>
-<li><p><strong>kwargs...</strong> – additional kwargs passed to bicgstabl</p></li>
+<li><p><strong>kwargs</strong><strong>...</strong> – additional kwargs passed to bicgstabl</p></li>
 </ul>
 </dd>
 </dl>
@@ -463,8 +466,8 @@ should be set to a lower value if the steady state has non-trivial correlations.
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>maxiter</strong> – maximum number of iterations for the iterative solver (default: None)</p></li>
 <li><p><strong>tol</strong> – The precision for the calculation (default: 1e-05)</p></li>
-<li><p><strong>callback</strong> – User-supplied function to call after each iteration. It is called as callback(xk),
-where xk is the current solution vector</p></li>
+<li><p><strong>callback</strong> – User-supplied function to call after each iteration. It is called as
+callback(xk), where xk is the current solution vector</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -473,7 +476,7 @@ where xk is the current solution vector</p></li>
 </dl>
 </dd></dl>
 
-</div>
+</section>
 
 
     </div>
@@ -489,7 +492,7 @@ where xk is the current solution vector</p></li>
     </p>
     <p>
         &copy; Copyright 2019-2021, The Netket authors - All rights reserved.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
     </p>
   </div>
 </footer>

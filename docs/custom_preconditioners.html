@@ -3,23 +3,24 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>The preconditioner interface &#8212; netket v3.0 documentation</title>
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../_static/jumbo-style.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/all.min.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/rtd_theme.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script src="../_static/js/rtd_theme.js"></script>
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
@@ -234,6 +235,7 @@
 <li class="toctree-l1"><a class="reference internal" href="api.html">Public API: netket package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api.html#graph">Graph</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.AbstractGraph.html">netket.graph.AbstractGraph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Graph.html">netket.graph.Graph</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Edgeless.html">netket.graph.Edgeless</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Hypercube.html">netket.graph.Hypercube</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Lattice.html">netket.graph.Lattice</a></li>
@@ -359,7 +361,7 @@
 <li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.softmax.html">netket.nn.softmax</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.softplus.html">netket.nn.softplus</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.swish.html">netket.nn.swish</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.logcosh.html">netket.nn.logcosh</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.log_cosh.html">netket.nn.log_cosh</a></li>
 </ul>
 </li>
 </ul>
@@ -442,7 +444,7 @@ It is also possible to define your own method. If you implement the API as outli
 <p>Keep in mind that writing your own optimisation loop only requires writing about 10  lines of code and you are not forced to use NetKet’s drivers!
 We believe our design to be fairly modular and flexible and thus should be able to accommodate a wide variety of use-cases, but there will be algorithms that are hard to express within the boundaries of our API.
 Do not turn away from NetKet in those cases, but take all the pieces that you need and write your own optimisation loop!</p>
-<div class="section" id="the-preconditioner-interface">
+<section id="the-preconditioner-interface">
 <h1>The preconditioner interface<a class="headerlink" href="#the-preconditioner-interface" title="Permalink to this headline">¶</a></h1>
 <p>Preconditioners must be implemented as a Callable object or function with the following signature:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">preconditioner</span><span class="p">(</span><span class="n">vstate</span><span class="p">:</span> <span class="n">VariationalState</span><span class="p">,</span> <span class="n">gradient</span><span class="p">:</span> <span class="n">PyTree</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyTree</span><span class="p">:</span>
@@ -452,7 +454,7 @@ Do not turn away from NetKet in those cases, but take all the pieces that you ne
 The output of the preconditioner must be the transformed gradient stored as a PyTree.</p>
 <p>This general API will allow you to implement any preconditioner and use it together with NetKet Variational Drivers.
 However, note that any performance optimisation (such as calling <span class="xref std std-ref">jax.jit</span> on the code) will be your responsability.</p>
-<div class="section" id="the-linearpreconditioner-interface">
+<section id="the-linearpreconditioner-interface">
 <h2>The LinearPreconditioner interface<a class="headerlink" href="#the-linearpreconditioner-interface" title="Permalink to this headline">¶</a></h2>
 <p>Several preconditioners, including the Stochastic Reconfiguration, transform the gradient by solving a linear system of equation.
 begin{equation}
@@ -470,7 +472,7 @@ The gradient is always provided as a PyTree.</p>
 The <span class="math notranslate nohighlight">\( S \)</span> matrix in this case is the <code class="docutils literal notranslate"><span class="pre">lhs</span></code> or LinearOperator of the preconditioner, while the function is any linear solver such as <code class="docutils literal notranslate"><span class="pre">cholesky</span></code>, <code class="docutils literal notranslate"><span class="pre">jnp.linalg.solve</span></code> or iterative solvers such as <code class="docutils literal notranslate"><span class="pre">scipy.sparse.linalg.cg</span></code>.</p>
 <p>As there are different ways to compute the <span class="math notranslate nohighlight">\( S \)</span> matrix, all with their different computational performance characteristics, and there are different solvers, we believe that this design makes the code more modular and easier to reason about.</p>
 <p>When defining a preconditioner object you have two options: you can implement the bare API, which gives you maximum freedom but makes you responsible for all optimisations, or you can implement the <code class="docutils literal notranslate"><span class="pre">LinearOperator</span></code> interface, which constraints you a bit but will take care of a few performance optimisations.</p>
-<div class="section" id="bare-interface">
+<section id="bare-interface">
 <h3>Bare interface<a class="headerlink" href="#bare-interface" title="Permalink to this headline">¶</a></h3>
 <p>The bare-minimum API a preconditioner <code class="docutils literal notranslate"><span class="pre">lhs</span></code> must implement:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>- It must be a class
@@ -504,8 +506,8 @@ Since you cannot write the <code class="docutils literal notranslate"><span clas
 <p>You might be asking why each object needs a <code class="docutils literal notranslate"><span class="pre">solve</span></code> method and is passed to the preconditioner function instead of the over way around. The reason for this is to invert the control: <code class="docutils literal notranslate"><span class="pre">preconditioner_function</span></code>s must obey a certain API, but even if they do, different objects might need to perform some different initialization to compute the precondition in a more efficient way.
 This architecture allows every object to run arbitrary logic before executing the preconditioner of choice.
 Particular examples of this approach can be seen by looking at the implementation of <a class="reference internal" href="_generated/optim/netket.optimizer.qgt.QGTJacobianDense.html#netket-optimizer-qgt-qgtjacobiandense"><span class="std std-ref">netket.optimizer.qgt.QGTJacobianDense</span></a> and <a class="reference internal" href="_generated/optim/netket.optimizer.qgt.QGTJacobianPyTree.html#netket-optimizer-qgt-qgtjacobianpytree"><span class="std std-ref">netket.optimizer.qgt.QGTJacobianPyTree</span></a>.</p>
-</div>
-<div class="section" id="linearoperator-interface">
+</section>
+<section id="linearoperator-interface">
 <h3>LinearOperator interface<a class="headerlink" href="#linearoperator-interface" title="Permalink to this headline">¶</a></h3>
 <p>You can also subclass <span class="xref std std-ref">netket.optimizer.LinearOperator</span>.
 A LinearOperator must be a <a class="reference external" href="https://flax.readthedocs.io/en/latest/flax.struct.html"><code class="docutils literal notranslate"><span class="pre">flax</span></code> dataclass</a>, which is an immutable
@@ -547,9 +549,9 @@ run before executing a solve function (that will call matmul repeatedly).
 The <code class="docutils literal notranslate"><span class="pre">_solve</span></code> takes as first input the solve function, which is passed as a closure so it does not need to be marked
 as static (even though it is).  The x0 is an optional argument which must be accepted but can be ignored, and it is the last previous solution to the linear system.
 Optionally, one can also define the <code class="docutils literal notranslate"><span class="pre">to_dense</span></code> method.</p>
-</div>
-</div>
-<div class="section" id="the-preconditioner-function-api">
+</section>
+</section>
+<section id="the-preconditioner-function-api">
 <h2>The preconditioner function API<a class="headerlink" href="#the-preconditioner-function-api" title="Permalink to this headline">¶</a></h2>
 <p>The preconditioner function must have the following signature:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">preconditioner_function</span><span class="p">(</span><span class="nb">object</span><span class="p">,</span> <span class="n">gradient</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -563,8 +565,8 @@ x0 is an optional initial condition that might be ignored.</p>
 <p>The gradient might be a PyTree version or a dense ravelling of the PyTree. The result of the function should be a preconditioned gradient with the same format.
 Additional keyword argument can be present, and will in general be set through a closure or <code class="docutils literal notranslate"><span class="pre">functools.partial</span></code>, because this function will be called with the signature above.
 If you have a peculiar preconditioner, you can assume that <code class="docutils literal notranslate"><span class="pre">preconditioner_function</span></code> will be called only from your <code class="docutils literal notranslate"><span class="pre">preconditioner</span> <span class="pre">object</span></code>, but in general it is good practice respecting the interface above so that different functions can work with different objects.</p>
-</div>
-</div>
+</section>
+</section>
 
 
     </div>
@@ -580,7 +582,7 @@ If you have a peculiar preconditioner, you can assume that <code class="docutils
     </p>
     <p>
         &copy; Copyright 2019-2021, The Netket authors - All rights reserved.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
     </p>
   </div>
 </footer>

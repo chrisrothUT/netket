@@ -3,23 +3,24 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>netket.vqs.MCMixedState &#8212; netket v3.0 documentation</title>
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/jumbo-style.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/all.min.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/rtd_theme.css" />
-    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script src="../../../_static/js/rtd_theme.js"></script>
     <link rel="author" title="About these documents" href="../../../about.html" />
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -234,6 +235,7 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../../api.html">Public API: netket package</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#graph">Graph</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.AbstractGraph.html">netket.graph.AbstractGraph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Graph.html">netket.graph.Graph</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Edgeless.html">netket.graph.Edgeless</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Hypercube.html">netket.graph.Hypercube</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Lattice.html">netket.graph.Lattice</a></li>
@@ -359,7 +361,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.softmax.html">netket.nn.softmax</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.softplus.html">netket.nn.softplus</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.swish.html">netket.nn.swish</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.logcosh.html">netket.nn.logcosh</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.log_cosh.html">netket.nn.log_cosh</a></li>
 </ul>
 </li>
 </ul>
@@ -431,18 +433,30 @@
       </div>
     <div class="body col-md-9 content" role="main">
       
-  <div class="section" id="netket-vqs-mcmixedstate">
+  <section id="netket-vqs-mcmixedstate">
 <h1>netket.vqs.MCMixedState<a class="headerlink" href="#netket-vqs-mcmixedstate" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
-<dt id="netket.vqs.MCMixedState">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">netket.vqs.</span></code><code class="sig-name descname"><span class="pre">MCMixedState</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples_per_rank_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_discard_per_chain_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_discard_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler_seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/vqs/mc_mixed_state.html#MCMixedState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.vqs.MCMixedState" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">netket.vqs.base.VariationalMixedState</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">netket.vqs.mc_state.MCState</span></code></p>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">netket.vqs.</span></span><span class="sig-name descname"><span class="pre">MCMixedState</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples_per_rank_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_discard_per_chain_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_discard_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler_seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/vqs/mc_mixed_state.html#MCMixedState"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.vqs.MCMixedState" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">netket.vqs.base.VariationalMixedState</span></code>, <a class="reference internal" href="netket.vqs.MCState.html#netket.vqs.MCState" title="netket.vqs.mc_state.MCState"><code class="xref py py-class docutils literal notranslate"><span class="pre">netket.vqs.mc_state.MCState</span></code></a></p>
 <p>Variational State for a Mixed Variational Neural Quantum State.</p>
 <p>The state is sampled according to the provided sampler, and it’s diagonal is sampled
 according to another sampler.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sampler_diag</strong> (<a class="reference internal" href="../samplers/netket.sampler.Sampler.html#netket.sampler.Sampler" title="netket.sampler.base.Sampler"><em>netket.sampler.base.Sampler</em></a>) – </p></li>
+<li><p><strong>n_samples_diag</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a>) – </p></li>
+<li><p><strong>n_samples_per_rank_diag</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em>) – </p></li>
+<li><p><strong>n_discard_per_chain_diag</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em>) – </p></li>
+<li><p><strong>n_discard_diag</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em>) – </p></li>
+<li><p><strong>sampler_seed</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em>) – </p></li>
+</ul>
+</dd>
+</dl>
 <dl class="py method">
-<dt id="netket.vqs.MCMixedState.__init__">
-<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples_per_rank_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_discard_per_chain_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_discard_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler_seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/vqs/mc_mixed_state.html#MCMixedState.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.vqs.MCMixedState.__init__" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples_per_rank_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_discard_per_chain_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_discard_diag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampler_seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/vqs/mc_mixed_state.html#MCMixedState.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.vqs.MCMixedState.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Constructs the MCMixedState.
 Arguments are the same as <a class="reference internal" href="netket.vqs.MCState.html#netket.vqs.MCState" title="netket.vqs.MCState"><code class="xref py py-class docutils literal notranslate"><span class="pre">MCState</span></code></a>.</p>
 <dl class="field-list simple">
@@ -473,7 +487,7 @@ a non-standard init method.</p></li>
 <cite>model.apply(variables, σ)</cite>. specify only if your network has a non-standard apply method.</p></li>
 <li><p><strong>training_kwargs</strong> – a dict containing the optionaal keyword arguments to be passed to the apply_fun during training.
 Useful for example when you have a batchnorm layer that constructs the average/mean only during training.</p></li>
-<li><p><strong>sampler_diag</strong> (<em>Optional</em><em>[</em><em>netket.sampler.base.Sampler</em><em>]</em>) – </p></li>
+<li><p><strong>sampler_diag</strong> (<em>Optional</em><em>[</em><a class="reference internal" href="../samplers/netket.sampler.Sampler.html#netket.sampler.Sampler" title="netket.sampler.base.Sampler"><em>netket.sampler.base.Sampler</em></a><em>]</em>) – </p></li>
 <li><p><strong>n_discard_diag</strong> (<em>Optional</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em>) – </p></li>
 </ul>
 </dd>
@@ -482,8 +496,8 @@ Useful for example when you have a batchnorm layer that constructs the average/m
 
 <dl class="class-dl-groups">
 <dt>Attributes</dt><dd><dl class="py attribute">
-<dt id="netket.vqs.MCMixedState.chain_length">
-<code class="sig-name descname"><span class="pre">chain_length</span></code><a class="headerlink" href="#netket.vqs.MCMixedState.chain_length" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.chain_length">
+<span class="sig-name descname"><span class="pre">chain_length</span></span><a class="headerlink" href="#netket.vqs.MCMixedState.chain_length" title="Permalink to this definition">¶</a></dt>
 <dd><p>Length of the markov chain used for sampling configurations.</p>
 <p>If running under MPI, the total samples will be n_nodes * chain_length * n_batches.</p>
 <dl class="field-list simple">
@@ -494,8 +508,8 @@ Useful for example when you have a batchnorm layer that constructs the average/m
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="netket.vqs.MCMixedState.chain_length_diag">
-<code class="sig-name descname"><span class="pre">chain_length_diag</span></code><a class="headerlink" href="#netket.vqs.MCMixedState.chain_length_diag" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.chain_length_diag">
+<span class="sig-name descname"><span class="pre">chain_length_diag</span></span><a class="headerlink" href="#netket.vqs.MCMixedState.chain_length_diag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Length of the markov chain used for sampling the diagonal configurations.</p>
 <p>If running under MPI, the total samples will be n_nodes * chain_length * n_batches.</p>
 <dl class="field-list simple">
@@ -506,35 +520,35 @@ Useful for example when you have a batchnorm layer that constructs the average/m
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="netket.vqs.MCMixedState.diagonal">
-<code class="sig-name descname"><span class="pre">diagonal</span></code><a class="headerlink" href="#netket.vqs.MCMixedState.diagonal" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.diagonal">
+<span class="sig-name descname"><span class="pre">diagonal</span></span><a class="headerlink" href="#netket.vqs.MCMixedState.diagonal" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt id="netket.vqs.MCMixedState.hilbert">
-<code class="sig-name descname"><span class="pre">hilbert</span></code><a class="headerlink" href="#netket.vqs.MCMixedState.hilbert" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.hilbert">
+<span class="sig-name descname"><span class="pre">hilbert</span></span><a class="headerlink" href="#netket.vqs.MCMixedState.hilbert" title="Permalink to this definition">¶</a></dt>
 <dd><p>The descriptor of the Hilbert space
 on which this variational state is defined.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractHilbert</span></code></p>
+<dd class="field-odd"><p><a class="reference internal" href="../hilbert/netket.hilbert.AbstractHilbert.html#netket.hilbert.AbstractHilbert" title="netket.hilbert.abstract_hilbert.AbstractHilbert"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractHilbert</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="netket.vqs.MCMixedState.hilbert_physical">
-<code class="sig-name descname"><span class="pre">hilbert_physical</span></code><a class="headerlink" href="#netket.vqs.MCMixedState.hilbert_physical" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.hilbert_physical">
+<span class="sig-name descname"><span class="pre">hilbert_physical</span></span><a class="headerlink" href="#netket.vqs.MCMixedState.hilbert_physical" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractHilbert</span></code></p>
+<dd class="field-odd"><p><a class="reference internal" href="../hilbert/netket.hilbert.AbstractHilbert.html#netket.hilbert.AbstractHilbert" title="netket.hilbert.abstract_hilbert.AbstractHilbert"><code class="xref py py-class docutils literal notranslate"><span class="pre">AbstractHilbert</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="netket.vqs.MCMixedState.model_state">
-<code class="sig-name descname"><span class="pre">model_state</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#netket.vqs.MCMixedState.model_state" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.model_state">
+<span class="sig-name descname"><span class="pre">model_state</span></span><em class="property"><span class="pre">:</span> <span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#netket.vqs.MCMixedState.model_state" title="Permalink to this definition">¶</a></dt>
 <dd><p>An Optional PyTree encoding a mutable state of the model that is not trained.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -544,8 +558,8 @@ on which this variational state is defined.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="netket.vqs.MCMixedState.n_discard">
-<code class="sig-name descname"><span class="pre">n_discard</span></code><a class="headerlink" href="#netket.vqs.MCMixedState.n_discard" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.n_discard">
+<span class="sig-name descname"><span class="pre">n_discard</span></span><a class="headerlink" href="#netket.vqs.MCMixedState.n_discard" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use <cite>n_discard_per_chain</cite> instead.</p>
 <p>Number of discarded samples at the beginning of the markov chain.</p>
 <dl class="field-list simple">
@@ -559,8 +573,8 @@ on which this variational state is defined.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="netket.vqs.MCMixedState.n_discard_diag">
-<code class="sig-name descname"><span class="pre">n_discard_diag</span></code><a class="headerlink" href="#netket.vqs.MCMixedState.n_discard_diag" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.n_discard_diag">
+<span class="sig-name descname"><span class="pre">n_discard_diag</span></span><a class="headerlink" href="#netket.vqs.MCMixedState.n_discard_diag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Use <cite>n_discard_per_chain_diag</cite> instead.</p>
 <p>Number of discarded samples at the beginning of the markov chain.</p>
 <dl class="field-list simple">
@@ -574,8 +588,8 @@ on which this variational state is defined.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="netket.vqs.MCMixedState.n_discard_per_chain">
-<code class="sig-name descname"><span class="pre">n_discard_per_chain</span></code><a class="headerlink" href="#netket.vqs.MCMixedState.n_discard_per_chain" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.n_discard_per_chain">
+<span class="sig-name descname"><span class="pre">n_discard_per_chain</span></span><a class="headerlink" href="#netket.vqs.MCMixedState.n_discard_per_chain" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of discarded samples at the beginning of the markov chain.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -585,8 +599,8 @@ on which this variational state is defined.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="netket.vqs.MCMixedState.n_discard_per_chain_diag">
-<code class="sig-name descname"><span class="pre">n_discard_per_chain_diag</span></code><a class="headerlink" href="#netket.vqs.MCMixedState.n_discard_per_chain_diag" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.n_discard_per_chain_diag">
+<span class="sig-name descname"><span class="pre">n_discard_per_chain_diag</span></span><a class="headerlink" href="#netket.vqs.MCMixedState.n_discard_per_chain_diag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of discarded samples at the beginning of the markov chain used to
 sample the diagonal of this mixed state.</p>
 <dl class="field-list simple">
@@ -597,8 +611,8 @@ sample the diagonal of this mixed state.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="netket.vqs.MCMixedState.n_parameters">
-<code class="sig-name descname"><span class="pre">n_parameters</span></code><a class="headerlink" href="#netket.vqs.MCMixedState.n_parameters" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.n_parameters">
+<span class="sig-name descname"><span class="pre">n_parameters</span></span><a class="headerlink" href="#netket.vqs.MCMixedState.n_parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>The total number of parameters in the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -608,8 +622,8 @@ sample the diagonal of this mixed state.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="netket.vqs.MCMixedState.n_samples">
-<code class="sig-name descname"><span class="pre">n_samples</span></code><a class="headerlink" href="#netket.vqs.MCMixedState.n_samples" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.n_samples">
+<span class="sig-name descname"><span class="pre">n_samples</span></span><a class="headerlink" href="#netket.vqs.MCMixedState.n_samples" title="Permalink to this definition">¶</a></dt>
 <dd><p>The total number of samples generated at every sampling step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -619,8 +633,8 @@ sample the diagonal of this mixed state.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="netket.vqs.MCMixedState.n_samples_diag">
-<code class="sig-name descname"><span class="pre">n_samples_diag</span></code><a class="headerlink" href="#netket.vqs.MCMixedState.n_samples_diag" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.n_samples_diag">
+<span class="sig-name descname"><span class="pre">n_samples_diag</span></span><a class="headerlink" href="#netket.vqs.MCMixedState.n_samples_diag" title="Permalink to this definition">¶</a></dt>
 <dd><p>The total number of samples generated at every sampling step
 when sampling the diagonal of this mixed state.</p>
 <dl class="field-list simple">
@@ -631,8 +645,8 @@ when sampling the diagonal of this mixed state.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="netket.vqs.MCMixedState.n_samples_per_rank">
-<code class="sig-name descname"><span class="pre">n_samples_per_rank</span></code><a class="headerlink" href="#netket.vqs.MCMixedState.n_samples_per_rank" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.n_samples_per_rank">
+<span class="sig-name descname"><span class="pre">n_samples_per_rank</span></span><a class="headerlink" href="#netket.vqs.MCMixedState.n_samples_per_rank" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of samples generated on one MPI rank at every sampling step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -642,8 +656,8 @@ when sampling the diagonal of this mixed state.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="netket.vqs.MCMixedState.parameters">
-<code class="sig-name descname"><span class="pre">parameters</span></code><a class="headerlink" href="#netket.vqs.MCMixedState.parameters" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.parameters">
+<span class="sig-name descname"><span class="pre">parameters</span></span><a class="headerlink" href="#netket.vqs.MCMixedState.parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>The pytree of the parameters of the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -653,31 +667,31 @@ when sampling the diagonal of this mixed state.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="netket.vqs.MCMixedState.sampler">
-<code class="sig-name descname"><span class="pre">sampler</span></code><a class="headerlink" href="#netket.vqs.MCMixedState.sampler" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.sampler">
+<span class="sig-name descname"><span class="pre">sampler</span></span><a class="headerlink" href="#netket.vqs.MCMixedState.sampler" title="Permalink to this definition">¶</a></dt>
 <dd><p>The Monte Carlo sampler used by this Monte Carlo variational state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code></p>
+<dd class="field-odd"><p><a class="reference internal" href="../samplers/netket.sampler.Sampler.html#netket.sampler.Sampler" title="netket.sampler.base.Sampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="netket.vqs.MCMixedState.sampler_diag">
-<code class="sig-name descname"><span class="pre">sampler_diag</span></code><a class="headerlink" href="#netket.vqs.MCMixedState.sampler_diag" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.sampler_diag">
+<span class="sig-name descname"><span class="pre">sampler_diag</span></span><a class="headerlink" href="#netket.vqs.MCMixedState.sampler_diag" title="Permalink to this definition">¶</a></dt>
 <dd><p>The Monte Carlo sampler used by this Monte Carlo variational state to
 sample the diagonal.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code></p>
+<dd class="field-odd"><p><a class="reference internal" href="../samplers/netket.sampler.Sampler.html#netket.sampler.Sampler" title="netket.sampler.base.Sampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="netket.vqs.MCMixedState.samples">
-<code class="sig-name descname"><span class="pre">samples</span></code><a class="headerlink" href="#netket.vqs.MCMixedState.samples" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.samples">
+<span class="sig-name descname"><span class="pre">samples</span></span><a class="headerlink" href="#netket.vqs.MCMixedState.samples" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the set of cached samples.</p>
 <p>The samples returnede are guaranteed valid for the current state of
 the variational state. If no cached parameters are available, then
@@ -691,8 +705,8 @@ they are sampled first and then cached.</p>
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="netket.vqs.MCMixedState.variables">
-<code class="sig-name descname"><span class="pre">variables</span></code><a class="headerlink" href="#netket.vqs.MCMixedState.variables" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.variables">
+<span class="sig-name descname"><span class="pre">variables</span></span><a class="headerlink" href="#netket.vqs.MCMixedState.variables" title="Permalink to this definition">¶</a></dt>
 <dd><p>The PyTreee containing the paramters and state of the model,
 used when evaluating it.</p>
 <dl class="field-list simple">
@@ -706,8 +720,8 @@ used when evaluating it.</p>
 </dl>
 <dl class="class-dl-groups">
 <dt>Methods</dt><dd><dl class="py method">
-<dt id="netket.vqs.MCMixedState.evaluate">
-<code class="sig-name descname"><span class="pre">evaluate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">σ</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.vqs.MCMixedState.evaluate" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.evaluate">
+<span class="sig-name descname"><span class="pre">evaluate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">σ</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.vqs.MCMixedState.evaluate" title="Permalink to this definition">¶</a></dt>
 <dd><p>DEPRECATED: use log_value instead.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -720,8 +734,8 @@ used when evaluating it.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="netket.vqs.MCMixedState.expect">
-<code class="sig-name descname"><span class="pre">expect</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ô</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.vqs.MCMixedState.expect" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.expect">
+<span class="sig-name descname"><span class="pre">expect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ô</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.vqs.MCMixedState.expect" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="simple">
 <dt>Estimates the quantum expectation value for a given operator O.</dt><dd><p>In the case of a pure state $psi$, this is $&lt;O&gt;= &lt;Psi|O|Psi&gt;/&lt;Psi|Psi&gt;$
 otherwise for a mixed state $rho$, this is $&lt;O&gt; = Tr[rho hat{O}/Tr[rho]$.</p>
@@ -731,7 +745,7 @@ otherwise for a mixed state $rho$, this is $&lt;O&gt; = Tr[rho hat{O}/Tr[rho]$.<
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>Ô</strong> – the operator O.</p></li>
-<li><p><strong>Ô</strong> (<em>netket.operator._abstract_operator.AbstractOperator</em>) – </p></li>
+<li><p><strong>Ô</strong> (<a class="reference internal" href="../operator/netket.operator.AbstractOperator.html#netket.operator.AbstractOperator" title="netket.operator._abstract_operator.AbstractOperator"><em>netket.operator._abstract_operator.AbstractOperator</em></a>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -744,8 +758,8 @@ otherwise for a mixed state $rho$, this is $&lt;O&gt; = Tr[rho hat{O}/Tr[rho]$.<
 </dd></dl>
 
 <dl class="py method">
-<dt id="netket.vqs.MCMixedState.expect_and_grad">
-<code class="sig-name descname"><span class="pre">expect_and_grad</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ô</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mutable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_hermitian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.vqs.MCMixedState.expect_and_grad" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.expect_and_grad">
+<span class="sig-name descname"><span class="pre">expect_and_grad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ô</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mutable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_hermitian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.vqs.MCMixedState.expect_and_grad" title="Permalink to this definition">¶</a></dt>
 <dd><p>Estimates both the gradient of the quantum expectation value of a given operator O.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -760,7 +774,7 @@ to implement BatchNorm. Consult
 for a more in-depth exaplanation).</p></li>
 <li><p><strong>is_hermitian</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>]) – optional override for whever to use or not the hermitian logic. By default
 it’s automatically detected.</p></li>
-<li><p><strong>Ô</strong> (<em>netket.operator._abstract_operator.AbstractOperator</em>) – </p></li>
+<li><p><strong>Ô</strong> (<a class="reference internal" href="../operator/netket.operator.AbstractOperator.html#netket.operator.AbstractOperator" title="netket.operator._abstract_operator.AbstractOperator"><em>netket.operator._abstract_operator.AbstractOperator</em></a>) – </p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -774,34 +788,34 @@ An estimation of the average gradient of the quantum expectation value &lt;O&gt;
 </dd></dl>
 
 <dl class="py method">
-<dt id="netket.vqs.MCMixedState.expect_and_grad_operator">
-<code class="sig-name descname"><span class="pre">expect_and_grad_operator</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ô</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_hermitian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/vqs/mc_mixed_state.html#MCMixedState.expect_and_grad_operator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.vqs.MCMixedState.expect_and_grad_operator" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.expect_and_grad_operator">
+<span class="sig-name descname"><span class="pre">expect_and_grad_operator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ô</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_hermitian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/vqs/mc_mixed_state.html#MCMixedState.expect_and_grad_operator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.vqs.MCMixedState.expect_and_grad_operator" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Stats</span></code>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
 </dd>
 <dt class="field-even">Parameters</dt>
-<dd class="field-even"><p><strong>Ô</strong> (<em>netket.operator._abstract_operator.AbstractOperator</em>) – </p>
+<dd class="field-even"><p><strong>Ô</strong> (<a class="reference internal" href="../operator/netket.operator.AbstractOperator.html#netket.operator.AbstractOperator" title="netket.operator._abstract_operator.AbstractOperator"><em>netket.operator._abstract_operator.AbstractOperator</em></a>) – </p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="netket.vqs.MCMixedState.expect_operator">
-<code class="sig-name descname"><span class="pre">expect_operator</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ô</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/vqs/mc_mixed_state.html#MCMixedState.expect_operator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.vqs.MCMixedState.expect_operator" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.expect_operator">
+<span class="sig-name descname"><span class="pre">expect_operator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ô</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/vqs/mc_mixed_state.html#MCMixedState.expect_operator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.vqs.MCMixedState.expect_operator" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Stats</span></code></p>
 </dd>
 <dt class="field-even">Parameters</dt>
-<dd class="field-even"><p><strong>Ô</strong> (<em>netket.operator._abstract_operator.AbstractOperator</em>) – </p>
+<dd class="field-even"><p><strong>Ô</strong> (<a class="reference internal" href="../operator/netket.operator.AbstractOperator.html#netket.operator.AbstractOperator" title="netket.operator._abstract_operator.AbstractOperator"><em>netket.operator._abstract_operator.AbstractOperator</em></a>) – </p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="netket.vqs.MCMixedState.grad">
-<code class="sig-name descname"><span class="pre">grad</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ô</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_hermitian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mutable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.vqs.MCMixedState.grad" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.grad">
+<span class="sig-name descname"><span class="pre">grad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ô</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_hermitian</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mutable</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.vqs.MCMixedState.grad" title="Permalink to this definition">¶</a></dt>
 <dd><p>Estimates the gradient of the quantum expectation value of a given operator O.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -822,27 +836,27 @@ it’s automatically detected.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="netket.vqs.MCMixedState.grad_operator">
-<code class="sig-name descname"><span class="pre">grad_operator</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ô</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.vqs.MCMixedState.grad_operator" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.grad_operator">
+<span class="sig-name descname"><span class="pre">grad_operator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Ô</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.vqs.MCMixedState.grad_operator" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Stats</span></code></p>
 </dd>
 <dt class="field-even">Parameters</dt>
-<dd class="field-even"><p><strong>Ô</strong> (<em>netket.operator._abstract_operator.AbstractOperator</em>) – </p>
+<dd class="field-even"><p><strong>Ô</strong> (<a class="reference internal" href="../operator/netket.operator.AbstractOperator.html#netket.operator.AbstractOperator" title="netket.operator._abstract_operator.AbstractOperator"><em>netket.operator._abstract_operator.AbstractOperator</em></a>) – </p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="netket.vqs.MCMixedState.init">
-<code class="sig-name descname"><span class="pre">init</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.vqs.MCMixedState.init" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.init">
+<span class="sig-name descname"><span class="pre">init</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dtype</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.vqs.MCMixedState.init" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialises the variational parameters of the variational state.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="netket.vqs.MCMixedState.init_parameters">
-<code class="sig-name descname"><span class="pre">init_parameters</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_fun</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.vqs.MCMixedState.init_parameters" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.init_parameters">
+<span class="sig-name descname"><span class="pre">init_parameters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">init_fun</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.vqs.MCMixedState.init_parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Re-initializes all the parameters with the provided initialization function, defaulting to
 the normal distribution of standard deviation 0.01.</p>
 <div class="admonition warning">
@@ -853,7 +867,7 @@ model. DO NOT SPECIFY IT INSIDE THE INIT FUNCTION</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>init_fun</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.20)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>, <a class="reference external" href="https://jax.readthedocs.io/en/latest/jax.numpy.html#jaxlib.xla_extension.DeviceArray" title="(in JAX)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeviceArray</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Tracer</span></code>]]]) – a jax initializer such as <span class="xref std std-ref">netket.nn.initializers.normal</span>. Must be a Callable
+<li><p><strong>init_fun</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>[[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>, <a class="reference external" href="https://jax.readthedocs.io/en/latest/jax.numpy.html#jaxlib.xla_extension.DeviceArray" title="(in JAX)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeviceArray</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Tracer</span></code>]]]) – a jax initializer such as <span class="xref std std-ref">netket.nn.initializers.normal</span>. Must be a Callable
 taking 3 inputs, the jax PRNG key, the shape and the dtype, and outputting an array with
 the valid dtype and shape. If left unspecified, defaults to <code class="code docutils literal notranslate"><span class="pre">netket.nn.initializers.normal(stddev=0.01)</span></code></p></li>
 <li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]) – Optional seed to be used. The seed is synced across all MPI processes. If unspecified, uses
@@ -864,8 +878,8 @@ a random seed.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="netket.vqs.MCMixedState.log_value">
-<code class="sig-name descname"><span class="pre">log_value</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">σ</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.vqs.MCMixedState.log_value" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.log_value">
+<span class="sig-name descname"><span class="pre">log_value</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">σ</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.vqs.MCMixedState.log_value" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluate the variational state for a batch of states and returns
 the logarithm of the amplitude of the quantum state. For pure states,
 this is <span class="math notranslate nohighlight">\(log(&lt;σ|ψ&gt;)\)</span>, whereas for mixed states this is
@@ -885,8 +899,8 @@ are obtained as <code class="code docutils literal notranslate"><span class="pre
 </dd></dl>
 
 <dl class="py method">
-<dt id="netket.vqs.MCMixedState.quantum_geometric_tensor">
-<code class="sig-name descname"><span class="pre">quantum_geometric_tensor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qgt_T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">QGTAuto()</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.vqs.MCMixedState.quantum_geometric_tensor" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.quantum_geometric_tensor">
+<span class="sig-name descname"><span class="pre">quantum_geometric_tensor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">qgt_T</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">QGTAuto()</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.vqs.MCMixedState.quantum_geometric_tensor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes an estimate of the quantum geometric tensor G_ij.
 This function returns a linear operator that can be used to apply G_ij to a given vector
 or can be converted to a full matrix.</p>
@@ -904,15 +918,15 @@ or can be converted to a full matrix.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="netket.vqs.MCMixedState.reset">
-<code class="sig-name descname"><span class="pre">reset</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/vqs/mc_mixed_state.html#MCMixedState.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.vqs.MCMixedState.reset" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.reset">
+<span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/vqs/mc_mixed_state.html#MCMixedState.reset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.vqs.MCMixedState.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resets the internal cache of th variational state.
 Called automatically when the parameters/state is updated.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="netket.vqs.MCMixedState.sample">
-<code class="sig-name descname"><span class="pre">sample</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chain_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_discard_per_chain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.vqs.MCMixedState.sample" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.sample">
+<span class="sig-name descname"><span class="pre">sample</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chain_length</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_discard_per_chain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.vqs.MCMixedState.sample" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sample a certain number of configurations.</p>
 <p>If one among chain_leength or n_samples is defined, that number of samples
 are gen erated. Otherwise the value set internally is used.</p>
@@ -931,8 +945,8 @@ are gen erated. Otherwise the value set internally is used.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="netket.vqs.MCMixedState.to_array">
-<code class="sig-name descname"><span class="pre">to_array</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.vqs.MCMixedState.to_array" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.to_array">
+<span class="sig-name descname"><span class="pre">to_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.vqs.MCMixedState.to_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the dense-vector representation of this state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -949,8 +963,8 @@ basis.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="netket.vqs.MCMixedState.to_matrix">
-<code class="sig-name descname"><span class="pre">to_matrix</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/vqs/mc_mixed_state.html#MCMixedState.to_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.vqs.MCMixedState.to_matrix" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.vqs.MCMixedState.to_matrix">
+<span class="sig-name descname"><span class="pre">to_matrix</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">normalize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/vqs/mc_mixed_state.html#MCMixedState.to_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.vqs.MCMixedState.to_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the dense-matrix representation of this operator.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -970,7 +984,7 @@ basis.</p>
 </dl>
 </dd></dl>
 
-</div>
+</section>
 
 
     </div>
@@ -986,7 +1000,7 @@ basis.</p>
     </p>
     <p>
         &copy; Copyright 2019-2021, The Netket authors - All rights reserved.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
     </p>
   </div>
 </footer>

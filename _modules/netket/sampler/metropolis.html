@@ -5,15 +5,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>netket.sampler.metropolis &#8212; netket v3.0 documentation</title>
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/jumbo-style.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/all.min.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/rtd_theme.css" />
-    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
@@ -116,12 +116,20 @@
 <span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">jnp</span>
 <span class="kn">from</span> <span class="nn">jax.experimental</span> <span class="kn">import</span> <span class="n">loops</span>
 
-<span class="kn">from</span> <span class="nn">netket.hilbert</span> <span class="kn">import</span> <span class="n">AbstractHilbert</span>
 <span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">mpi</span>
 <span class="kn">from</span> <span class="nn">netket.utils.types</span> <span class="kn">import</span> <span class="n">PyTree</span><span class="p">,</span> <span class="n">PRNGKeyT</span>
 
 <span class="kn">from</span> <span class="nn">netket.utils.deprecation</span> <span class="kn">import</span> <span class="n">deprecated</span><span class="p">,</span> <span class="n">warn_deprecation</span>
 <span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">struct</span>
+
+<span class="c1"># TODO remove</span>
+<span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">wraps_legacy</span>
+<span class="kn">from</span> <span class="nn">netket.legacy.machine</span> <span class="kn">import</span> <span class="n">AbstractMachine</span>
+<span class="kn">from</span> <span class="nn">netket.legacy.sampler</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">MetropolisLocal</span> <span class="k">as</span> <span class="n">LegacyMetropolisLocal</span><span class="p">,</span>
+    <span class="n">MetropolisExchange</span> <span class="k">as</span> <span class="n">LegacyMetropolisExchange</span><span class="p">,</span>
+    <span class="n">MetropolisHamiltonian</span> <span class="k">as</span> <span class="n">LegacyMetropolisHamiltonian</span><span class="p">,</span>
+<span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">Sampler</span><span class="p">,</span> <span class="n">SamplerState</span>
 
@@ -250,8 +258,8 @@
 
     <span class="nd">@property</span>
     <span class="nd">@deprecated</span><span class="p">(</span>
-        <span class="sd">&quot;&quot;&quot;Please use the attribute `.acceptance` instead of </span>
-<span class="sd">        `.acceptance_ratio`. The new attribute `.acceptance` returns the </span>
+        <span class="sd">&quot;&quot;&quot;Please use the attribute `.acceptance` instead of</span>
+<span class="sd">        `.acceptance_ratio`. The new attribute `.acceptance` returns the</span>
 <span class="sd">        acceptance ratio ∈ [0,1], instead of the current `acceptance_ratio`</span>
 <span class="sd">        returning a percentage, which is a bug.&quot;&quot;&quot;</span>
     <span class="p">)</span>
@@ -292,7 +300,7 @@
 
 <div class="viewcode-block" id="MetropolisSampler"><a class="viewcode-back" href="../../../docs/_generated/samplers/netket.sampler.MetropolisSampler.html#netket.sampler.MetropolisSampler">[docs]</a><span class="nd">@struct</span><span class="o">.</span><span class="n">dataclass</span>
 <span class="k">class</span> <span class="nc">MetropolisSampler</span><span class="p">(</span><span class="n">Sampler</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Metropolis-Hastings sampler for an Hilbert space according to a specific transition rule.</span>
 
 <span class="sd">    The transition rule is used to generate a proposed state :math:`s^\prime`, starting from the</span>
@@ -300,7 +308,7 @@
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        A(s \\rightarrow s^\\prime) = \\mathrm{min} \\left( 1,\\frac{P(s^\\prime)}{P(s)} F(e^{L(s,s^\\prime)}) \\right) ,</span>
+<span class="sd">        A(s \rightarrow s^\prime) = \mathrm{min} \left( 1,\frac{P(s^\prime)}{P(s)} F(e^{L(s,s^\prime)}) \right) ,</span>
 
 <span class="sd">    where the probability being sampled from is :math:`P(s)=|M(s)|^p. Here ::math::`M(s)` is a</span>
 <span class="sd">    user-provided function (the machine), :math:`p` is also user-provided with default value :math:`p=2`,</span>
@@ -317,7 +325,7 @@
     <span class="sd">&quot;&quot;&quot;If True resets the chain state when reset is called (every new sampling).&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__pre_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hilbert</span><span class="p">,</span> <span class="n">rule</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructs a Metropolis Sampler.</span>
 
 <span class="sd">        Args:</span>
@@ -463,21 +471,14 @@
         <span class="p">)</span></div>
 
 
-<span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">wraps_legacy</span>
-<span class="kn">from</span> <span class="nn">netket.legacy.machine</span> <span class="kn">import</span> <span class="n">AbstractMachine</span>
-
-<span class="kn">from</span> <span class="nn">.rules</span> <span class="kn">import</span> <span class="n">LocalRule</span>
-<span class="kn">from</span> <span class="nn">netket.legacy.sampler</span> <span class="kn">import</span> <span class="n">MetropolisLocal</span> <span class="k">as</span> <span class="n">LegacyMetropolisLocal</span>
-
-
 <div class="viewcode-block" id="MetropolisLocal"><a class="viewcode-back" href="../../../docs/_generated/samplers/netket.sampler.MetropolisLocal.html#netket.sampler.MetropolisLocal">[docs]</a><span class="nd">@wraps_legacy</span><span class="p">(</span><span class="n">LegacyMetropolisLocal</span><span class="p">,</span> <span class="s2">&quot;machine&quot;</span><span class="p">,</span> <span class="n">AbstractMachine</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">MetropolisLocal</span><span class="p">(</span><span class="n">hilbert</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MetropolisSampler</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sampler acting on one local degree of freedom.</span>
 
 <span class="sd">    This sampler acts locally only on one local degree of freedom :math:`s_i`,</span>
 <span class="sd">    and proposes a new state: :math:`s_1 \dots s^\prime_i \dots s_N`,</span>
-<span class="sd">    where :math:`s^\prime_i \\neq s_i`.</span>
+<span class="sd">    where :math:`s^\prime_i \neq s_i`.</span>
 
 <span class="sd">    The transition probability associated to this</span>
 <span class="sd">    sampler can be decomposed into two steps:</span>
@@ -506,11 +507,9 @@
 <span class="sd">        machine_pow: The power to which the machine should be exponentiated to generate the pdf (default = 2).</span>
 <span class="sd">        dtype: The dtype of the statees sampled (default = np.float32).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">.rules</span> <span class="kn">import</span> <span class="n">LocalRule</span>
+
     <span class="k">return</span> <span class="n">MetropolisSampler</span><span class="p">(</span><span class="n">hilbert</span><span class="p">,</span> <span class="n">LocalRule</span><span class="p">(),</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
-
-
-<span class="kn">from</span> <span class="nn">.rules</span> <span class="kn">import</span> <span class="n">ExchangeRule</span>
-<span class="kn">from</span> <span class="nn">netket.legacy.sampler</span> <span class="kn">import</span> <span class="n">MetropolisExchange</span> <span class="k">as</span> <span class="n">LegacyMetropolisExchange</span>
 
 
 <div class="viewcode-block" id="MetropolisExchange"><a class="viewcode-back" href="../../../docs/_generated/samplers/netket.sampler.MetropolisExchange.html#netket.sampler.MetropolisExchange">[docs]</a><span class="nd">@wraps_legacy</span><span class="p">(</span><span class="n">LegacyMetropolisExchange</span><span class="p">,</span> <span class="s2">&quot;machine&quot;</span><span class="p">,</span> <span class="n">AbstractMachine</span><span class="p">)</span>
@@ -567,12 +566,10 @@
 <span class="sd">          &gt;&gt;&gt; print(sa)</span>
 <span class="sd">          MetropolisSampler(rule = ExchangeRule(# of clusters: 200), n_chains = 16, machine_power = 2, n_sweeps = 100, dtype = &lt;class &#39;numpy.float64&#39;&gt;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">.rules</span> <span class="kn">import</span> <span class="n">ExchangeRule</span>
+
     <span class="n">rule</span> <span class="o">=</span> <span class="n">ExchangeRule</span><span class="p">(</span><span class="n">clusters</span><span class="o">=</span><span class="n">clusters</span><span class="p">,</span> <span class="n">graph</span><span class="o">=</span><span class="n">graph</span><span class="p">,</span> <span class="n">d_max</span><span class="o">=</span><span class="n">d_max</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">MetropolisSampler</span><span class="p">(</span><span class="n">hilbert</span><span class="p">,</span> <span class="n">rule</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
-
-
-<span class="kn">from</span> <span class="nn">.rules</span> <span class="kn">import</span> <span class="n">HamiltonianRule</span>
-<span class="kn">from</span> <span class="nn">netket.legacy.sampler</span> <span class="kn">import</span> <span class="n">MetropolisHamiltonian</span> <span class="k">as</span> <span class="n">LegacyMetropolisHamiltonian</span>
 
 
 <div class="viewcode-block" id="MetropolisHamiltonian"><a class="viewcode-back" href="../../../docs/_generated/samplers/netket.sampler.MetropolisHamiltonian.html#netket.sampler.MetropolisHamiltonian">[docs]</a><span class="nd">@wraps_legacy</span><span class="p">(</span><span class="n">LegacyMetropolisHamiltonian</span><span class="p">,</span> <span class="s2">&quot;machine&quot;</span><span class="p">,</span> <span class="n">AbstractMachine</span><span class="p">)</span>
@@ -622,6 +619,8 @@
 <span class="sd">       &gt;&gt;&gt; print(sa)</span>
 <span class="sd">       MetropolisSampler(rule = HamiltonianRule(Ising(J=1.0, h=1.0; dim=100)), n_chains = 16, machine_power = 2, n_sweeps = 100, dtype = &lt;class &#39;numpy.float64&#39;&gt;)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">.rules</span> <span class="kn">import</span> <span class="n">HamiltonianRule</span>
+
     <span class="n">rule</span> <span class="o">=</span> <span class="n">HamiltonianRule</span><span class="p">(</span><span class="n">hamiltonian</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">MetropolisSampler</span><span class="p">(</span><span class="n">hilbert</span><span class="p">,</span> <span class="n">rule</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 </pre></div>
@@ -639,7 +638,7 @@
     </p>
     <p>
         &copy; Copyright 2019-2021, The Netket authors - All rights reserved.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
     </p>
   </div>
 </footer>

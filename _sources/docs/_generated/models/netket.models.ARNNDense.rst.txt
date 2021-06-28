@@ -13,7 +13,6 @@
    .. rst-class:: class-dl-groups
 
    Attributes
-      .. autoattribute:: ARNNDense.eps
       .. autoattribute:: ARNNDense.name
       .. autoattribute:: ARNNDense.parent
       .. autoattribute:: ARNNDense.precision

@@ -5,15 +5,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>netket.driver.vmc &#8212; netket v3.0 documentation</title>
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/jumbo-style.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/all.min.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/rtd_theme.css" />
-    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
@@ -110,20 +110,21 @@
 <span class="c1"># See the License for the specific language governing permissions and</span>
 <span class="c1"># limitations under the License.</span>
 
-<span class="kn">import</span> <span class="nn">math</span>
-
 <span class="kn">import</span> <span class="nn">jax</span>
 <span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
-<span class="kn">from</span> <span class="nn">jax.tree_util</span> <span class="kn">import</span> <span class="n">tree_map</span>
 
+<span class="kn">from</span> <span class="nn">textwrap</span> <span class="kn">import</span> <span class="n">dedent</span>
+
+<span class="kn">from</span> <span class="nn">netket.utils.types</span> <span class="kn">import</span> <span class="n">PyTree</span>
+<span class="kn">from</span> <span class="nn">netket.operator</span> <span class="kn">import</span> <span class="n">AbstractOperator</span>
 <span class="kn">from</span> <span class="nn">netket.stats</span> <span class="kn">import</span> <span class="n">Stats</span>
 <span class="kn">from</span> <span class="nn">netket.vqs</span> <span class="kn">import</span> <span class="n">MCState</span>
 <span class="kn">from</span> <span class="nn">netket.optimizer</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">identity_preconditioner</span><span class="p">,</span>
-    <span class="n">LinearPreconditioner</span><span class="p">,</span>
     <span class="n">PreconditionerT</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">warn_deprecation</span>
+
 
 <span class="kn">from</span> <span class="nn">.vmc_common</span> <span class="kn">import</span> <span class="n">info</span>
 <span class="kn">from</span> <span class="nn">.abstract_variational_driver</span> <span class="kn">import</span> <span class="n">AbstractVariationalDriver</span>
@@ -137,12 +138,12 @@
     <span class="c1"># TODO docstring</span>
 <div class="viewcode-block" id="VMC.__init__"><a class="viewcode-back" href="../../../docs/_generated/driver/netket.driver.VMC.html#netket.driver.VMC.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">hamiltonian</span><span class="p">,</span>
+        <span class="n">hamiltonian</span><span class="p">:</span> <span class="n">AbstractOperator</span><span class="p">,</span>
         <span class="n">optimizer</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">,</span>
         <span class="n">variational_state</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">preconditioner</span><span class="p">:</span> <span class="n">PreconditionerT</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">sr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">sr</span><span class="p">:</span> <span class="n">PreconditionerT</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">sr_restart</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
@@ -164,10 +165,13 @@
 
         <span class="k">if</span> <span class="n">variational_state</span><span class="o">.</span><span class="n">hilbert</span> <span class="o">!=</span> <span class="n">hamiltonian</span><span class="o">.</span><span class="n">hilbert</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;the variational_state has hilbert space </span><span class="si">{</span><span class="n">variational_state</span><span class="o">.</span><span class="n">hilbert</span><span class="si">}</span><span class="s2"> </span>
-<span class="s2">                                (this is normally defined by the hilbert space in the sampler), but</span>
-<span class="s2">                                the hamiltonian has hilbert space </span><span class="si">{</span><span class="n">hamiltonian</span><span class="o">.</span><span class="n">hilbert</span><span class="si">}</span><span class="s2">. </span>
-<span class="s2">                                The two should match.&quot;&quot;&quot;</span>
+                <span class="n">dedent</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;&quot;&quot;the variational_state has hilbert space </span><span class="si">{</span><span class="n">variational_state</span><span class="o">.</span><span class="n">hilbert</span><span class="si">}</span><span class="s2"></span>
+<span class="s2">                    (this is normally defined by the hilbert space in the sampler), but</span>
+<span class="s2">                    the hamiltonian has hilbert space </span><span class="si">{</span><span class="n">hamiltonian</span><span class="o">.</span><span class="n">hilbert</span><span class="si">}</span><span class="s2">.</span>
+<span class="s2">                    The two should match.</span>
+<span class="s2">                    &quot;&quot;&quot;</span>
+                <span class="p">)</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">sr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -279,7 +283,7 @@
     </p>
     <p>
         &copy; Copyright 2019-2021, The Netket authors - All rights reserved.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
     </p>
   </div>
 </footer>

@@ -3,17 +3,18 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Getting Started &#8212; netket v3.0 documentation</title>
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../_static/jumbo-style.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/all.min.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/rtd_theme.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
@@ -23,7 +24,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Change Log" href="changelog.html" />
-    <link rel="prev" title="&lt;no title&gt;" href="../index.html" />
+    <link rel="prev" title="NetKet" href="../index.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -232,6 +233,7 @@
 <li class="toctree-l1"><a class="reference internal" href="api.html">Public API: netket package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api.html#graph">Graph</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.AbstractGraph.html">netket.graph.AbstractGraph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Graph.html">netket.graph.Graph</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Edgeless.html">netket.graph.Edgeless</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Hypercube.html">netket.graph.Hypercube</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Lattice.html">netket.graph.Lattice</a></li>
@@ -357,7 +359,7 @@
 <li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.softmax.html">netket.nn.softmax</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.softplus.html">netket.nn.softplus</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.swish.html">netket.nn.swish</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.logcosh.html">netket.nn.logcosh</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.log_cosh.html">netket.nn.log_cosh</a></li>
 </ul>
 </li>
 </ul>
@@ -429,11 +431,11 @@
       </div>
     <div class="body col-md-9 content" role="main">
       
-  <div class="section" id="getting-started">
+  <section id="getting-started">
 <h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
 <p>Welcome to the documentation for Netket 3.0 (alpha).</p>
 <p>Please read the release notes to see what has changed since the last release.</p>
-<div class="section" id="installation-and-requirements">
+<section id="installation-and-requirements">
 <h2>Installation and requirements<a class="headerlink" href="#installation-and-requirements" title="Permalink to this headline">¶</a></h2>
 <p>Netket v3.0 requires <cite>python&gt;= 3.8</cite> and optionally a recent MPI install.
 To install, run one of the two following commands</p>
@@ -453,7 +455,7 @@ At the time of writing, Netket was tested with X=0.1.62 and cuda=111</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -e <span class="s2">&quot;import netket; print(netket.version)&quot;</span>
 </pre></div>
 </div>
-<div class="section" id="mpi">
+<section id="mpi">
 <h3>MPI<a class="headerlink" href="#mpi" title="Permalink to this headline">¶</a></h3>
 <p>If you want to use MPI, you will need to have a working MPI compiler. You can install the
 dependencies necessary to run with MPI with the following command:</p>
@@ -462,9 +464,9 @@ dependencies necessary to run with MPI with the following command:</p>
 </div>
 <p>Subsequently, NetKet will exploit MPI-level parallelism for the Monte-Carlo sampling.
 See <a class="reference internal" href="varstate.html#warn-mpi-sampling"><span class="std std-ref">this block</span></a> to understand how NetKet behaves under MPI.</p>
-</div>
-</div>
-<div class="section" id="introduction">
+</section>
+</section>
+<section id="introduction">
 <h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
 <p>Netket is a numerical framework written in Python to simulate many-body quantum systems using
 variational methods. In general, netket allows the user to parametrize quantum states using
@@ -479,8 +481,8 @@ wish to extend netket.</p>
 <p>This documentation is divided into several modules, each explaining in-depth how a sub-module of netket works.
 You can select a module from the list on the left, or you can read the following example which contains links
 to all relevant parts of the documentation.</p>
-</div>
-<div class="section" id="jax-flax-extensions">
+</section>
+<section id="jax-flax-extensions">
 <h2>Jax/Flax extensions<a class="headerlink" href="#jax-flax-extensions" title="Permalink to this headline">¶</a></h2>
 <p>Netket v3 API is centered around <a class="reference external" href="https://flax.readthedocs.io">flax</a>, a jax library to simplify the definition and
 usage of Neural-Networks.
@@ -491,8 +493,8 @@ As such, netket exports a module, <cite>netket.nn</cite> which re-exports the fu
 with the additional support of complex numbers.
 Also <cite>netket.optim</cite> is a re-export of <cite>flax.optim</cite> with few added functionalities.</p>
 <p>Lastly, in <cite>netket.jax</cite> there are a few functions, notably <cite>jax.grad</cite> and <cite>jax.vjp</cite> adapted to work with arbitrary real or complex functions, and/or with MPI.</p>
-</div>
-<div class="section" id="legacy-api-support-api-before-2021">
+</section>
+<section id="legacy-api-support-api-before-2021">
 <h2>Legacy API support (API before 2021)<a class="headerlink" href="#legacy-api-support-api-before-2021" title="Permalink to this headline">¶</a></h2>
 <p>With the 3.0 official release in the beginning of 2021, we have drastically
 changed the API of Netket, which are no longer compatible with the old version.</p>
@@ -506,7 +508,7 @@ you use the legacy api suggesting you how to update your code.</p>
 <p>While it might be annoying, the new API allows us to have less code to maintain
 and grants more freedom to the user when defining models, so it will be a huge
 improvement.</p>
-<p>Some documentation of the legacy module can be found in this section <a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#legacy" title="(in NumPy v1.20)"><span>Legacy Random Generation</span></a>,
+<p>Some documentation of the legacy module can be found in this section <a class="reference external" href="https://numpy.org/doc/stable/reference/random/legacy.html#legacy" title="(in NumPy v1.21)"><span>Legacy Random Generation</span></a>,
 but please be advised that it is no longer-supported and documentation will
 probably be of poor quality.</p>
 <p>For more information on new features and API changes, please consult <span class="xref std std-ref">Whats New</span>.</p>
@@ -515,8 +517,8 @@ probably be of poor quality.</p>
 <p>If you were using the previous version of NetKet, we strongly advise you to read
 <span class="xref std std-ref">Whats New</span> as it lists several changes that might otherwise pass unnoticed.</p>
 </div>
-</div>
-<div class="section" id="commented-example">
+</section>
+<section id="commented-example">
 <h2>Commented Example<a class="headerlink" href="#commented-example" title="Permalink to this headline">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">netket</span> <span class="k">as</span> <span class="nn">nk</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -589,8 +591,8 @@ sampler, mahcine and various options.</p>
 <p>Once that is done, you can run the simulation by calling the <span class="xref std std-ref">run</span> method
 in the driver, specifying the output loggers and the number of iterations in
 the optimisation.</p>
-</div>
-</div>
+</section>
+</section>
 
 
     </div>
@@ -606,7 +608,7 @@ the optimisation.</p>
     </p>
     <p>
         &copy; Copyright 2019-2021, The Netket authors - All rights reserved.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
     </p>
   </div>
 </footer>

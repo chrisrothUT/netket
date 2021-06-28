@@ -5,15 +5,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>netket.hilbert.abstract_hilbert &#8212; netket v3.0 documentation</title>
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/jumbo-style.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/all.min.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/rtd_theme.css" />
-    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
@@ -111,23 +111,23 @@
 <span class="c1"># limitations under the License.</span>
 
 <span class="kn">import</span> <span class="nn">abc</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Generator</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span>
 
-<span class="kn">import</span> <span class="nn">jax</span>
 <span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">deprecated</span><span class="p">,</span> <span class="n">warn_deprecation</span>
+<span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">warn_deprecation</span>
 
-
-<span class="sd">&quot;&quot;&quot;int: Maximum number of states that can be indexed&quot;&quot;&quot;</span>
 <span class="n">max_states</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">iinfo</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span><span class="o">.</span><span class="n">max</span>
+<span class="sd">&quot;&quot;&quot;int: Maximum number of states that can be indexed&quot;&quot;&quot;</span>
 
 
-<span class="k">class</span> <span class="nc">NoneType</span><span class="p">:</span>
+<span class="k">class</span> <span class="nc">NoneTypeT</span><span class="p">:</span>
     <span class="k">pass</span>
+
+
+<span class="n">NoneType</span> <span class="o">=</span> <span class="n">NoneTypeT</span><span class="p">()</span>
 
 
 <span class="n">legacy_warn_str</span> <span class="o">=</span> <span class="p">(</span>
@@ -207,15 +207,17 @@
         <span class="bp">self</span><span class="p">,</span> <span class="n">numbers</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">out</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Returns the quantum numbers corresponding to the n-th basis state</span>
-<span class="sd">        for input n. n is an array of integer indices such that numbers[k]=Index(states[k]).</span>
+<span class="sd">        for input n. n is an array of integer indices such that</span>
+<span class="sd">        :code:py:`numbers[k]=Index(states[k])`.</span>
 <span class="sd">        Throws an exception iff the space is not indexable.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            numbers (numpy.array): Batch of input numbers to be converted into arrays of quantum numbers.</span>
+<span class="sd">            numbers (numpy.array): Batch of input numbers to be converted into arrays of</span>
+<span class="sd">                quantum numbers.</span>
 <span class="sd">            out: Optional Array of quantum numbers corresponding to numbers.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">out</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">numbers</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span><span class="p">))</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">numbers</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">numbers</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_states</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;numbers outside the range of allowed states&quot;</span><span class="p">)</span>
@@ -242,9 +244,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">states</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;&quot;&quot;Size of this state (</span><span class="si">{</span><span class="n">states</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">) not </span>
-<span class="s2">                                 corresponding to this hilbert space </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2"></span>
-<span class="s2">                                 &quot;&quot;&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Size of this state (</span><span class="si">{</span><span class="n">states</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2">) not&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;corresponding to this hilbert space </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
         <span class="n">states_r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">states</span><span class="p">,</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">states</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])))</span>
@@ -280,8 +281,8 @@
     <span class="c1"># def random_state(self, key, size=None, dtype=np.float32):</span>
 <div class="viewcode-block" id="AbstractHilbert.random_state"><a class="viewcode-back" href="../../../docs/_generated/hilbert/netket.hilbert.AbstractHilbert.html#netket.hilbert.AbstractHilbert.random_state">[docs]</a>    <span class="k">def</span> <span class="nf">random_state</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">key</span><span class="o">=</span><span class="n">NoneType</span><span class="p">(),</span>
-        <span class="n">size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">NoneType</span><span class="p">(),</span>
+        <span class="n">key</span><span class="o">=</span><span class="n">NoneType</span><span class="p">,</span>
+        <span class="n">size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">NoneType</span><span class="p">,</span>
         <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
         <span class="n">out</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">rgen</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -291,15 +292,18 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            key: rng state from a jax-style functional generator.</span>
-<span class="sd">            size: If provided, returns a batch of configurations of the form :code:`(size, N)` if size</span>
-<span class="sd">                  is an integer or :code:`(*size, N)` if it is a tuple and where :math:`N` is the Hilbert space size.</span>
-<span class="sd">                  By default, a single random configuration with shape :code:`(#,)` is returned.</span>
+<span class="sd">            size: If provided, returns a batch of configurations of the form</span>
+<span class="sd">                  :code:`(size, N)` if size is an integer or :code:`(*size, N)` if it is</span>
+<span class="sd">                  a tuple and where :math:`N` is the Hilbert space size.</span>
+<span class="sd">                  By default, a single random configuration with shape</span>
+<span class="sd">                  :code:`(#,)` is returned.</span>
 <span class="sd">            dtype: DType of the resulting vector.</span>
 <span class="sd">            out: Deprecated. Will be removed in v3.1</span>
 <span class="sd">            rgen: Deprecated. Will be removed in v3.1</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A state or batch of states sampled from the uniform distribution on the hilbert space.</span>
+<span class="sd">            A state or batch of states sampled from the uniform distribution on the</span>
+<span class="sd">            hilbert space.</span>
 
 <span class="sd">        Example:</span>
 
@@ -315,26 +319,21 @@
         <span class="c1"># legacy support</span>
         <span class="c1"># TODO: Remove in 3.1</span>
         <span class="c1"># if no positional arguments, and key is unspecified -&gt; legacy</span>
-
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
             <span class="n">warn_deprecation</span><span class="p">(</span><span class="n">legacy_warn_str</span><span class="p">)</span>
             <span class="c1"># legacy sure</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_random_state_legacy</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">,</span> <span class="n">rgen</span><span class="o">=</span><span class="n">rgen</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_random_state_legacy</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">,</span> <span class="n">rgen</span><span class="o">=</span><span class="n">rgen</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="p">(</span>
-            <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span>
-            <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
-            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">)</span>
-        <span class="p">):</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">size</span> <span class="ow">is</span> <span class="n">NoneType</span><span class="p">:</span>
             <span class="c1"># if one positional argument legacy typee...</span>
             <span class="n">warn_deprecation</span><span class="p">(</span><span class="n">legacy_warn_str</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_random_state_legacy</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">key</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">out</span><span class="p">,</span> <span class="n">rgen</span><span class="o">=</span><span class="n">rgen</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="kn">from</span> <span class="nn">netket.hilbert</span> <span class="kn">import</span> <span class="n">random</span>
 
-            <span class="n">size</span> <span class="o">=</span> <span class="n">size</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">NoneType</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="n">size</span> <span class="o">=</span> <span class="n">size</span> <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">NoneType</span> <span class="k">else</span> <span class="kc">None</span>
 
             <span class="k">return</span> <span class="n">random</span><span class="o">.</span><span class="n">random_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span></div>
 
@@ -401,7 +400,6 @@
 <span class="sd">        Tuple of hashable attributs, used to compute the immutable</span>
 <span class="sd">        hash of this Hilbert space</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">pass</span>
 
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
@@ -429,7 +427,7 @@
     </p>
     <p>
         &copy; Copyright 2019-2021, The Netket authors - All rights reserved.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
     </p>
   </div>
 </footer>

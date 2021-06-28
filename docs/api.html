@@ -3,23 +3,24 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Public API: netket package &#8212; netket v3.0 documentation</title>
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../_static/jumbo-style.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/all.min.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/rtd_theme.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["\\(", "\\)"]], "displayMath": [["\\[", "\\]"]], "processRefs": false, "processEnvironments": false}})</script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script src="../_static/js/rtd_theme.js"></script>
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
@@ -234,6 +235,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Public API: netket package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#graph">Graph</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.AbstractGraph.html">netket.graph.AbstractGraph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Graph.html">netket.graph.Graph</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Edgeless.html">netket.graph.Edgeless</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Hypercube.html">netket.graph.Hypercube</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Lattice.html">netket.graph.Lattice</a></li>
@@ -359,7 +361,7 @@
 <li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.softmax.html">netket.nn.softmax</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.softplus.html">netket.nn.softplus</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.swish.html">netket.nn.swish</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.logcosh.html">netket.nn.logcosh</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.log_cosh.html">netket.nn.log_cosh</a></li>
 </ul>
 </li>
 </ul>
@@ -431,9 +433,9 @@
       </div>
     <div class="body col-md-9 content" role="main">
       
-  <div class="section" id="public-api-netket-package">
+  <section id="public-api-netket-package">
 <span id="api"></span><h1>Public API: netket package<a class="headerlink" href="#public-api-netket-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="graph">
+<section id="graph">
 <span id="graph-api"></span><h2>Graph<a class="headerlink" href="#graph" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -444,28 +446,31 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="_generated/graph/netket.graph.AbstractGraph.html#netket.graph.AbstractGraph" title="netket.graph.AbstractGraph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.AbstractGraph</span></code></a></p></td>
 <td><p>Abstract class for NetKet graph objects.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/graph/netket.graph.Edgeless.html#netket.graph.Edgeless" title="netket.graph.Edgeless"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.Edgeless</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/graph/netket.graph.Graph.html#netket.graph.Graph" title="netket.graph.Graph"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.Graph</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/graph/netket.graph.Edgeless.html#netket.graph.Edgeless" title="netket.graph.Edgeless"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.Edgeless</span></code></a></p></td>
 <td><p>Construct a set graph (collection of unconnected vertices).</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/graph/netket.graph.Hypercube.html#netket.graph.Hypercube" title="netket.graph.Hypercube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.Hypercube</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/graph/netket.graph.Hypercube.html#netket.graph.Hypercube" title="netket.graph.Hypercube"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.Hypercube</span></code></a></p></td>
 <td><p>Constructs a hypercubic lattice with equal side length in all dimensions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/graph/netket.graph.Lattice.html#netket.graph.Lattice" title="netket.graph.Lattice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.Lattice</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/graph/netket.graph.Lattice.html#netket.graph.Lattice" title="netket.graph.Lattice"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.Lattice</span></code></a></p></td>
 <td><p>A lattice built by periodic arrangement of a given unit cell.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/graph/netket.graph.lattice.LatticeSite.html#netket.graph.lattice.LatticeSite" title="netket.graph.lattice.LatticeSite"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.lattice.LatticeSite</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/graph/netket.graph.lattice.LatticeSite.html#netket.graph.lattice.LatticeSite" title="netket.graph.lattice.LatticeSite"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.lattice.LatticeSite</span></code></a></p></td>
 <td><p>Contains information about a single <a class="reference internal" href="_generated/graph/netket.graph.Lattice.html#netket.graph.Lattice" title="netket.graph.Lattice"><code class="xref py py-class docutils literal notranslate"><span class="pre">Lattice</span></code></a> site.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="_generated/graph/netket.graph.Chain.html#netket.graph.Chain" title="netket.graph.Chain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.Chain</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/graph/netket.graph.Chain.html#netket.graph.Chain" title="netket.graph.Chain"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.Chain</span></code></a></p></td>
 <td><p>Constructs a chain of <cite>length</cite> sites.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/graph/netket.graph.Grid.html#netket.graph.Grid" title="netket.graph.Grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.Grid</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="_generated/graph/netket.graph.Grid.html#netket.graph.Grid" title="netket.graph.Grid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">netket.graph.Grid</span></code></a></p></td>
 <td><p>Constructs a hypercubic lattice given its extent in all dimensions.</p></td>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="hilbert">
+</section>
+<section id="hilbert">
 <span id="hilbert-api"></span><h2>Hilbert<a class="headerlink" href="#hilbert" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -493,8 +498,8 @@
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="operators">
+</section>
+<section id="operators">
 <span id="operators-api"></span><h2>Operators<a class="headerlink" href="#operators" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -528,7 +533,7 @@
 </tr>
 </tbody>
 </table>
-<div class="section" id="pre-defined-operators">
+<section id="pre-defined-operators">
 <h3>Pre-defined operators<a class="headerlink" href="#pre-defined-operators" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -565,9 +570,9 @@
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="exact-solvers">
+</section>
+</section>
+<section id="exact-solvers">
 <span id="exact-api"></span><h2>Exact solvers<a class="headerlink" href="#exact-solvers" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -586,10 +591,10 @@
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="sampler">
+</section>
+<section id="sampler">
 <span id="sampler-api"></span><h2>Sampler<a class="headerlink" href="#sampler" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="generic-api">
+<section id="generic-api">
 <h3>Generic API<a class="headerlink" href="#generic-api" title="Permalink to this headline">¶</a></h3>
 <p>Those functions can be used to interact with samplers</p>
 <table class="longtable docutils align-default">
@@ -615,8 +620,8 @@
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="list-of-samplers">
+</section>
+<section id="list-of-samplers">
 <h3>List of Samplers<a class="headerlink" href="#list-of-samplers" title="Permalink to this headline">¶</a></h3>
 <p>This is a list of all available samplers.
 Please note that samplers with <cite>Numpy</cite> in their name are implemented in
@@ -668,8 +673,8 @@ have a much higher overhead for small to moderate (for GPUs) system sizes.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="transition-rules">
+</section>
+<section id="transition-rules">
 <h3>Transition Rules<a class="headerlink" href="#transition-rules" title="Permalink to this headline">¶</a></h3>
 <p>Those are the transition rules that can be used with the Metropolis
 Sampler. Rules with <cite>Numpy</cite> in their name can only be used with
@@ -700,8 +705,8 @@ Sampler. Rules with <cite>Numpy</cite> in their name can only be used with
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="internal-state">
+</section>
+<section id="internal-state">
 <h3>Internal State<a class="headerlink" href="#internal-state" title="Permalink to this headline">¶</a></h3>
 <p>Those structure hold the state of the sampler.</p>
 <table class="longtable docutils align-default">
@@ -718,9 +723,9 @@ Sampler. Rules with <cite>Numpy</cite> in their name can only be used with
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="pre-built-models">
+</section>
+</section>
+<section id="pre-built-models">
 <span id="models"></span><h2>Pre-built models<a class="headerlink" href="#pre-built-models" title="Permalink to this headline">¶</a></h2>
 <p>This sub-module contains several pre-built models to be used as
 neural quantum states.</p>
@@ -762,8 +767,8 @@ neural quantum states.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="model-tools">
+</section>
+<section id="model-tools">
 <h2>Model tools<a class="headerlink" href="#model-tools" title="Permalink to this headline">¶</a></h2>
 <p>This sub-module wraps and re-exports <a class="reference external" href="https://flax.readthedocs.io/en/latest/flax.linen.html">flax.nn</a>.
 Read more about the design goal of this module in their <a class="reference external" href="https://github.com/google/flax/blob/master/flax/linen/README.md">README</a></p>
@@ -778,7 +783,7 @@ Read more about the design goal of this module in their <a class="reference exte
 </tr>
 </tbody>
 </table>
-<div class="section" id="linear-modules">
+<section id="linear-modules">
 <h3>Linear Modules<a class="headerlink" href="#linear-modules" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -815,8 +820,8 @@ Read more about the design goal of this module in their <a class="reference exte
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="activation-functions">
+</section>
+<section id="activation-functions">
 <h3>Activation functions<a class="headerlink" href="#activation-functions" title="Permalink to this headline">¶</a></h3>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -860,14 +865,14 @@ Read more about the design goal of this module in their <a class="reference exte
 <tr class="row-even"><td><p><a class="reference internal" href="_generated/nn/netket.nn.swish.html#netket.nn.swish" title="netket.nn.swish"><code class="xref py py-obj docutils literal notranslate"><span class="pre">swish</span></code></a>(x)</p></td>
 <td><p>SiLU activation function.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="_generated/nn/netket.nn.logcosh.html#netket.nn.logcosh" title="netket.nn.logcosh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">logcosh</span></code></a>(x)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="_generated/nn/netket.nn.log_cosh.html#netket.nn.log_cosh" title="netket.nn.log_cosh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_cosh</span></code></a>(x)</p></td>
 <td><p></p></td>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="variational-state-interface">
+</section>
+</section>
+<section id="variational-state-interface">
 <span id="variational-api"></span><h2>Variational State Interface<a class="headerlink" href="#variational-state-interface" title="Permalink to this headline">¶</a></h2>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -886,13 +891,13 @@ Read more about the design goal of this module in their <a class="reference exte
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="optimizer-module">
+</section>
+<section id="optimizer-module">
 <span id="optimizer-api"></span><h2>Optimizer Module<a class="headerlink" href="#optimizer-module" title="Permalink to this headline">¶</a></h2>
 <p>This module provides some optimisers,
 implementations of the {ref}`Quantum Geometric Tensor &lt;QGT_and_SR&gt;` and preconditioners such
 as SR.</p>
-<div class="section" id="optimizers">
+<section id="optimizers">
 <h3>Optimizers<a class="headerlink" href="#optimizers" title="Permalink to this headline">¶</a></h3>
 <p>Optimizers in NetKet are simple wrappers of <a class="reference external" href="https://github.com/deepmind/optax">optax</a>
 optimizers. If you want to write a custom optimizer or use more advanced ones, we suggest
@@ -929,8 +934,8 @@ optimisers, and it’s extremely easy to use step-dependent schedulers.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="preconditioners">
+</section>
+<section id="preconditioners">
 <h3>Preconditioners<a class="headerlink" href="#preconditioners" title="Permalink to this headline">¶</a></h3>
 <p>This module also provides an implemnetation of the Stochastic Reconfiguration/Natural
 gradient preconditioner.</p>
@@ -945,8 +950,8 @@ gradient preconditioner.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="quantum-geometric-tensor">
+</section>
+<section id="quantum-geometric-tensor">
 <h3>Quantum Geometric Tensor<a class="headerlink" href="#quantum-geometric-tensor" title="Permalink to this headline">¶</a></h3>
 <p>It also provides the following implementation of the quantum geometric tensor:</p>
 <table class="longtable docutils align-default">
@@ -969,8 +974,8 @@ gradient preconditioner.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="dense-solvers">
+</section>
+<section id="dense-solvers">
 <h3>Dense solvers<a class="headerlink" href="#dense-solvers" title="Permalink to this headline">¶</a></h3>
 <p>And the following dense solvers for Stochastic Reconfiguration:</p>
 <table class="longtable docutils align-default">
@@ -993,9 +998,9 @@ gradient preconditioner.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="section" id="optimization-drivers">
+</section>
+</section>
+<section id="optimization-drivers">
 <span id="drivers-api"></span><h2>Optimization drivers<a class="headerlink" href="#optimization-drivers" title="Permalink to this headline">¶</a></h2>
 <p>Those are the optimization drivers already implmented in Netket:</p>
 <table class="longtable docutils align-default">
@@ -1015,8 +1020,8 @@ gradient preconditioner.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="logging-output">
+</section>
+<section id="logging-output">
 <span id="logging-api"></span><h2>Logging output<a class="headerlink" href="#logging-output" title="Permalink to this headline">¶</a></h2>
 <p>Those are the loggers that can be used with the optimization drivers.</p>
 <table class="longtable docutils align-default">
@@ -1039,8 +1044,8 @@ gradient preconditioner.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="utils">
+</section>
+<section id="utils">
 <span id="utils-api"></span><h2>Utils<a class="headerlink" href="#utils" title="Permalink to this headline">¶</a></h2>
 <p>Utility functions and classes.</p>
 <table class="longtable docutils align-default">
@@ -1054,8 +1059,8 @@ gradient preconditioner.</p>
 </tr>
 </tbody>
 </table>
-</div>
-<div class="section" id="callbacks">
+</section>
+<section id="callbacks">
 <span id="callbacks-api"></span><h2>Callbacks<a class="headerlink" href="#callbacks" title="Permalink to this headline">¶</a></h2>
 <p>Those callbacks can be used with the optimisation drivers.</p>
 <table class="longtable docutils align-default">
@@ -1072,8 +1077,8 @@ gradient preconditioner.</p>
 </tr>
 </tbody>
 </table>
-</div>
-</div>
+</section>
+</section>
 
 
     </div>
@@ -1089,7 +1094,7 @@ gradient preconditioner.</p>
     </p>
     <p>
         &copy; Copyright 2019-2021, The Netket authors - All rights reserved.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
     </p>
   </div>
 </footer>

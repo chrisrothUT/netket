@@ -3,17 +3,18 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>netket.graph.AbstractGraph &#8212; netket v3.0 documentation</title>
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/jumbo-style.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/all.min.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/rtd_theme.css" />
-    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
@@ -22,7 +23,7 @@
     <link rel="author" title="About these documents" href="../../../about.html" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="netket.graph.Edgeless" href="netket.graph.Edgeless.html" />
+    <link rel="next" title="netket.graph.Graph" href="netket.graph.Graph.html" />
     <link rel="prev" title="Public API: netket package" href="../../api.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
@@ -232,6 +233,7 @@
 <li class="toctree-l1 current"><a class="reference internal" href="../../api.html">Public API: netket package</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="../../api.html#graph">Graph</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="#">netket.graph.AbstractGraph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="netket.graph.Graph.html">netket.graph.Graph</a></li>
 <li class="toctree-l3"><a class="reference internal" href="netket.graph.Edgeless.html">netket.graph.Edgeless</a></li>
 <li class="toctree-l3"><a class="reference internal" href="netket.graph.Hypercube.html">netket.graph.Hypercube</a></li>
 <li class="toctree-l3"><a class="reference internal" href="netket.graph.Lattice.html">netket.graph.Lattice</a></li>
@@ -357,7 +359,7 @@
 <li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.softmax.html">netket.nn.softmax</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.softplus.html">netket.nn.softplus</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.swish.html">netket.nn.swish</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.logcosh.html">netket.nn.logcosh</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.log_cosh.html">netket.nn.log_cosh</a></li>
 </ul>
 </li>
 </ul>
@@ -429,23 +431,35 @@
       </div>
     <div class="body col-md-9 content" role="main">
       
-  <div class="section" id="netket-graph-abstractgraph">
+  <section id="netket-graph-abstractgraph">
 <h1>netket.graph.AbstractGraph<a class="headerlink" href="#netket-graph-abstractgraph" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
-<dt id="netket.graph.AbstractGraph">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">netket.graph.</span></code><code class="sig-name descname"><span class="pre">AbstractGraph</span></code><a class="reference internal" href="../../../_modules/netket/graph/abstract_graph.html#AbstractGraph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.graph.AbstractGraph" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.graph.AbstractGraph">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">netket.graph.</span></span><span class="sig-name descname"><span class="pre">AbstractGraph</span></span><a class="reference internal" href="../../../_modules/netket/graph/abstract_graph.html#AbstractGraph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.graph.AbstractGraph" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></a></p>
 <p>Abstract class for NetKet graph objects.</p>
 <dl class="py method">
-<dt id="netket.graph.AbstractGraph.__init__">
-<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#netket.graph.AbstractGraph.__init__" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.graph.AbstractGraph.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#netket.graph.AbstractGraph.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 
 <dl class="class-dl-groups">
 <dt>Attributes</dt><dd><dl class="py attribute">
-<dt id="netket.graph.AbstractGraph.n_edges">
-<code class="sig-name descname"><span class="pre">n_edges</span></code><a class="headerlink" href="#netket.graph.AbstractGraph.n_edges" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.graph.AbstractGraph.edge_colors">
+<span class="sig-name descname"><span class="pre">edge_colors</span></span><a class="headerlink" href="#netket.graph.AbstractGraph.edge_colors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sequence of edge colors, in the order of the edges returned by
+<code class="code docutils literal notranslate"><span class="pre">self.edges</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="netket.graph.AbstractGraph.n_edges">
+<span class="sig-name descname"><span class="pre">n_edges</span></span><a class="headerlink" href="#netket.graph.AbstractGraph.n_edges" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of edges in the graph.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -455,8 +469,8 @@
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="netket.graph.AbstractGraph.n_nodes">
-<code class="sig-name descname"><span class="pre">n_nodes</span></code><a class="headerlink" href="#netket.graph.AbstractGraph.n_nodes" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.graph.AbstractGraph.n_nodes">
+<span class="sig-name descname"><span class="pre">n_nodes</span></span><a class="headerlink" href="#netket.graph.AbstractGraph.n_nodes" title="Permalink to this definition">¶</a></dt>
 <dd><p>The number of nodes (or vertices) in the graph</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -469,8 +483,8 @@
 </dl>
 <dl class="class-dl-groups">
 <dt>Methods</dt><dd><dl class="py method">
-<dt id="netket.graph.AbstractGraph.adjacency_list">
-<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">adjacency_list</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/graph/abstract_graph.html#AbstractGraph.adjacency_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.graph.AbstractGraph.adjacency_list" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.graph.AbstractGraph.adjacency_list">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">adjacency_list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/graph/abstract_graph.html#AbstractGraph.adjacency_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.graph.AbstractGraph.adjacency_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>List containing the adjacency list of the graph where each node
 is represented by an integer in [0, n_nodes)</p>
 <dl class="field-list simple">
@@ -481,16 +495,16 @@ is represented by an integer in [0, n_nodes)</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="netket.graph.AbstractGraph.automorphisms">
-<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">automorphisms</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/graph/abstract_graph.html#AbstractGraph.automorphisms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.graph.AbstractGraph.automorphisms" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.graph.AbstractGraph.automorphisms">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">automorphisms</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/graph/abstract_graph.html#AbstractGraph.automorphisms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.graph.AbstractGraph.automorphisms" title="Permalink to this definition">¶</a></dt>
 <dd><p>Symmetry group containing the automorphisms of the graph</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="netket.graph.AbstractGraph.distances">
-<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">distances</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/graph/abstract_graph.html#AbstractGraph.distances"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.graph.AbstractGraph.distances" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.graph.AbstractGraph.distances">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">distances</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/graph/abstract_graph.html#AbstractGraph.distances"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.graph.AbstractGraph.distances" title="Permalink to this definition">¶</a></dt>
 <dd><p>List containing the distances between the nodes.
-The fact that some node may not be reachable from another is represented by -1</p>
+The distance between unconnected nodes (no path exists between them) is set to -1</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>]</p>
@@ -499,22 +513,30 @@ The fact that some node may not be reachable from another is represented by -1</
 </dd></dl>
 
 <dl class="py method">
-<dt id="netket.graph.AbstractGraph.edges">
-<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">edges</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/graph/abstract_graph.html#AbstractGraph.edges"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.graph.AbstractGraph.edges" title="Permalink to this definition">¶</a></dt>
-<dd><p>Iterator over the edges of the graph. Optionally filter by edge color.</p>
+<dt class="sig sig-object py" id="netket.graph.AbstractGraph.edges">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">return_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter_color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/graph/abstract_graph.html#AbstractGraph.edges"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.graph.AbstractGraph.edges" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the sequence of edges of the graph.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]]]</p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>return_color</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – If <code class="code docutils literal notranslate"><span class="pre">True</span></code>, return edges with added color information.</p></li>
+<li><p><strong>filter_color</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]) – If set, return only edges of the given color.</p></li>
+</ul>
 </dd>
-<dt class="field-even">Parameters</dt>
-<dd class="field-even"><p><strong>color</strong> (<em>Union</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><em>bool</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><em>int</em></a><em>]</em>) – </p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]], <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Sequence" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]]]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A sequence of edges as tuples <code class="code docutils literal notranslate"><span class="pre">(i,</span> <span class="pre">j)</span></code> or, if <cite>return_color</cite> is
+passed, a sequence of tuples <code class="code docutils literal notranslate"><span class="pre">(i,</span> <span class="pre">j,</span> <span class="pre">c)</span></code> with <code class="code docutils literal notranslate"><span class="pre">c</span></code> indicating
+the color of the respective edge.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="netket.graph.AbstractGraph.is_bipartite">
-<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">is_bipartite</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/graph/abstract_graph.html#AbstractGraph.is_bipartite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.graph.AbstractGraph.is_bipartite" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.graph.AbstractGraph.is_bipartite">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">is_bipartite</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/graph/abstract_graph.html#AbstractGraph.is_bipartite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.graph.AbstractGraph.is_bipartite" title="Permalink to this definition">¶</a></dt>
 <dd><p>True if the graph is bipartite</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -524,8 +546,8 @@ The fact that some node may not be reachable from another is represented by -1</
 </dd></dl>
 
 <dl class="py method">
-<dt id="netket.graph.AbstractGraph.is_connected">
-<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">is_connected</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/graph/abstract_graph.html#AbstractGraph.is_connected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.graph.AbstractGraph.is_connected" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.graph.AbstractGraph.is_connected">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">is_connected</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/graph/abstract_graph.html#AbstractGraph.is_connected"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.graph.AbstractGraph.is_connected" title="Permalink to this definition">¶</a></dt>
 <dd><p>True if the graph is connected</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -535,8 +557,8 @@ The fact that some node may not be reachable from another is represented by -1</
 </dd></dl>
 
 <dl class="py method">
-<dt id="netket.graph.AbstractGraph.nodes">
-<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">nodes</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/graph/abstract_graph.html#AbstractGraph.nodes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.graph.AbstractGraph.nodes" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="netket.graph.AbstractGraph.nodes">
+<em class="property"><span class="pre">abstract</span> </em><span class="sig-name descname"><span class="pre">nodes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/graph/abstract_graph.html#AbstractGraph.nodes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.graph.AbstractGraph.nodes" title="Permalink to this definition">¶</a></dt>
 <dd><p>Iterator over the nodes of the graph</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -549,7 +571,7 @@ The fact that some node may not be reachable from another is represented by -1</
 </dl>
 </dd></dl>
 
-</div>
+</section>
 
 
     </div>
@@ -565,7 +587,7 @@ The fact that some node may not be reachable from another is represented by -1</
     </p>
     <p>
         &copy; Copyright 2019-2021, The Netket authors - All rights reserved.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
     </p>
   </div>
 </footer>

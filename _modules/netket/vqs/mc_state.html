@@ -5,15 +5,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>netket.vqs.mc_state &#8212; netket v3.0 documentation</title>
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/jumbo-style.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/all.min.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/rtd_theme.css" />
-    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
@@ -112,14 +112,13 @@
 
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="kn">import</span> <span class="nn">jax</span>
 <span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">jnp</span>
 <span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">tree_map</span>
-<span class="kn">from</span> <span class="nn">jax.util</span> <span class="kn">import</span> <span class="n">as_hashable_function</span>
 
 <span class="kn">import</span> <span class="nn">flax</span>
 <span class="kn">from</span> <span class="nn">flax</span> <span class="kn">import</span> <span class="n">linen</span> <span class="k">as</span> <span class="n">nn</span>
@@ -127,20 +126,17 @@
 
 <span class="kn">import</span> <span class="nn">netket</span>
 <span class="kn">from</span> <span class="nn">netket</span> <span class="kn">import</span> <span class="n">jax</span> <span class="k">as</span> <span class="n">nkjax</span>
-<span class="kn">from</span> <span class="nn">netket</span> <span class="kn">import</span> <span class="n">utils</span>
 <span class="kn">from</span> <span class="nn">netket</span> <span class="kn">import</span> <span class="n">config</span>
-<span class="kn">from</span> <span class="nn">netket.hilbert</span> <span class="kn">import</span> <span class="n">AbstractHilbert</span>
-<span class="kn">from</span> <span class="nn">netket.sampler</span> <span class="kn">import</span> <span class="n">Sampler</span><span class="p">,</span> <span class="n">SamplerState</span><span class="p">,</span> <span class="n">ExactSampler</span>
-<span class="kn">from</span> <span class="nn">netket.stats</span> <span class="kn">import</span> <span class="n">Stats</span><span class="p">,</span> <span class="n">statistics</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">sum_inplace</span>
+<span class="kn">from</span> <span class="nn">netket.sampler</span> <span class="kn">import</span> <span class="n">Sampler</span><span class="p">,</span> <span class="n">SamplerState</span>
+<span class="kn">from</span> <span class="nn">netket.stats</span> <span class="kn">import</span> <span class="n">Stats</span><span class="p">,</span> <span class="n">statistics</span><span class="p">,</span> <span class="n">mean</span>
 <span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">maybe_wrap_module</span><span class="p">,</span> <span class="n">deprecated</span><span class="p">,</span> <span class="n">warn_deprecation</span><span class="p">,</span> <span class="n">mpi</span><span class="p">,</span> <span class="n">wrap_afun</span>
-<span class="kn">from</span> <span class="nn">netket.utils.types</span> <span class="kn">import</span> <span class="n">PyTree</span><span class="p">,</span> <span class="n">PRNGKeyT</span><span class="p">,</span> <span class="n">SeedT</span><span class="p">,</span> <span class="n">Shape</span><span class="p">,</span> <span class="n">NNInitFunc</span>
+<span class="kn">from</span> <span class="nn">netket.utils.types</span> <span class="kn">import</span> <span class="n">PyTree</span><span class="p">,</span> <span class="n">SeedT</span><span class="p">,</span> <span class="n">NNInitFunc</span>
 <span class="kn">from</span> <span class="nn">netket.optimizer</span> <span class="kn">import</span> <span class="n">LinearOperator</span>
 <span class="kn">from</span> <span class="nn">netket.optimizer.qgt</span> <span class="kn">import</span> <span class="n">QGTAuto</span>
 
 <span class="kn">from</span> <span class="nn">netket.operator</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">AbstractOperator</span><span class="p">,</span>
     <span class="n">AbstractSuperOperator</span><span class="p">,</span>
-    <span class="n">define_local_cost_function</span><span class="p">,</span>
     <span class="n">local_cost_function</span><span class="p">,</span>
     <span class="n">local_value_cost</span><span class="p">,</span>
     <span class="n">Squared</span><span class="p">,</span>
@@ -287,13 +283,13 @@
         <span class="k">if</span> <span class="n">n_samples</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">n_samples_per_rank</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">n_samples</span> <span class="o">=</span> <span class="mi">1000</span>
         <span class="k">elif</span> <span class="n">n_samples</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">n_samples_per_rank</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">InvalidInputError</span><span class="p">(</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;Only one argument between `n_samples` and `n_samples_per_rank`&quot;</span>
                 <span class="s2">&quot;can be specified at the same time.&quot;</span>
             <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">n_discard</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">n_discard_per_chain</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">InvalidInputError</span><span class="p">(</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;`n_discard` has been renamed to `n_discard_per_chain` and deprecated.&quot;</span>
                 <span class="s2">&quot;Specify only `n_discard_per_chain`.&quot;</span>
             <span class="p">)</span>
@@ -716,7 +712,8 @@
     <span class="k">if</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">σ</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
         <span class="n">σ</span> <span class="o">=</span> <span class="n">σ</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">σ_shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
 
-    <span class="n">logpsi</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">w</span><span class="p">,</span> <span class="n">σ</span><span class="p">:</span> <span class="n">model_apply_fun</span><span class="p">({</span><span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="n">w</span><span class="p">,</span> <span class="o">**</span><span class="n">model_state</span><span class="p">},</span> <span class="n">σ</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">logpsi</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">σ</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">model_apply_fun</span><span class="p">({</span><span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="n">w</span><span class="p">,</span> <span class="o">**</span><span class="n">model_state</span><span class="p">},</span> <span class="n">σ</span><span class="p">)</span>
 
     <span class="n">log_pdf</span> <span class="o">=</span> <span class="p">(</span>
         <span class="k">lambda</span> <span class="n">w</span><span class="p">,</span> <span class="n">σ</span><span class="p">:</span> <span class="n">machine_pow</span> <span class="o">*</span> <span class="n">model_apply_fun</span><span class="p">({</span><span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="n">w</span><span class="p">,</span> <span class="o">**</span><span class="n">model_state</span><span class="p">},</span> <span class="n">σ</span><span class="p">)</span><span class="o">.</span><span class="n">real</span>
@@ -792,7 +789,7 @@
         <span class="n">parameters</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">Ō</span><span class="p">,</span> <span class="n">tree_map</span><span class="p">(</span><span class="n">sum_inplace</span><span class="p">,</span> <span class="n">Ō_grad</span><span class="p">),</span> <span class="n">new_model_state</span>
+    <span class="k">return</span> <span class="n">Ō</span><span class="p">,</span> <span class="n">tree_map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">mpi</span><span class="o">.</span><span class="n">mpi_sum_jax</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Ō_grad</span><span class="p">),</span> <span class="n">new_model_state</span>
 
 
 <span class="nd">@partial</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">,</span> <span class="n">static_argnums</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
@@ -825,10 +822,10 @@
         <span class="n">σ</span> <span class="o">=</span> <span class="n">σ</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">σ_shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
 
     <span class="n">has_aux</span> <span class="o">=</span> <span class="n">mutable</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">has_aux</span><span class="p">:</span>
-        <span class="n">out_axes</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">out_axes</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># if not has_aux:</span>
+    <span class="c1">#    out_axes = (0, 0)</span>
+    <span class="c1"># else:</span>
+    <span class="c1">#    out_axes = (0, 0, 0)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">has_aux</span><span class="p">:</span>
         <span class="n">logpsi</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">w</span><span class="p">,</span> <span class="n">σ</span><span class="p">:</span> <span class="n">model_apply_fun</span><span class="p">({</span><span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="n">w</span><span class="p">,</span> <span class="o">**</span><span class="n">model_state</span><span class="p">},</span> <span class="n">σ</span><span class="p">)</span>
@@ -857,7 +854,7 @@
 
     <span class="k">return</span> <span class="p">(</span>
         <span class="n">Ō_stats</span><span class="p">,</span>
-        <span class="n">tree_map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">sum_inplace</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="n">mpi</span><span class="o">.</span><span class="n">n_nodes</span><span class="p">,</span> <span class="n">Ō_pars_grad</span><span class="p">),</span>
+        <span class="n">tree_map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">mpi</span><span class="o">.</span><span class="n">mpi_mean_jax</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">Ō_pars_grad</span><span class="p">),</span>
         <span class="n">model_state</span><span class="p">,</span>
     <span class="p">)</span>
 
@@ -879,10 +876,10 @@
     <span class="n">n_samples_node</span> <span class="o">=</span> <span class="n">σ</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="n">has_aux</span> <span class="o">=</span> <span class="n">mutable</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">has_aux</span><span class="p">:</span>
-        <span class="n">out_axes</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">out_axes</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="c1"># if not has_aux:</span>
+    <span class="c1">#    out_axes = (0, 0)</span>
+    <span class="c1"># else:</span>
+    <span class="c1">#    out_axes = (0, 0, 0)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">has_aux</span><span class="p">:</span>
         <span class="n">logpsi</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">w</span><span class="p">,</span> <span class="n">σ</span><span class="p">:</span> <span class="n">model_apply_fun</span><span class="p">({</span><span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="n">w</span><span class="p">,</span> <span class="o">**</span><span class="n">model_state</span><span class="p">},</span> <span class="n">σ</span><span class="p">)</span>
@@ -892,9 +889,9 @@
             <span class="p">{</span><span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="n">w</span><span class="p">,</span> <span class="o">**</span><span class="n">model_state</span><span class="p">},</span> <span class="n">σ</span><span class="p">,</span> <span class="n">mutable</span><span class="o">=</span><span class="n">mutable</span>
         <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-    <span class="n">local_kernel_vmap</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span>
-        <span class="n">partial</span><span class="p">(</span><span class="n">local_value_kernel</span><span class="p">,</span> <span class="n">logpsi</span><span class="p">),</span> <span class="n">in_axes</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">out_axes</span><span class="o">=</span><span class="mi">0</span>
-    <span class="p">)</span>
+    <span class="c1"># local_kernel_vmap = jax.vmap(</span>
+    <span class="c1">#    partial(local_value_kernel, logpsi), in_axes=(None, 0, 0, 0), out_axes=0</span>
+    <span class="c1"># )</span>
 
     <span class="c1"># _Lρ = local_kernel_vmap(parameters, σ, σp, mels).reshape((σ_shape[0], -1))</span>
     <span class="p">(</span>
@@ -926,7 +923,7 @@
     <span class="c1"># der_logs_ave = d_logpsi(</span>
     <span class="c1">#    jnp.ones_like(_logpsi_ave).real / (n_samples_node * utils.n_nodes)</span>
     <span class="c1"># )[0]</span>
-    <span class="n">der_logs_ave</span> <span class="o">=</span> <span class="n">tree_map</span><span class="p">(</span><span class="n">sum_inplace</span><span class="p">,</span> <span class="n">der_logs_ave</span><span class="p">)</span>
+    <span class="n">der_logs_ave</span> <span class="o">=</span> <span class="n">tree_map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">mpi</span><span class="o">.</span><span class="n">mpi_sum_jax</span><span class="p">(</span><span class="n">x</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="n">der_logs_ave</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">gradfun</span><span class="p">(</span><span class="n">der_loc_vals</span><span class="p">,</span> <span class="n">der_logs_ave</span><span class="p">):</span>
         <span class="n">par_dims</span> <span class="o">=</span> <span class="n">der_loc_vals</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">1</span>
@@ -998,7 +995,7 @@
     </p>
     <p>
         &copy; Copyright 2019-2021, The Netket authors - All rights reserved.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
     </p>
   </div>
 </footer>

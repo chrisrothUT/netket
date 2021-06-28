@@ -3,17 +3,18 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>Writing Tests &#8212; netket v3.0 documentation</title>
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../_static/jumbo-style.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/all.min.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/rtd_theme.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
@@ -232,6 +233,7 @@
 <li class="toctree-l1"><a class="reference internal" href="api.html">Public API: netket package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api.html#graph">Graph</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.AbstractGraph.html">netket.graph.AbstractGraph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Graph.html">netket.graph.Graph</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Edgeless.html">netket.graph.Edgeless</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Hypercube.html">netket.graph.Hypercube</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Lattice.html">netket.graph.Lattice</a></li>
@@ -357,7 +359,7 @@
 <li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.softmax.html">netket.nn.softmax</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.softplus.html">netket.nn.softplus</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.swish.html">netket.nn.swish</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.logcosh.html">netket.nn.logcosh</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.log_cosh.html">netket.nn.log_cosh</a></li>
 </ul>
 </li>
 </ul>
@@ -429,7 +431,7 @@
       </div>
     <div class="body col-md-9 content" role="main">
       
-  <div class="section" id="writing-tests">
+  <section class="tex2jax_ignore mathjax_ignore" id="writing-tests">
 <h1>Writing Tests<a class="headerlink" href="#writing-tests" title="Permalink to this headline">¶</a></h1>
 <p>NetKet’s tests are written using the <a class="reference external" href="https://docs.pytest.org/en/stable/contents.html">PyTest</a>
 framework.
@@ -437,7 +439,7 @@ In particular, we make extensive use of <a class="reference external" href="http
 test functions on different input types.
 We also use often <a class="reference external" href="https://docs.pytest.org/en/stable/fixture.html#what-fixtures-are"><code class="docutils literal notranslate"><span class="pre">pytest.fixture</span></code></a>
 to initialize expensive objects only once among different tests.</p>
-<div class="section" id="test-structure-and-common-files">
+<section id="test-structure-and-common-files">
 <h2>Test structure and common files.<a class="headerlink" href="#test-structure-and-common-files" title="Permalink to this headline">¶</a></h2>
 <p>NetKet’s <code class="docutils literal notranslate"><span class="pre">Test</span></code> folder is a python module because every folder (aka, submodule) has an
 <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code> file.
@@ -446,18 +448,18 @@ If you add a new submodule, you should add a new submodule to the tests too.</p>
 <p>If you add a new file to netket, if might be a good idea to split it’s tests into a new file in
 the relevant submodule, too.</p>
 <p>Common functions and methods used throughout our testing infrastructure are defined in the file
-<code class="docutils literal notranslate"><span class="pre">Test/common.py</span></code> and every test is expected to use them if necessary.
-Some common fixtures are also defined inside <code class="docutils literal notranslate"><span class="pre">Test/conftest.py</span></code> and are available to all tests.
+<code class="docutils literal notranslate"><span class="pre">test/common.py</span></code> and every test is expected to use them if necessary.
+Some common fixtures are also defined inside <code class="docutils literal notranslate"><span class="pre">test/conftest.py</span></code> and are available to all tests.
 Those do not need to be imported explicitly, as pytest will take care of it.</p>
-</div>
-<div class="section" id="tests-and-mpi">
+</section>
+<section id="tests-and-mpi">
 <h2>Tests and MPI<a class="headerlink" href="#tests-and-mpi" title="Permalink to this headline">¶</a></h2>
 <p>Tests are expected to run with or without mpi4py installed, under MPI and not under MPI.
 Therefore you should never import <code class="docutils literal notranslate"><span class="pre">mpi4py</span></code> or <code class="docutils literal notranslate"><span class="pre">mpi4jax</span></code> in the global test module, but only
 inside individual tests.</p>
 <p>Tests not testing MPI-related fucntionality should be skipped when executed under MPI.
 To mark a whole module to be skipped under mpi, you can define the following variable</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Test/Hilbert/test_tensor.py</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># test/hilbert/test_tensor.py</span>
 
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">common</span>
 
@@ -505,8 +507,8 @@ functions to get easily those informations. See the example below:</p>
 
 </pre></div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
     </div>
@@ -522,7 +524,7 @@ functions to get easily those informations. See the example below:</p>
     </p>
     <p>
         &copy; Copyright 2019-2021, The Netket authors - All rights reserved.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
     </p>
   </div>
 </footer>

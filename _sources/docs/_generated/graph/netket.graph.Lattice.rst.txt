@@ -17,6 +17,7 @@
       .. autoattribute:: Lattice.basis_coords
       .. autoattribute:: Lattice.basis_vectors
       .. autoattribute:: Lattice.coordinates
+      .. autoattribute:: Lattice.edge_colors
       .. autoattribute:: Lattice.extent
       .. autoattribute:: Lattice.n_edges
       .. autoattribute:: Lattice.n_nodes

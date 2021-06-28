@@ -19,5 +19,6 @@
    .. rst-class:: class-dl-groups
 
    Methods
+      .. automethod:: HashableArray.replace
 
    

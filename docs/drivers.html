@@ -3,17 +3,18 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
     <title>The Drivers API &#8212; netket v3.0 documentation</title>
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../_static/jumbo-style.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/all.min.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/rtd_theme.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
@@ -232,6 +233,7 @@
 <li class="toctree-l1"><a class="reference internal" href="api.html">Public API: netket package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api.html#graph">Graph</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.AbstractGraph.html">netket.graph.AbstractGraph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Graph.html">netket.graph.Graph</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Edgeless.html">netket.graph.Edgeless</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Hypercube.html">netket.graph.Hypercube</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.Lattice.html">netket.graph.Lattice</a></li>
@@ -357,7 +359,7 @@
 <li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.softmax.html">netket.nn.softmax</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.softplus.html">netket.nn.softplus</a></li>
 <li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.swish.html">netket.nn.swish</a></li>
-<li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.logcosh.html">netket.nn.logcosh</a></li>
+<li class="toctree-l4"><a class="reference internal" href="_generated/nn/netket.nn.log_cosh.html">netket.nn.log_cosh</a></li>
 </ul>
 </li>
 </ul>
@@ -429,7 +431,7 @@
       </div>
     <div class="body col-md-9 content" role="main">
       
-  <div class="section" id="the-drivers-api">
+  <section id="the-drivers-api">
 <h1>The Drivers API<a class="headerlink" href="#the-drivers-api" title="Permalink to this headline">¶</a></h1>
 <p>In this section we will briefly describe the capabilities of the drivers API.
 This page assumes that you have already read and are familiar witht the <span class="xref std std-ref">Variational
@@ -442,7 +444,7 @@ State interface</span>.</p>
 <p>A driver, will run your optimisation loop, computing the loss function and the gradient,
 using the gradient to update the parameters, and logging to yours sinks any data that you
 may wish.</p>
-<div class="section" id="constructing-a-driver">
+<section id="constructing-a-driver">
 <h2>Constructing a driver<a class="headerlink" href="#constructing-a-driver" title="Permalink to this headline">¶</a></h2>
 <p>There are two objects both drivers above need in order to be constructed:</p>
 <ul class="simple">
@@ -458,7 +460,7 @@ The resulting code looks a bit like this:</p>
 
 <span class="n">optimizer</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">optimizer</span><span class="o">.</span><span class="n">SGD</span><span class="p">(</span><span class="n">learning_rate</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
 
-<span class="n">vstate</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">variational</span><span class="o">.</span><span class="n">MCState</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">vstate</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">vqs</span><span class="o">.</span><span class="n">MCState</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
 
 <span class="n">gs</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">driver</span><span class="o">.</span><span class="n">VMC</span><span class="p">(</span><span class="n">hamiltonian</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">variational_state</span><span class="o">=</span><span class="n">vstate</span><span class="p">)</span>
 </pre></div>
@@ -474,8 +476,8 @@ The resulting code looks a bit like this:</p>
 <p>And you can then access the variational state contructed like that through the attribute <cite>gs.state</cite>.
 The latter is there to guarantee better compatibility with legacy codebases, therefore we suggest to
 use the more first API, where the variational state is built explicitly.</p>
-</div>
-<div class="section" id="running-the-optimisation">
+</section>
+<section id="running-the-optimisation">
 <h2>Running the optimisation<a class="headerlink" href="#running-the-optimisation" title="Permalink to this headline">¶</a></h2>
 <p>The simplest way to use optimization drivers to perform the optimisation is to use their <a class="reference internal" href="_generated/driver/netket.driver.AbstractVariationalDriver.html#netket.driver.AbstractVariationalDriver.run" title="netket.driver.AbstractVariationalDriver.run"><code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code></a> method.</p>
 <p>This method will run the optimisation for the desired number of steps, while logging data to the
@@ -504,8 +506,8 @@ Netket comes with a few built-in callbacks, listed <a class="reference internal"
 </li>
 <li><p><code class="code docutils literal notranslate"><span class="pre">step_size</span></code>: Data will be logged and callbacks will be called every <code class="code docutils literal notranslate"><span class="pre">step_size</span></code> optimisation steps. Useful if your callbacks have a high computational cost. If unspecified, logs at every step.</p></li>
 </ul>
-</div>
-</div>
+</section>
+</section>
 
 
     </div>
@@ -521,7 +523,7 @@ Netket comes with a few built-in callbacks, listed <a class="reference internal"
     </p>
     <p>
         &copy; Copyright 2019-2021, The Netket authors - All rights reserved.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
     </p>
   </div>
 </footer>
