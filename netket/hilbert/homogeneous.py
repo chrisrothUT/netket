@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Optional, Tuple, List, Callable
+from typing import Optional, List, Callable
 
 from numbers import Real
 
 import numpy as np
 from numba import jit
 
-from .abstract_hilbert import AbstractHilbert
+from .discrete_hilbert import DiscreteHilbert
 from .hilbert_index import HilbertIndex
 
 
@@ -29,19 +29,14 @@ def _gen_to_bare_numbers(conditions):
 
 
 @jit(nopython=True)
-def _to_constrained_numbers_kernel(has_constraint, bare_numbers, numbers):
-    if not has_constraint:
-        return numbers
-    else:
-        found = np.searchsorted(bare_numbers, numbers)
-        if np.max(found) >= bare_numbers.shape[0]:
-            raise RuntimeError(
-                "The required state does not satisfy the given constraints."
-            )
-        return found
+def _to_constrained_numbers_kernel(bare_numbers, numbers):
+    found = np.searchsorted(bare_numbers, numbers)
+    if np.max(found) >= bare_numbers.shape[0]:
+        raise RuntimeError("The required state does not satisfy the given constraints.")
+    return found
 
 
-class HomogeneousHilbert(AbstractHilbert):
+class HomogeneousHilbert(DiscreteHilbert):
     r"""The Abstract base class for homogeneous hilbert spaces.
 
     This class should only be subclassed and should not be instantiated directly.
@@ -68,7 +63,6 @@ class HomogeneousHilbert(AbstractHilbert):
                 specifying whether those states are valid or not.
         """
         assert isinstance(N, int)
-        super().__init__()
 
         self._size = N
 
@@ -90,22 +84,13 @@ class HomogeneousHilbert(AbstractHilbert):
 
         self._hilbert_index = None
 
-        self._shape = tuple(self._local_size for _ in range(self.size))
+        shape = tuple(self._local_size for _ in range(self.size))
+        super().__init__(shape=shape)
 
     @property
     def size(self) -> int:
         r"""The total number number of degrees of freedom."""
         return self._size
-
-    @property
-    def shape(self) -> Tuple[int, ...]:
-        r"""The size of the hilbert space on every site."""
-        return self._shape
-
-    @property
-    def is_discrete(self) -> bool:
-        r"""Whether the hilbert space is discrete."""
-        return True
 
     @property
     def local_size(self) -> int:
@@ -126,7 +111,7 @@ class HomogeneousHilbert(AbstractHilbert):
 
     @property
     def n_states(self) -> int:
-        r"""int: The total dimension of the many-body Hilbert space.
+        r"""The total dimension of the many-body Hilbert space.
         Throws an exception iff the space is not indexable."""
 
         hind = self._get_hilbert_index()
@@ -138,8 +123,13 @@ class HomogeneousHilbert(AbstractHilbert):
 
     @property
     def is_finite(self) -> bool:
-        r"""bool: Whether the local hilbert space is finite."""
+        r"""Whether the local hilbert space is finite."""
         return self._is_finite
+
+    @property
+    def constrained(self) -> bool:
+        r"""Returns True if the hilbert space is constrained."""
+        return self._has_constraint
 
     def _numbers_to_states(self, numbers: np.ndarray, out: np.ndarray) -> np.ndarray:
         hind = self._get_hilbert_index()
@@ -148,11 +138,13 @@ class HomogeneousHilbert(AbstractHilbert):
     def _states_to_numbers(self, states, out):
         hind = self._get_hilbert_index()
 
-        out = _to_constrained_numbers_kernel(
-            self._has_constraint,
-            self._bare_numbers,
-            hind.states_to_numbers(states, out),
-        )
+        hind.states_to_numbers(states, out)
+
+        if self._has_constraint:
+            out[:] = _to_constrained_numbers_kernel(
+                self._bare_numbers,
+                out,
+            )
 
         return out
 
@@ -203,7 +195,7 @@ class HomogeneousHilbert(AbstractHilbert):
     # legacy interoperability.
     # TODO: Remove in 3.1
     def _random_state_legacy(self, size=None, *, out=None, rgen=None):
-        if not self.is_discrete or not self.is_finite or self._has_constraint:
+        if not self.is_finite or self._has_constraint:
             raise NotImplementedError()
 
         # Default version for discrete hilbert spaces without constraints.

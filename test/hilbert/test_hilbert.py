@@ -16,9 +16,17 @@ import itertools
 import netket as nk
 import numpy as np
 import pytest
-from netket.hilbert import Spin, Fock, CustomHilbert, Qubit, DoubledHilbert
+from netket.hilbert import (
+    Spin,
+    Fock,
+    CustomHilbert,
+    Qubit,
+    DoubledHilbert,
+    DiscreteHilbert,
+)
 
 import jax
+import jax.numpy as jnp
 
 from .. import common
 
@@ -30,7 +38,8 @@ hilberts = {}
 hilberts["Spin 1/2"] = Spin(s=0.5, N=20)
 
 # Spin 1/2 with total Sz
-hilberts["Spin 1/2 with total Sz"] = Spin(s=0.5, total_sz=1.0, N=20)
+hilberts["Spin[0.5, N=20, total_sz=1"] = Spin(s=0.5, total_sz=1.0, N=20)
+hilberts["Spin[0.5, N=5, total_sz=-1.5"] = Spin(s=0.5, total_sz=-1.5, N=5)
 
 # Spin 1/2 with total Sz
 hilberts["Spin 1 with total Sz, even sites"] = Spin(s=1.0, total_sz=5.0, N=6)
@@ -79,7 +88,15 @@ hilberts["Qubit Small"] = Qubit(N=1)
 hilberts["Custom Hilbert Small"] = CustomHilbert(local_states=[-1232, 132, 0], N=5)
 
 # Custom Hilbert
-hilberts["Doubled Hilbert"] = DoubledHilbert(
+hilberts["DoubledHilbert[Spin]"] = DoubledHilbert(Spin(0.5, N=5))
+
+hilberts["DoubledHilbert[Spin(total_sz=0.5)]"] = DoubledHilbert(
+    Spin(0.5, N=5, total_sz=0.5)
+)
+
+hilberts["DoubledHilbert[Fock]"] = DoubledHilbert(Spin(0.5, N=5))
+
+hilberts["DoubledHilbert[CustomHilbert]"] = DoubledHilbert(
     CustomHilbert(local_states=[-1232, 132, 0], N=5)
 )
 
@@ -94,8 +111,8 @@ hilberts["Doubled Hilbert"] = DoubledHilbert(
 )
 def test_consistent_size(hi):
     assert hi.size > 0
-    assert hi.local_size > 0
-    if hi.is_discrete:
+    if isinstance(hi, DiscreteHilbert):
+        assert hi.local_size > 0
         assert len(hi.local_states) == hi.local_size
         for state in hi.local_states:
             assert np.isfinite(state).all()
@@ -109,7 +126,7 @@ def test_random_states(hi):
     assert hi.local_size > 0
     assert len(hi.local_states) == hi.local_size
 
-    if hi.is_discrete:
+    if isinstance(hi, DiscreteHilbert):
         local_states = hi.local_states
         for i in range(100):
             rstate = hi.random_state(jax.random.PRNGKey(i * 14))
@@ -134,6 +151,37 @@ def test_random_states(hi):
 @pytest.mark.parametrize(
     "hi", [pytest.param(hi, id=name) for name, hi in hilberts.items()]
 )
+def test_flip_state(hi):
+    rng = nk.jax.PRNGSeq(1)
+    N_batches = 20
+
+    if isinstance(hi, DiscreteHilbert):
+        local_states = hi.local_states
+        states = hi.random_state(rng.next(), N_batches)
+
+        ids = jnp.asarray(
+            jnp.floor(hi.size * jax.random.uniform(rng.next(), shape=(N_batches,))),
+            dtype=int,
+        )
+
+        new_states, old_vals = nk.hilbert.random.flip_state(hi, rng.next(), states, ids)
+
+        assert new_states.shape == states.shape
+
+        assert np.all(np.in1d(new_states.reshape(-1), local_states))
+
+        states_np = np.asarray(states)
+        states_new_np = np.array(new_states)
+
+        for (row, col) in enumerate(ids):
+            states_new_np[row, col] = states_np[row, col]
+
+        np.testing.assert_allclose(states_np, states_new_np)
+
+
+@pytest.mark.parametrize(
+    "hi", [pytest.param(hi, id=name) for name, hi in hilberts.items()]
+)
 def test_random_states_legacy(hi):
     nk.legacy.random.seed(12345)
 
@@ -141,7 +189,7 @@ def test_random_states_legacy(hi):
     assert hi.local_size > 0
     assert len(hi.local_states) == hi.local_size
 
-    if hi.is_discrete:
+    if isinstance(hi, DiscreteHilbert):
         rstate = np.zeros(hi.size)
         local_states = hi.local_states
         for i in range(100):
