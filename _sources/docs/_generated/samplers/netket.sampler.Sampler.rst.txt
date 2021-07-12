@@ -18,6 +18,7 @@
       .. autoattribute:: Sampler.n_batches
       .. autoattribute:: Sampler.n_chains
       .. autoattribute:: Sampler.n_chains_per_rank
+      .. autoattribute:: Sampler.hilbert
    
       
    .. rst-class:: class-dl-groups

@@ -21,6 +21,7 @@
       .. autoattribute:: RBMMultiVal.use_hidden_bias
       .. autoattribute:: RBMMultiVal.use_visible_bias
       .. autoattribute:: RBMMultiVal.variables
+      .. autoattribute:: RBMMultiVal.n_classes
    
       
    .. rst-class:: class-dl-groups

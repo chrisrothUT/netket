@@ -21,6 +21,7 @@
       .. autoattribute:: DenseGeneral.scope
       .. autoattribute:: DenseGeneral.use_bias
       .. autoattribute:: DenseGeneral.variables
+      .. autoattribute:: DenseGeneral.features
    
       
    .. rst-class:: class-dl-groups

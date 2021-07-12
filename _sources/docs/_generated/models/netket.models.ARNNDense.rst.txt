@@ -19,6 +19,9 @@
       .. autoattribute:: ARNNDense.scope
       .. autoattribute:: ARNNDense.use_bias
       .. autoattribute:: ARNNDense.variables
+      .. autoattribute:: ARNNDense.layers
+      .. autoattribute:: ARNNDense.features
+      .. autoattribute:: ARNNDense.hilbert
    
       
    .. rst-class:: class-dl-groups

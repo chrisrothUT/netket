@@ -42,7 +42,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="../../../index.html"><span><img src="../../../_static/logonav.png"></span>
+        <a class="navbar-brand" href="../../../index.html"><span><img src="../../../_static/_static/logonav.png"></span>
           NetKet</a>
         <span class="navbar-text navbar-version pull-left"><b></b></span>
       </div>
@@ -329,6 +329,7 @@
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_in</span><span class="p">):</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">nknn</span><span class="o">.</span><span class="n">DenseSymm</span><span class="p">(</span>
             <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Dense&quot;</span><span class="p">,</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;matrix&quot;</span><span class="p">,</span>
             <span class="n">symmetries</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">symmetries</span><span class="p">,</span>
             <span class="n">features</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">,</span>
             <span class="n">dtype</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
@@ -338,6 +339,8 @@
             <span class="n">precision</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">precision</span><span class="p">,</span>
         <span class="p">)(</span><span class="n">x_in</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">activation</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_visible_bias</span><span class="p">:</span>
@@ -363,7 +366,7 @@
     </p>
     <p>
         &copy; Copyright 2019-2021, The Netket authors - All rights reserved.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.0.<br/>
     </p>
   </div>
 </footer>

@@ -19,6 +19,9 @@
       .. autoattribute:: MPSPeriodic.scope
       .. autoattribute:: MPSPeriodic.symperiod
       .. autoattribute:: MPSPeriodic.variables
+      .. autoattribute:: MPSPeriodic.hilbert
+      .. autoattribute:: MPSPeriodic.graph
+      .. autoattribute:: MPSPeriodic.bond_dim
    
       
    .. rst-class:: class-dl-groups

@@ -10,6 +10,10 @@
 
    
       
+   .. rst-class:: class-dl-groups
+
+   Attributes
+      .. autoattribute:: HamiltonianRuleNumpy.operator
    
       
    .. rst-class:: class-dl-groups

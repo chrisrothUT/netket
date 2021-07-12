@@ -17,6 +17,7 @@
       .. autoattribute:: ARNN.parent
       .. autoattribute:: ARNN.scope
       .. autoattribute:: ARNN.variables
+      .. autoattribute:: ARNN.hilbert
    
       
    .. rst-class:: class-dl-groups

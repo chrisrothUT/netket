@@ -17,6 +17,9 @@
       .. autoattribute:: Embed.parent
       .. autoattribute:: Embed.scope
       .. autoattribute:: Embed.variables
+      .. autoattribute:: Embed.num_embeddings
+      .. autoattribute:: Embed.features
+      .. autoattribute:: Embed.embedding
    
       
    .. rst-class:: class-dl-groups

@@ -42,7 +42,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="../../../../index.html"><span><img src="../../../../_static/logonav.png"></span>
+        <a class="navbar-brand" href="../../../../index.html"><span><img src="../../../../_static/_static/logonav.png"></span>
           NetKet</a>
         <span class="navbar-text navbar-version pull-left"><b></b></span>
       </div>
@@ -171,17 +171,31 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_last_vstate</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">_last_matrix</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="sd">&quot;&quot;&quot;Cached last variational state to skip logic to decide what type of</span>
+<span class="sd">    QGT to chose.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="QGTAuto.__init__"><a class="viewcode-back" href="../../../../docs/_generated/optim/netket.optimizer.qgt.QGTAuto.html#netket.optimizer.qgt.QGTAuto.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_solver</span> <span class="o">=</span> <span class="n">solver</span></div>
+    <span class="n">_last_matrix</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Cached last QGT. Used when vstate == _last_vstate</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_kwargs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Kwargs passed at construction. Used when constructing a QGT.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="QGTAuto.__init__"><a class="viewcode-back" href="../../../../docs/_generated/optim/netket.optimizer.qgt.QGTAuto.html#netket.optimizer.qgt.QGTAuto.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_solver</span> <span class="o">=</span> <span class="n">solver</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span></div>
 
 <div class="viewcode-block" id="QGTAuto.__call__"><a class="viewcode-back" href="../../../../docs/_generated/optim/netket.optimizer.qgt.QGTAuto.html#netket.optimizer.qgt.QGTAuto.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variational_state</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_vstate</span> <span class="o">!=</span> <span class="n">variational_state</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_last_vstate</span> <span class="o">=</span> <span class="n">variational_state</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_last_matrix</span> <span class="o">=</span> <span class="n">default_qgt_matrix</span><span class="p">(</span>
-                <span class="n">variational_state</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_solver</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+                <span class="n">variational_state</span><span class="p">,</span> <span class="n">solver</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_solver</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_matrix</span><span class="p">(</span><span class="n">variational_state</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
@@ -203,7 +217,7 @@
     </p>
     <p>
         &copy; Copyright 2019-2021, The Netket authors - All rights reserved.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.0.<br/>
     </p>
   </div>
 </footer>

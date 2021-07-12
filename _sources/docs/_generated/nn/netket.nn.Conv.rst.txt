@@ -24,6 +24,8 @@
       .. autoattribute:: Conv.strides
       .. autoattribute:: Conv.use_bias
       .. autoattribute:: Conv.variables
+      .. autoattribute:: Conv.features
+      .. autoattribute:: Conv.kernel_size
    
       
    .. rst-class:: class-dl-groups

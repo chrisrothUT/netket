@@ -20,6 +20,10 @@
       .. autoattribute:: MaskedConv1D.scope
       .. autoattribute:: MaskedConv1D.use_bias
       .. autoattribute:: MaskedConv1D.variables
+      .. autoattribute:: MaskedConv1D.features
+      .. autoattribute:: MaskedConv1D.kernel_size
+      .. autoattribute:: MaskedConv1D.kernel_dilation
+      .. autoattribute:: MaskedConv1D.exclusive
    
       
    .. rst-class:: class-dl-groups

@@ -18,6 +18,7 @@
       .. autoattribute:: ExactSampler.n_batches
       .. autoattribute:: ExactSampler.n_chains
       .. autoattribute:: ExactSampler.n_chains_per_rank
+      .. autoattribute:: ExactSampler.hilbert
    
       
    .. rst-class:: class-dl-groups

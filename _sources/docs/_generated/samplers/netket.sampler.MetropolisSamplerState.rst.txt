@@ -19,6 +19,9 @@
       .. autoattribute:: MetropolisSamplerState.n_accepted_proc
       .. autoattribute:: MetropolisSamplerState.n_steps
       .. autoattribute:: MetropolisSamplerState.n_steps_proc
+      .. autoattribute:: MetropolisSamplerState.σ
+      .. autoattribute:: MetropolisSamplerState.rng
+      .. autoattribute:: MetropolisSamplerState.rule_state
    
       
    .. rst-class:: class-dl-groups

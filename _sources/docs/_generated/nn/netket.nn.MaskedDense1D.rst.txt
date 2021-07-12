@@ -19,6 +19,8 @@
       .. autoattribute:: MaskedDense1D.scope
       .. autoattribute:: MaskedDense1D.use_bias
       .. autoattribute:: MaskedDense1D.variables
+      .. autoattribute:: MaskedDense1D.features
+      .. autoattribute:: MaskedDense1D.exclusive
    
       
    .. rst-class:: class-dl-groups

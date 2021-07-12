@@ -32,6 +32,7 @@
       .. autoattribute:: MCMixedState.sampler_diag
       .. autoattribute:: MCMixedState.samples
       .. autoattribute:: MCMixedState.variables
+      .. autoattribute:: MCMixedState.sampler_state
    
       
    .. rst-class:: class-dl-groups

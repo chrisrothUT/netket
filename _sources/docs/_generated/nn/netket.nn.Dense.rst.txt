@@ -19,6 +19,7 @@
       .. autoattribute:: Dense.scope
       .. autoattribute:: Dense.use_bias
       .. autoattribute:: Dense.variables
+      .. autoattribute:: Dense.features
    
       
    .. rst-class:: class-dl-groups

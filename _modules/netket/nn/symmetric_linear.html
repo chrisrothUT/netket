@@ -42,7 +42,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="../../../index.html"><span><img src="../../../_static/logonav.png"></span>
+        <a class="navbar-brand" href="../../../index.html"><span><img src="../../../_static/_static/logonav.png"></span>
           NetKet</a>
         <span class="navbar-text navbar-version pull-left"><b></b></span>
       </div>
@@ -110,19 +110,27 @@
 <span class="c1"># See the License for the specific language governing permissions and</span>
 <span class="c1"># limitations under the License.</span>
 
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
 
 <span class="kn">from</span> <span class="nn">flax.linen.module</span> <span class="kn">import</span> <span class="n">Module</span><span class="p">,</span> <span class="n">compact</span>
 <span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">lax</span>
 <span class="kn">import</span> <span class="nn">jax.numpy</span> <span class="k">as</span> <span class="nn">jnp</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">jax</span>
 
 <span class="kn">from</span> <span class="nn">netket.nn.initializers</span> <span class="kn">import</span> <span class="n">normal</span><span class="p">,</span> <span class="n">zeros</span>
 <span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">HashableArray</span>
-<span class="kn">from</span> <span class="nn">netket.utils.types</span> <span class="kn">import</span> <span class="n">Array</span><span class="p">,</span> <span class="n">DType</span><span class="p">,</span> <span class="n">PRNGKeyT</span><span class="p">,</span> <span class="n">Shape</span>
+<span class="kn">from</span> <span class="nn">netket.utils.types</span> <span class="kn">import</span> <span class="n">Array</span><span class="p">,</span> <span class="n">DType</span><span class="p">,</span> <span class="n">PRNGKeyT</span><span class="p">,</span> <span class="n">Shape</span><span class="p">,</span> <span class="n">NNInitFunc</span>
 <span class="kn">from</span> <span class="nn">netket.utils.group</span> <span class="kn">import</span> <span class="n">PermutationGroup</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Sequence</span>
+<span class="kn">from</span> <span class="nn">netket.graph</span> <span class="kn">import</span> <span class="n">Graph</span><span class="p">,</span> <span class="n">Lattice</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
-<span class="n">default_kernel_init</span> <span class="o">=</span> <span class="n">normal</span><span class="p">(</span><span class="n">stddev</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">unit_normal_scaling</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span> <span class="o">/</span> <span class="n">jnp</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+        <span class="n">jnp</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
+    <span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_symmetrizer_col</span><span class="p">(</span><span class="n">perms</span><span class="p">,</span> <span class="n">features</span><span class="p">):</span>
@@ -151,92 +159,628 @@
     <span class="k">return</span> <span class="n">kl</span>
 
 
-<div class="viewcode-block" id="DenseSymm"><a class="viewcode-back" href="../../../docs/_generated/nn/netket.nn.DenseSymm.html#netket.nn.DenseSymm">[docs]</a><span class="k">class</span> <span class="nc">DenseSymm</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A symmetrized linear transformation applied over the last dimension of the input.</span>
+<span class="k">class</span> <span class="nc">DenseSymmMatrix</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Implements a symmetrized linear transformation over a permutation group</span>
+<span class="sd">    using matrix multiplication.&quot;&quot;&quot;</span>
 
-<span class="sd">    This layer uses a reduced number of parameters, which are arranged so that the full</span>
-<span class="sd">    affine transformation is invariant under all of the given permutations when applied to s.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">symmetries</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">HashableArray</span><span class="p">,</span> <span class="n">PermutationGroup</span><span class="p">]</span>
+    <span class="n">symmetries</span><span class="p">:</span> <span class="n">HashableArray</span>
     <span class="sd">&quot;&quot;&quot;A group of symmetry operations (or array of permutation indices) over which the layer should be invariant.</span>
-
 <span class="sd">        Numpy/Jax arrays must be wrapped into an :class:`netket.utils.HashableArray`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">features</span><span class="p">:</span> <span class="nb">int</span>
     <span class="sd">&quot;&quot;&quot;The number of symmetry-reduced features. The full output size is len(symmetries) * features.&quot;&quot;&quot;</span>
     <span class="n">use_bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="sd">&quot;&quot;&quot;Whether to add a bias to the output (default: True).&quot;&quot;&quot;</span>
+    <span class="n">mask</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HashableArray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="sd">&quot;&quot;&quot;Mask that zeros out elements of the filter. Should be of shape [inp.shape[-1]]&quot;&quot;&quot;</span>
     <span class="n">dtype</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">float64</span>
     <span class="sd">&quot;&quot;&quot;The dtype of the weights.&quot;&quot;&quot;</span>
     <span class="n">precision</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="sd">&quot;&quot;&quot;numerical precision of the computation see `jax.lax.Precision`for details.&quot;&quot;&quot;</span>
 
-    <span class="n">kernel_init</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">PRNGKeyT</span><span class="p">,</span> <span class="n">Shape</span><span class="p">,</span> <span class="n">DType</span><span class="p">],</span> <span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="n">default_kernel_init</span>
-    <span class="sd">&quot;&quot;&quot;Initializer for the Dense layer matrix.&quot;&quot;&quot;</span>
-    <span class="n">bias_init</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">PRNGKeyT</span><span class="p">,</span> <span class="n">Shape</span><span class="p">,</span> <span class="n">DType</span><span class="p">],</span> <span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="n">zeros</span>
-    <span class="sd">&quot;&quot;&quot;Initializer for the bias.&quot;&quot;&quot;</span>
+    <span class="n">kernel_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">unit_normal_scaling</span>
+    <span class="sd">&quot;&quot;&quot;Initializer for the Dense layer matrix. Defaults to variance scaling&quot;&quot;&quot;</span>
+    <span class="n">bias_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">zeros</span>
+    <span class="sd">&quot;&quot;&quot;Initializer for the bias. Defaults to zero initialization&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="DenseSymm.setup"><a class="viewcode-back" href="../../../docs/_generated/nn/netket.nn.DenseSymm.html#netket.nn.DenseSymm.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># pylint: disable=attribute-defined-outside-init</span>
         <span class="n">perms</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symmetries</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_sites</span> <span class="o">=</span> <span class="n">perms</span><span class="o">.</span><span class="n">shape</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">n_hidden</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">symm_cols</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">_symmetrizer_col</span><span class="p">(</span><span class="n">perms</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">))</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">symm_cols</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">_symmetrizer_col</span><span class="p">(</span><span class="n">perms</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">))</span>
 
-<div class="viewcode-block" id="DenseSymm.full_kernel"><a class="viewcode-back" href="../../../docs/_generated/nn/netket.nn.DenseSymm.html#netket.nn.DenseSymm.full_kernel">[docs]</a>    <span class="k">def</span> <span class="nf">full_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kernel</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">full_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kernel</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Converts the symmetry-reduced kernel of shape (n_sites, features) to</span>
 <span class="sd">        the full Dense kernel of shape (n_sites, features * n_symm).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">result</span> <span class="o">=</span> <span class="n">kernel</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">symm_cols</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_sites</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_sites</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DenseSymm.full_bias"><a class="viewcode-back" href="../../../docs/_generated/nn/netket.nn.DenseSymm.html#netket.nn.DenseSymm.full_bias">[docs]</a>    <span class="k">def</span> <span class="nf">full_bias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bias</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">full_bias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bias</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert symmetry-reduced bias of shape (features,) to the full bias of</span>
 <span class="sd">        shape (n_symm * features,).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">bias</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">bias</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
 
-<div class="viewcode-block" id="DenseSymm.__call__"><a class="viewcode-back" href="../../../docs/_generated/nn/netket.nn.DenseSymm.html#netket.nn.DenseSymm.__call__">[docs]</a>    <span class="nd">@compact</span>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
+    <span class="nd">@compact</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Applies the symmetrized linear transformation to the inputs along the last dimension.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">          inputs: The nd-array to be transformed.</span>
+<span class="sd">          x: The nd-array to be transformed.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">          The transformed input.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">dtype</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">promote_types</span><span class="p">(</span><span class="n">inputs</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
-        <span class="n">inputs</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">promote_types</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
 
         <span class="n">kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">(</span>
-            <span class="s2">&quot;kernel&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_init</span><span class="p">,</span> <span class="p">(</span><span class="n">inputs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span>
+            <span class="s2">&quot;kernel&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_init</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span>
         <span class="p">)</span>
-        <span class="n">kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_kernel</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">:</span>
+            <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_kernel</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">)</span>
         <span class="n">kernel</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
 
-        <span class="n">y</span> <span class="o">=</span> <span class="n">lax</span><span class="o">.</span><span class="n">dot_general</span><span class="p">(</span>
-            <span class="n">inputs</span><span class="p">,</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">lax</span><span class="o">.</span><span class="n">dot_general</span><span class="p">(</span>
+            <span class="n">x</span><span class="p">,</span>
             <span class="n">kernel</span><span class="p">,</span>
-            <span class="p">(((</span><span class="n">inputs</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,)),</span> <span class="p">((),</span> <span class="p">())),</span>
+            <span class="p">(((</span><span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,)),</span> <span class="p">((),</span> <span class="p">())),</span>
             <span class="n">precision</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">precision</span><span class="p">,</span>
         <span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_bias</span><span class="p">:</span>
             <span class="n">bias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;bias&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias_init</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">,),</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
             <span class="n">bias</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">full_bias</span><span class="p">(</span><span class="n">bias</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)</span>
-            <span class="n">y</span> <span class="o">+=</span> <span class="n">bias</span>
+            <span class="n">x</span> <span class="o">+=</span> <span class="n">bias</span>
 
-        <span class="k">return</span> <span class="n">y</span></div></div>
+        <span class="k">return</span> <span class="n">x</span>
 
 
-<div class="viewcode-block" id="DenseEquivariant"><a class="viewcode-back" href="../../../docs/_generated/nn/netket.nn.DenseEquivariant.html#netket.nn.DenseEquivariant">[docs]</a><span class="k">class</span> <span class="nc">DenseEquivariant</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;A group convolution operation that is equivariant over a symmetry group</span>
+<span class="k">class</span> <span class="nc">DenseSymmFFT</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Implements a symmetrized projection onto a space group using a Fast Fourier Transform&quot;&quot;&quot;</span>
+
+    <span class="n">space_group</span><span class="p">:</span> <span class="n">HashableArray</span>
+    <span class="sd">&quot;&quot;&quot;Array that lists the space group as permutations&quot;&quot;&quot;</span>
+    <span class="n">features</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="sd">&quot;&quot;&quot;The number of input features; must be the second dimension of the input.&quot;&quot;&quot;</span>
+    <span class="n">shape</span><span class="p">:</span> <span class="n">Tuple</span>
+    <span class="sd">&quot;&quot;&quot;Tuple that corresponds to shape of lattice&quot;&quot;&quot;</span>
+    <span class="n">use_bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="sd">&quot;&quot;&quot;Whether to add a bias to the output (default: True).&quot;&quot;&quot;</span>
+    <span class="n">mask</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HashableArray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="sd">&quot;&quot;&quot;Mask that zeros out elements of the filter. Should be of shape [inp.shape[-1]]&quot;&quot;&quot;</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">DType</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">float64</span>
+    <span class="sd">&quot;&quot;&quot;The dtype of the weights.&quot;&quot;&quot;</span>
+    <span class="n">precision</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">kernel_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">unit_normal_scaling</span>
+    <span class="sd">&quot;&quot;&quot;Initializer for the Dense layer matrix. Defaults to variance scaling&quot;&quot;&quot;</span>
+    <span class="n">bias_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">zeros</span>
+    <span class="sd">&quot;&quot;&quot;Initializer for the bias. Defaults to zero initialization&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">sg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">space_group</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_cells</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sg</span><span class="p">)</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_cells</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sites_per_cell</span> <span class="o">=</span> <span class="n">sg</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_cells</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">sg</span><span class="p">[:,</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sites_per_cell</span><span class="p">]</span>
+            <span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_cells</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sites_per_cell</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sites_per_cell</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">make_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kernel</span><span class="p">):</span>
+        <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">kernel</span>
+
+    <span class="nd">@compact</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Applies the equivariant transform to the inputs along the last two</span>
+<span class="sd">        dimensions (-2: features, -1: group elements)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">promote_types</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_cells</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sites_per_cell</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sites_per_cell</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="n">kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">(</span>
+            <span class="s2">&quot;kernel&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kernel_init</span><span class="p">,</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_cells</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sites_per_cell</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">kernel</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">:</span>
+            <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_kernel</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftn</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_cells</span><span class="p">)</span>
+
+        <span class="n">kernel</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftn</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+            <span class="o">*</span><span class="n">kernel</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">3</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_cells</span>
+        <span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">lax</span><span class="o">.</span><span class="n">dot_general</span><span class="p">(</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="p">(((</span><span class="mi">1</span><span class="p">,),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,)),</span> <span class="p">((</span><span class="mi">2</span><span class="p">,),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,))),</span> <span class="n">precision</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">precision</span>
+        <span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">3</span><span class="p">],</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">ifftn</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">3</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_cells</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_bias</span><span class="p">:</span>
+            <span class="n">bias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;bias&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias_init</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">bias</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">bias</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">+=</span> <span class="n">bias</span>
+
+        <span class="k">if</span> <span class="n">jnp</span><span class="o">.</span><span class="n">can_cast</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">x</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">real</span>
+
+
+<span class="k">class</span> <span class="nc">DenseEquivariantFFT</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Implements a group convolution using a fast fourier transform over the translation group.</span>
+<span class="sd">    The group convolution can be written in terms of translational convolutions with</span>
+<span class="sd">    symmetry transformed filters as desribed in ` Cohen et. *al* &lt;http://proceedings.mlr.press/v48/cohenc16.pdf&gt;`_</span>
+<span class="sd">    The translational convolutions are then implemented with Fast Fourier Transforms.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">product_table</span><span class="p">:</span> <span class="n">HashableArray</span>
+    <span class="sd">&quot;&quot;&quot; product table for space group&quot;&quot;&quot;</span>
+    <span class="n">in_features</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="sd">&quot;&quot;&quot;The number of input features; must be the second dimension of the input.&quot;&quot;&quot;</span>
+    <span class="n">out_features</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="sd">&quot;&quot;&quot;The number of input features; must be the second dimension of the input.&quot;&quot;&quot;</span>
+    <span class="n">shape</span><span class="p">:</span> <span class="n">Tuple</span>
+    <span class="sd">&quot;&quot;&quot;Tuple that corresponds to shape of lattice&quot;&quot;&quot;</span>
+    <span class="n">use_bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="sd">&quot;&quot;&quot;Whether to add a bias to the output (default: True).&quot;&quot;&quot;</span>
+    <span class="n">mask</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HashableArray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="sd">&quot;&quot;&quot;Mask that zeros out elements of the filter. Should be of shape [inp.shape[-1]]&quot;&quot;&quot;</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">DType</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">float64</span>
+    <span class="sd">&quot;&quot;&quot;The dtype of the weights.&quot;&quot;&quot;</span>
+    <span class="n">precision</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="sd">&quot;&quot;&quot;numerical precision of the computation see `jax.lax.Precision`for details.&quot;&quot;&quot;</span>
+
+    <span class="n">kernel_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">unit_normal_scaling</span>
+    <span class="sd">&quot;&quot;&quot;Initializer for the Dense layer matrix. Defaults to variance scaling&quot;&quot;&quot;</span>
+    <span class="n">bias_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">zeros</span>
+    <span class="sd">&quot;&quot;&quot;Initializer for the bias. Defaults to zero initialization&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">pt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">product_table</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_cells</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pt</span><span class="p">)</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_cells</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">pt</span><span class="p">[:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">]</span>
+            <span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_cells</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">make_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kernel</span><span class="p">):</span>
+        <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mapping</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">kernel</span>
+
+    <span class="nd">@compact</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Applies the equivariant transform to the inputs along the last two</span>
+<span class="sd">        dimensions (-2: features, -1: group elements)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">promote_types</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_cells</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+        <span class="n">kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">(</span>
+            <span class="s2">&quot;kernel&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kernel_init</span><span class="p">,</span>
+            <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">out_features</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_cells</span><span class="p">,</span>
+            <span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">kernel</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">:</span>
+            <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="n">kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_kernel</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftn</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">3</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_cells</span><span class="p">)</span>
+
+        <span class="n">kernel</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">fftn</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+            <span class="o">*</span><span class="n">kernel</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">4</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_cells</span>
+        <span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">lax</span><span class="o">.</span><span class="n">dot_general</span><span class="p">(</span>
+            <span class="n">x</span><span class="p">,</span> <span class="n">kernel</span><span class="p">,</span> <span class="p">(((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)),</span> <span class="p">((</span><span class="mi">3</span><span class="p">,),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,))),</span> <span class="n">precision</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">precision</span>
+        <span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">3</span><span class="p">],</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">ifftn</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">3</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_cells</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_bias</span><span class="p">:</span>
+            <span class="n">bias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">(</span>
+                <span class="s2">&quot;bias&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias_init</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">out_features</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span>
+            <span class="p">)</span>
+            <span class="n">bias</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">bias</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">+=</span> <span class="n">bias</span>
+
+        <span class="k">if</span> <span class="n">jnp</span><span class="o">.</span><span class="n">can_cast</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">x</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">real</span>
+
+
+<span class="k">class</span> <span class="nc">DenseEquivariantIrrep</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Implements a group convolutional layer by projecting onto irreducible</span>
+<span class="sd">    representations of the group.</span>
+
+<span class="sd">    Acts on a feature map of shape [batch_size, in_features, n_symm] and</span>
+<span class="sd">    eeturns a feature map of shape [batch_size, out_features, n_symm].</span>
+<span class="sd">    The input and the output are related by</span>
+<span class="sd">    :: math ::</span>
+<span class="sd">        y^{(i)}_g = \sum_{h,j} f^{(j)}_h W^{(ij)}_{h^{-1}g}.</span>
+<span class="sd">    Note that this switches the convention of Cohen et al. to use an actual group</span>
+<span class="sd">    convolution, but this doesn&#39;t affect equivariance.</span>
+<span class="sd">    The convolution is implemented in terms of a group Fourier transform.</span>
+<span class="sd">    Therefore, the group structure is represented internally as the set of its</span>
+<span class="sd">    irrep matrices. After Fourier transforming, the convolution translates to</span>
+<span class="sd">    :: math ::</span>
+<span class="sd">        y^{(i)}_\rho = \sum_j f^{(j)}_\rho W^{(ij)}_\rho,</span>
+<span class="sd">    where all terms are d x d matrices rather than numbers, and the juxtaposition</span>
+<span class="sd">    stands for matrix multiplication.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">irreps</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">HashableArray</span><span class="p">]</span>
+    <span class="sd">&quot;&quot;&quot;Irrep matrices of the symmetry group. Each element of the list is an</span>
+<span class="sd">    array of shape [n_symm, d, d]; irreps[i][j] is the representation of the</span>
+<span class="sd">    jth group element in irrep #i.&quot;&quot;&quot;</span>
+    <span class="n">in_features</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="sd">&quot;&quot;&quot;The number of input features; must be the second dimension of the input.&quot;&quot;&quot;</span>
+    <span class="n">out_features</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="sd">&quot;&quot;&quot;The number of output features; returned as the second dimension of the output.&quot;&quot;&quot;</span>
+    <span class="n">use_bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="sd">&quot;&quot;&quot;Whether to add a bias to the output (default: True).&quot;&quot;&quot;</span>
+    <span class="n">mask</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HashableArray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="sd">&quot;&quot;&quot;Mask that zeros out elements of the filter. Should be of shape [inp.shape[-1]]&quot;&quot;&quot;</span>
+
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">DType</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">float64</span>
+    <span class="sd">&quot;&quot;&quot;The dtype of the weights.&quot;&quot;&quot;</span>
+    <span class="n">precision</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="sd">&quot;&quot;&quot;numerical precision of the computation see `jax.lax.Precision`for details.&quot;&quot;&quot;</span>
+
+    <span class="n">kernel_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">unit_normal_scaling</span>
+    <span class="sd">&quot;&quot;&quot;Initializer for the Dense layer matrix. Defaults to variance scaling&quot;&quot;&quot;</span>
+    <span class="n">bias_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">zeros</span>
+    <span class="sd">&quot;&quot;&quot;Initializer for the bias. Defaults to zero initialization&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">irreps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">forward</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">irrep</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">irrep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">irreps</span><span class="p">],</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inverse</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">irrep</span><span class="p">)</span><span class="o">.</span><span class="n">conj</span><span class="p">()</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="o">*</span> <span class="p">(</span><span class="n">irrep</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">irrep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">irreps</span>
+            <span class="p">],</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+
+        <span class="c1"># Convert between vectors of length n_symm and tuples of arrays of shape</span>
+        <span class="c1"># n_irrep × irrep_size^2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assemble</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">arrays</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">array</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,))</span> <span class="k">for</span> <span class="n">array</span> <span class="ow">in</span> <span class="n">arrays</span><span class="p">],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span>
+        <span class="p">)</span>
+
+        <span class="n">irrep_size</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">n_same_size</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">shapes</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">irrep</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">irreps</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">irrep_size</span> <span class="o">==</span> <span class="n">irrep</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">n_same_size</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">shapes</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">n_same_size</span><span class="p">,</span> <span class="n">irrep_size</span><span class="p">,</span> <span class="n">irrep_size</span><span class="p">))</span>
+                <span class="n">irrep_size</span> <span class="o">=</span> <span class="n">irrep</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">n_same_size</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">shapes</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">n_same_size</span><span class="p">,</span> <span class="n">irrep_size</span><span class="p">,</span> <span class="n">irrep_size</span><span class="p">))</span>
+        <span class="n">limits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">shape</span><span class="p">)</span> <span class="k">for</span> <span class="n">shape</span> <span class="ow">in</span> <span class="n">shapes</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">disassemble</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">vecs</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span>
+            <span class="n">vecs</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">limits</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="p">:</span> <span class="n">limits</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">vecs</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">shape</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">shape</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">shapes</span><span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">forward_ft</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Array</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Performs a forward group Fourier transform on the input.</span>
+<span class="sd">        This is defined by</span>
+<span class="sd">        :: math ::</span>
+<span class="sd">            \hat{f}_\rho = \sum_g f(g) \rho(g),</span>
+<span class="sd">        where :math:`\rho` is an irrep of the group.</span>
+<span class="sd">        The Fourier transform is performed over the last index, and is returned</span>
+<span class="sd">        as a tuple of arrays, each entry corresponding to the entry of `irreps`</span>
+<span class="sd">        in the same position, and the last dimension of length `n_symm` replaced</span>
+<span class="sd">        by two dimensions of length `d` each.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">disassemble</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">tensordot</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">inverse_ft</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Array</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Performs an inverse group Fourier transform on the input.</span>
+<span class="sd">        This is defined by</span>
+<span class="sd">        :: math ::</span>
+<span class="sd">            f(g) = \frac{1}{|G|} \sum_\rho d_\rho {\rm Tr}(\rho(g^{-1}) \hat{f}_\rho)</span>
+<span class="sd">        where the sum runs over all irreps of the group.</span>
+<span class="sd">        The input is a tuple of arrays whose the last two dimensions match the</span>
+<span class="sd">        dimensions of each irrep. The inverse Fourier transform is performed</span>
+<span class="sd">        over these indices and is returned as an array where those dimensions</span>
+<span class="sd">        are replaced by a single dimension of length `n_symm`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span>
+            <span class="n">jnp</span><span class="o">.</span><span class="n">tensordot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">assemble</span><span class="p">(</span><span class="n">inputs</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">inverse</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+            <span class="c1"># Irrep matrices might be complex, so `result` might be complex</span>
+            <span class="c1"># even if the inputs are real</span>
+        <span class="p">)</span>
+
+    <span class="nd">@compact</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Applies the equivariant transform to the inputs along the last two</span>
+<span class="sd">        dimensions (-2: features, -1: group elements)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">promote_types</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_ft</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="n">kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">(</span>
+            <span class="s2">&quot;kernel&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kernel_init</span><span class="p">,</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">in_features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">kernel</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">:</span>
+            <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="n">kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_ft</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+            <span class="n">lax</span><span class="o">.</span><span class="n">dot_general</span><span class="p">(</span>
+                <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">kernel</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="p">(((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span> <span class="p">((</span><span class="mi">2</span><span class="p">,),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,)))</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inverse_ft</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_bias</span><span class="p">:</span>
+            <span class="n">bias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">(</span>
+                <span class="s2">&quot;bias&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias_init</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">out_features</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span>
+            <span class="p">)</span>
+            <span class="n">bias</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">bias</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+
+            <span class="n">x</span> <span class="o">+=</span> <span class="n">bias</span>
+
+        <span class="k">if</span> <span class="n">jnp</span><span class="o">.</span><span class="n">can_cast</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">x</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">real</span>
+
+
+<span class="k">class</span> <span class="nc">DenseEquivariantMatrix</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Implements a group convolution operation that is equivariant over a symmetry group</span>
+<span class="sd">    by multiplying by the full kernel matrix&quot;&quot;&quot;</span>
+
+    <span class="n">product_table</span><span class="p">:</span> <span class="n">HashableArray</span>
+    <span class="sd">&quot;&quot;&quot;Flattened product table generated by PermutationGroup.produt_table().ravel()</span>
+<span class="sd">    that specifies the product of the group with its involution, or the</span>
+<span class="sd">    PermutationGroup object itself&quot;&quot;&quot;</span>
+    <span class="n">in_features</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="sd">&quot;&quot;&quot;The number of symmetry-reduced input features. The full input size</span>
+<span class="sd">    is n_symm*in_features.&quot;&quot;&quot;</span>
+    <span class="n">out_features</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="sd">&quot;&quot;&quot;The number of symmetry-reduced output features. The full output size</span>
+<span class="sd">    is n_symm*out_features.&quot;&quot;&quot;</span>
+    <span class="n">use_bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="sd">&quot;&quot;&quot;Whether to add a bias to the output (default: True).&quot;&quot;&quot;</span>
+    <span class="n">mask</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">HashableArray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="sd">&quot;&quot;&quot;Whether to mask the filters to restrict the connectivity&quot;&quot;&quot;</span>
+    <span class="n">dtype</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">float64</span>
+    <span class="sd">&quot;&quot;&quot;The dtype of the weights.&quot;&quot;&quot;</span>
+    <span class="n">precision</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="sd">&quot;&quot;&quot;numerical precision of the computation see `jax.lax.Precision`for details.&quot;&quot;&quot;</span>
+
+    <span class="n">kernel_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">unit_normal_scaling</span>
+    <span class="sd">&quot;&quot;&quot;Initializer for the Dense layer matrix. Defaults to variance scaling&quot;&quot;&quot;</span>
+    <span class="n">bias_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">zeros</span>
+    <span class="sd">&quot;&quot;&quot;Initializer for the bias. Defaults to zero initialization&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">product_table</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">stdev</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">in_features</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">full_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kernel</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts the symmetry-reduced kernel of shape (n_sites, features) to</span>
+<span class="sd">        the full Dense kernel of shape (n_sites, features * n_symm).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">product_table</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">out_features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span>
+        <span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+    <span class="k">def</span> <span class="nf">full_bias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bias</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert symmetry-reduced bias of shape (features,) to the full bias of</span>
+<span class="sd">        shape (n_symm * features,).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">bias</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">)</span>
+
+    <span class="nd">@compact</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Applies the equivariant transform to the inputs along the last dimension.</span>
+<span class="sd">        Args:</span>
+<span class="sd">          x: The nd-array to be transformed.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">          The transformed input.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dtype</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">promote_types</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+
+        <span class="n">kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">(</span>
+            <span class="s2">&quot;kernel&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">kernel_init</span><span class="p">,</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">out_features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">kernel</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">:</span>
+            <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="n">kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_kernel</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span>
+        <span class="n">kernel</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">lax</span><span class="o">.</span><span class="n">dot_general</span><span class="p">(</span>
+            <span class="n">x</span><span class="p">,</span>
+            <span class="n">kernel</span><span class="p">,</span>
+            <span class="p">(((</span><span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,)),</span> <span class="p">((),</span> <span class="p">())),</span>
+            <span class="n">precision</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">precision</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_bias</span><span class="p">:</span>
+            <span class="n">bias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;bias&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias_init</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">out_features</span><span class="p">,),</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+            <span class="n">bias</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">full_bias</span><span class="p">(</span><span class="n">bias</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)</span>
+            <span class="n">x</span> <span class="o">+=</span> <span class="n">bias</span>
+
+        <span class="k">return</span> <span class="n">x</span>
+
+
+<div class="viewcode-block" id="DenseSymm"><a class="viewcode-back" href="../../../docs/_generated/nn/netket.nn.DenseSymm.html#netket.nn.DenseSymm">[docs]</a><span class="k">def</span> <span class="nf">DenseSymm</span><span class="p">(</span><span class="n">symmetries</span><span class="p">,</span> <span class="n">point_group</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Implements a projection onto a symmetry group. The output will be</span>
+<span class="sd">    equivariant with respect to the symmetry operations in the group and can</span>
+<span class="sd">    be averaged to produce an invariant model.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        symmetries: A specification of the symmetry group. Can be given by a</span>
+<span class="sd">            nk.graph.Graph, a nk.utils.PermuationGroup, or an array [n_symm, n_sites]</span>
+<span class="sd">            specifying the permutations corresponding to symmetry transformations</span>
+<span class="sd">            of the lattice.</span>
+<span class="sd">        point_group: The point group, from which the space group is built.</span>
+<span class="sd">            If symmetries is a graph the default point group is overwritten.</span>
+<span class="sd">        mode: string &quot;fft, matrix, auto&quot; specifying whether to use a fast Fourier</span>
+<span class="sd">            transform, matrix multiplication, or to choose a sensible default</span>
+<span class="sd">            based on the symmetry group.</span>
+<span class="sd">        shape: A tuple specifying the dimensions of the translation group.</span>
+<span class="sd">        features: The number of symmetry-reduced features. The full output size</span>
+<span class="sd">            is [n_symm,features].</span>
+<span class="sd">        use_bias: A bool specifying whether to add a bias to the output (default: True).</span>
+<span class="sd">        mask: An optional array of shape [n_sites] consisting of ones and zeros</span>
+<span class="sd">            that can be used to give the kernel a particular shape.</span>
+<span class="sd">        dtype: The datatype of the weights. Defaults to a 64bit float.</span>
+<span class="sd">        precision: Optional argument specifying numerical precision of the computation.</span>
+<span class="sd">            see `jax.lax.Precision`for details.</span>
+<span class="sd">        kernel_init: Optional kernel initialization function. Defaults to variance scaling.</span>
+<span class="sd">        bias_init: Optional bias initialization function. Defaults to zero initialization.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">symmetries</span><span class="p">,</span> <span class="n">Lattice</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+        <span class="ow">not</span> <span class="n">point_group</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">symmetries</span><span class="o">.</span><span class="n">_point_group</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">symmetries</span><span class="o">.</span><span class="n">extent</span><span class="p">)</span>
+        <span class="n">sym</span> <span class="o">=</span> <span class="n">HashableArray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">symmetries</span><span class="o">.</span><span class="n">space_group</span><span class="p">(</span><span class="n">point_group</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
+            <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;fft&quot;</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">symmetries</span><span class="p">,</span> <span class="n">Graph</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;fft&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;When requesting &#39;mode=fft&#39; a valid point group must be specified&quot;</span>
+                <span class="s2">&quot;in order to construct the space group&quot;</span>
+            <span class="p">)</span>
+        <span class="n">sym</span> <span class="o">=</span> <span class="n">HashableArray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">symmetries</span><span class="o">.</span><span class="n">automorphisms</span><span class="p">()))</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">symmetries</span><span class="p">,</span> <span class="n">PermutationGroup</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">symmetries</span><span class="p">,</span> <span class="s2">&quot;__len__&quot;</span><span class="p">):</span>
+        <span class="n">sym</span> <span class="o">=</span> <span class="n">HashableArray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">symmetries</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Symmetries must be specified as a Graph, PermutationGroup or Array&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;fft&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">shape</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;When requesting `mode=fft`, the shape of the translation group must be specified. &quot;</span>
+                <span class="s2">&quot;Either supply the `shape` keyword argument or pass a `netket.graph.Graph` object to &quot;</span>
+                <span class="s2">&quot;the symmetries keyword argument.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">DenseSymmFFT</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;matrix&quot;</span><span class="p">,</span> <span class="s2">&quot;auto&quot;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">DenseSymmMatrix</span><span class="p">(</span><span class="n">sym</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unknown mode=</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">. Valid modes are &#39;fft&#39;, &#39;matrix&#39;, or &#39;auto&#39;.&quot;</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DenseEquivariant"><a class="viewcode-back" href="../../../docs/_generated/nn/netket.nn.DenseEquivariant.html#netket.nn.DenseEquivariant">[docs]</a><span class="k">def</span> <span class="nf">DenseEquivariant</span><span class="p">(</span><span class="n">symmetries</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">point_group</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;A group convolution operation that is equivariant over a symmetry group.</span>
 
 <span class="sd">    Acts on a feature map of symmetry poses of shape [batch_size,n_symm*in_features]</span>
 <span class="sd">    and returns a feature  map of poses of shape [batch_size,n_symm*out_features]</span>
@@ -252,95 +796,93 @@
 
 <span class="sd">    Group elements that differ by the same symmetry operation (i.e. :math:`g = xh`</span>
 <span class="sd">    and :math:`g&#39; = xh&#39;`) are connected by the same filter.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        symmetries: A specification of the symmetry group. Can be given by a</span>
+<span class="sd">            nk.graph.Graph, an nk.utils.PermuationGroup, a list of irreducible</span>
+<span class="sd">            representations or a product table.</span>
+<span class="sd">        point_group: The point group, from which the space group is built.</span>
+<span class="sd">            If symmetries is a graph the default point group is overwritten.</span>
+<span class="sd">        mode: string &quot;fft, irreps, matrix, auto&quot; specifying whether to use a fast</span>
+<span class="sd">            fourier transform over the translation group, a fourier transform using</span>
+<span class="sd">            the irreducible representations or by constructing the full kernel matrix.</span>
+<span class="sd">        shape: A tuple specifying the dimensions of the translation group.</span>
+<span class="sd">        features: The number of symmetry-reduced features. The full output size</span>
+<span class="sd">            is n_symm*features.</span>
+<span class="sd">        use_bias: A bool specifying whether to add a bias to the output (default: True).</span>
+<span class="sd">        mask: An optional array of shape [n_sites] consisting of ones and zeros</span>
+<span class="sd">            that can be used to give the kernel a particular shape.</span>
+<span class="sd">        dtype: The datatype of the weights. Defaults to a 64bit float.</span>
+<span class="sd">        precision: Optional argument specifying numerical precision of the computation.</span>
+<span class="sd">            see `jax.lax.Precision`for details.</span>
+<span class="sd">        kernel_init: Optional kernel initialization function. Defaults to variance scaling.</span>
+<span class="sd">        bias_init: Optional bias initialization function. Defaults to zero initialization.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">symmetry_info</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">HashableArray</span><span class="p">,</span> <span class="n">PermutationGroup</span><span class="p">]</span>
-    <span class="sd">&quot;&quot;&quot;Flattened product table generated by PermutationGroup.produt_table().ravel()</span>
-<span class="sd">    that specifies the product of the group with its involution, or the</span>
-<span class="sd">    PermutationGroup object itself&quot;&quot;&quot;</span>
-    <span class="n">in_features</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="sd">&quot;&quot;&quot;The number of symmetry-reduced input features. The full input size</span>
-<span class="sd">    is n_symm*in_features.&quot;&quot;&quot;</span>
-    <span class="n">out_features</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="sd">&quot;&quot;&quot;The number of symmetry-reduced output features. The full output size</span>
-<span class="sd">    is n_symm*out_features.&quot;&quot;&quot;</span>
-    <span class="n">use_bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="sd">&quot;&quot;&quot;Whether to add a bias to the output (default: True).&quot;&quot;&quot;</span>
-    <span class="n">dtype</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">float64</span>
-    <span class="sd">&quot;&quot;&quot;The dtype of the weights.&quot;&quot;&quot;</span>
-    <span class="n">precision</span><span class="p">:</span> <span class="n">Any</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="sd">&quot;&quot;&quot;numerical precision of the computation see `jax.lax.Precision`for details.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">symmetries</span><span class="p">,</span> <span class="n">Lattice</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
+        <span class="ow">not</span> <span class="n">point_group</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">symmetries</span><span class="o">.</span><span class="n">_point_group</span> <span class="ow">is</span> <span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">symmetries</span><span class="o">.</span><span class="n">extent</span><span class="p">)</span>
+        <span class="c1"># With graph try to find point group, otherwise default to automorphisms</span>
+        <span class="n">sg</span> <span class="o">=</span> <span class="n">symmetries</span><span class="o">.</span><span class="n">space_group</span><span class="p">(</span><span class="n">point_group</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
+            <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;fft&quot;</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">symmetries</span><span class="p">,</span> <span class="n">Graph</span><span class="p">):</span>
+        <span class="n">sg</span> <span class="o">=</span> <span class="n">symmetry_info</span><span class="o">.</span><span class="n">automorphisms</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
+            <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;irreps&quot;</span>
+        <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;fft&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;When requesting &#39;mode=fft&#39; a valid point group must be specified&quot;</span>
+                <span class="s2">&quot;in order to construct the space group&quot;</span>
+            <span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">symmetries</span><span class="p">,</span> <span class="n">PermutationGroup</span><span class="p">):</span>
+        <span class="c1"># If we get a group and default to irrep projection</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
+            <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;irreps&quot;</span>
+        <span class="n">sg</span> <span class="o">=</span> <span class="n">symmetries</span>
 
-    <span class="n">kernel_init</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">PRNGKeyT</span><span class="p">,</span> <span class="n">Shape</span><span class="p">,</span> <span class="n">DType</span><span class="p">],</span> <span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="n">default_kernel_init</span>
-    <span class="sd">&quot;&quot;&quot;Initializer for the Dense layer matrix.&quot;&quot;&quot;</span>
-    <span class="n">bias_init</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">PRNGKeyT</span><span class="p">,</span> <span class="n">Shape</span><span class="p">,</span> <span class="n">DType</span><span class="p">],</span> <span class="n">Array</span><span class="p">]</span> <span class="o">=</span> <span class="n">zeros</span>
-    <span class="sd">&quot;&quot;&quot;Initializer for the bias.&quot;&quot;&quot;</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">symmetries</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;irreps&quot;</span><span class="p">,</span> <span class="s2">&quot;auto&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Specification of symmetries incompatible with mode&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">DenseEquivariantIrrep</span><span class="p">(</span><span class="n">symmetries</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">symmetries</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">symmetries</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">symmetries</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;irreps&quot;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Specification of symmetries incompatible with mode&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;matrix&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">DenseEquivariantMatrix</span><span class="p">(</span><span class="n">symmetries</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">shape</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                        <span class="s2">&quot;When requesting `mode=fft`, the shape of the translation group must be specified. &quot;</span>
+                        <span class="s2">&quot;Either supply the `shape` keyword argument or pass a `netket.graph.Graph` object to &quot;</span>
+                        <span class="s2">&quot;the symmetries keyword argument.&quot;</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">DenseEquivariantFFT</span><span class="p">(</span><span class="n">symmetries</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid Specification of Symmetries&quot;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="DenseEquivariant.setup"><a class="viewcode-back" href="../../../docs/_generated/nn/netket.nn.DenseEquivariant.html#netket.nn.DenseEquivariant.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># pylint: disable=attribute-defined-outside-init</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symmetry_info</span><span class="p">,</span> <span class="n">PermutationGroup</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">symmetry_info</span> <span class="o">=</span> <span class="n">HashableArray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symmetry_info</span><span class="o">.</span><span class="n">product_table</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symmetry_info</span><span class="p">)</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Product table should be flattened&quot;</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">symmetry_info</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span></div>
-
-<div class="viewcode-block" id="DenseEquivariant.full_kernel"><a class="viewcode-back" href="../../../docs/_generated/nn/netket.nn.DenseEquivariant.html#netket.nn.DenseEquivariant.full_kernel">[docs]</a>    <span class="k">def</span> <span class="nf">full_kernel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kernel</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Converts the symmetry-reduced kernel of shape (n_sites, features) to</span>
-<span class="sd">        the full Dense kernel of shape (n_sites, features * n_symm).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">result</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">symmetry_info</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_features</span>
-        <span class="p">)</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">result</span></div>
-
-<div class="viewcode-block" id="DenseEquivariant.full_bias"><a class="viewcode-back" href="../../../docs/_generated/nn/netket.nn.DenseEquivariant.html#netket.nn.DenseEquivariant.full_bias">[docs]</a>    <span class="k">def</span> <span class="nf">full_bias</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bias</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Convert symmetry-reduced bias of shape (features,) to the full bias of</span>
-<span class="sd">        shape (n_symm * features,).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">jnp</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">bias</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="DenseEquivariant.__call__"><a class="viewcode-back" href="../../../docs/_generated/nn/netket.nn.DenseEquivariant.html#netket.nn.DenseEquivariant.__call__">[docs]</a>    <span class="nd">@compact</span>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Applies the equivariant transform to the inputs along the last dimension.</span>
-<span class="sd">        Args:</span>
-<span class="sd">          inputs: The nd-array to be transformed.</span>
-<span class="sd">        Returns:</span>
-<span class="sd">          The transformed input.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">dtype</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">promote_types</span><span class="p">(</span><span class="n">inputs</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
-        <span class="n">inputs</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
-
-        <span class="n">kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">(</span>
-            <span class="s2">&quot;kernel&quot;</span><span class="p">,</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">kernel_init</span><span class="p">,</span>
-            <span class="p">(</span><span class="n">inputs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_features</span><span class="p">),</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
-        <span class="p">)</span>
-        <span class="n">kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_kernel</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span>
-        <span class="n">kernel</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
-
-        <span class="n">y</span> <span class="o">=</span> <span class="n">lax</span><span class="o">.</span><span class="n">dot_general</span><span class="p">(</span>
-            <span class="n">inputs</span><span class="p">,</span>
-            <span class="n">kernel</span><span class="p">,</span>
-            <span class="p">(((</span><span class="n">inputs</span><span class="o">.</span><span class="n">ndim</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,)),</span> <span class="p">((),</span> <span class="p">())),</span>
-            <span class="n">precision</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">precision</span><span class="p">,</span>
-        <span class="p">)</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_bias</span><span class="p">:</span>
-            <span class="n">bias</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">param</span><span class="p">(</span><span class="s2">&quot;bias&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias_init</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">out_features</span><span class="p">,),</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
-            <span class="n">bias</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">full_bias</span><span class="p">(</span><span class="n">bias</span><span class="p">),</span> <span class="n">dtype</span><span class="p">)</span>
-            <span class="n">y</span> <span class="o">+=</span> <span class="n">bias</span>
-
-        <span class="k">return</span> <span class="n">y</span></div></div>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;fft&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">shape</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;When requesting `mode=fft`, the shape of the translation group must be specified. &quot;</span>
+                <span class="s2">&quot;Either supply the `shape` keyword argument or pass a `netket.graph.Graph` object to &quot;</span>
+                <span class="s2">&quot;the symmetries keyword argument.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">DenseEquivariantFFT</span><span class="p">(</span>
+                <span class="n">HashableArray</span><span class="p">(</span><span class="n">sg</span><span class="o">.</span><span class="n">product_table</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="n">shape</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+            <span class="p">)</span>
+    <span class="k">elif</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;irreps&quot;</span><span class="p">,</span> <span class="s2">&quot;auto&quot;</span><span class="p">]:</span>
+        <span class="n">irreps</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">HashableArray</span><span class="p">(</span><span class="n">irrep</span><span class="p">)</span> <span class="k">for</span> <span class="n">irrep</span> <span class="ow">in</span> <span class="n">symmetries</span><span class="o">.</span><span class="n">irrep_matrices</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">DenseEquivariantIrrep</span><span class="p">(</span><span class="n">irreps</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;matrix&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">DenseEquivariantMatrix</span><span class="p">(</span><span class="n">HashableArray</span><span class="p">(</span><span class="n">symmetries</span><span class="o">.</span><span class="n">product_table</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Unknown mode=</span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2">. Valid modes are &#39;fft&#39;, &#39;matrix&#39;, &#39;irreps&#39; or &#39;auto&#39;.&quot;</span>
+        <span class="p">)</span></div>
 </pre></div>
 
     </div>
@@ -356,7 +898,7 @@
     </p>
     <p>
         &copy; Copyright 2019-2021, The Netket authors - All rights reserved.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.0.<br/>
     </p>
   </div>
 </footer>

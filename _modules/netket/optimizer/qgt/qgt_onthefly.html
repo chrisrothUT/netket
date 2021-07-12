@@ -42,7 +42,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="../../../../index.html"><span><img src="../../../../_static/logonav.png"></span>
+        <a class="navbar-brand" href="../../../../index.html"><span><img src="../../../../_static/_static/logonav.png"></span>
           NetKet</a>
         <span class="navbar-text navbar-version pull-left"><b></b></span>
       </div>
@@ -117,10 +117,11 @@
 <span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">jnp</span>
 <span class="kn">from</span> <span class="nn">flax</span> <span class="kn">import</span> <span class="n">struct</span>
 
-<span class="kn">from</span> <span class="nn">netket.utils.types</span> <span class="kn">import</span> <span class="n">PyTree</span>
 <span class="kn">import</span> <span class="nn">netket.jax</span> <span class="k">as</span> <span class="nn">nkjax</span>
+<span class="kn">from</span> <span class="nn">netket.utils.types</span> <span class="kn">import</span> <span class="n">PyTree</span>
+<span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">warn_deprecation</span>
 
-<span class="kn">from</span> <span class="nn">.qgt_onthefly_logic</span> <span class="kn">import</span> <span class="n">mat_vec</span> <span class="k">as</span> <span class="n">mat_vec_onthefly</span><span class="p">,</span> <span class="n">tree_cast</span>
+<span class="kn">from</span> <span class="nn">.qgt_onthefly_logic</span> <span class="kn">import</span> <span class="n">mat_vec</span> <span class="k">as</span> <span class="n">mat_vec_onthefly</span>
 
 <span class="kn">from</span> <span class="nn">..linear_operator</span> <span class="kn">import</span> <span class="n">LinearOperator</span><span class="p">,</span> <span class="n">Uninitialized</span>
 
@@ -138,12 +139,14 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        vstate: The variational State.</span>
-<span class="sd">        centered: Uses S=⟨ΔÔᶜΔÔ⟩ if True (default), S=⟨ÔᶜΔÔ⟩ otherwise. The two forms are</span>
-<span class="sd">            mathematically equivalent, but might lead to different results due to numerical</span>
-<span class="sd">            precision. The non-centered variant should be approximately 33% faster.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">vstate</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">partial</span><span class="p">(</span><span class="n">QGTOnTheFly</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">&quot;centered&quot;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">warn_deprecation</span><span class="p">(</span>
+            <span class="s2">&quot;The argument `centered` is deprecated. The implementation now always behaves as if centered=False.&quot;</span>
+        <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">QGTOnTheFlyT</span><span class="p">(</span>
         <span class="n">apply_fun</span><span class="o">=</span><span class="n">vstate</span><span class="o">.</span><span class="n">_apply_fun</span><span class="p">,</span>
@@ -181,12 +184,6 @@
     <span class="n">model_state</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PyTree</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="sd">&quot;&quot;&quot;Optional state of the ansataz.&quot;&quot;&quot;</span>
 
-    <span class="n">centered</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">field</span><span class="p">(</span><span class="n">pytree_node</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="sd">&quot;&quot;&quot;Uses S=⟨ΔÔᶜΔÔ⟩ if True (default), S=⟨ÔᶜΔÔ⟩ otherwise. The two forms are</span>
-<span class="sd">    mathematically equivalent, but might lead to different results due to numerical</span>
-<span class="sd">    precision. The non-centered variant should be approximately 33% faster.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
 
@@ -202,7 +199,7 @@
 
     <span class="k">def</span> <span class="nf">to_dense</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Convert the lazy matrix representation to a dense matrix representation.s</span>
+<span class="sd">        Convert the lazy matrix representation to a dense matrix representation.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A dense matrix representation of this S matrix.</span>
@@ -237,7 +234,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">ravel_result</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="n">vec</span> <span class="o">=</span> <span class="n">tree_cast</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">S</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">vec</span> <span class="o">=</span> <span class="n">nkjax</span><span class="o">.</span><span class="n">tree_cast</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">S</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">fun</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">σ</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">S</span><span class="o">.</span><span class="n">apply_fun</span><span class="p">({</span><span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="n">W</span><span class="p">,</span> <span class="o">**</span><span class="n">S</span><span class="o">.</span><span class="n">model_state</span><span class="p">},</span> <span class="n">σ</span><span class="p">)</span>
@@ -248,7 +245,6 @@
         <span class="n">params</span><span class="o">=</span><span class="n">S</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
         <span class="n">samples</span><span class="o">=</span><span class="n">S</span><span class="o">.</span><span class="n">samples</span><span class="p">,</span>
         <span class="n">diag_shift</span><span class="o">=</span><span class="n">S</span><span class="o">.</span><span class="n">diag_shift</span><span class="p">,</span>
-        <span class="n">centered</span><span class="o">=</span><span class="n">S</span><span class="o">.</span><span class="n">centered</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">res</span> <span class="o">=</span> <span class="n">mat_vec</span><span class="p">(</span><span class="n">vec</span><span class="p">)</span>
@@ -264,7 +260,7 @@
     <span class="bp">self</span><span class="p">:</span> <span class="n">QGTOnTheFlyT</span><span class="p">,</span> <span class="n">solve_fun</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">PyTree</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">x0</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PyTree</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyTree</span><span class="p">:</span>
 
-    <span class="n">y</span> <span class="o">=</span> <span class="n">tree_cast</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">nkjax</span><span class="o">.</span><span class="n">tree_cast</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
 
     <span class="c1"># we could cache this...</span>
     <span class="k">if</span> <span class="n">x0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -277,7 +273,7 @@
 <span class="nd">@jax</span><span class="o">.</span><span class="n">jit</span>
 <span class="k">def</span> <span class="nf">_to_dense</span><span class="p">(</span><span class="bp">self</span><span class="p">:</span> <span class="n">QGTOnTheFlyT</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Convert the lazy matrix representation to a dense matrix representation.s</span>
+<span class="sd">    Convert the lazy matrix representation to a dense matrix representation</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dense matrix representation of this S matrix.</span>
@@ -305,7 +301,7 @@
     </p>
     <p>
         &copy; Copyright 2019-2021, The Netket authors - All rights reserved.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.0.2.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.0.<br/>
     </p>
   </div>
 </footer>

@@ -25,6 +25,7 @@
       .. autoattribute:: MCState.sampler
       .. autoattribute:: MCState.samples
       .. autoattribute:: MCState.variables
+      .. autoattribute:: MCState.sampler_state
    
       
    .. rst-class:: class-dl-groups

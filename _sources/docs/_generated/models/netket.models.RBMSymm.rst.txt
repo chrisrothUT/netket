@@ -21,6 +21,7 @@
       .. autoattribute:: RBMSymm.use_hidden_bias
       .. autoattribute:: RBMSymm.use_visible_bias
       .. autoattribute:: RBMSymm.variables
+      .. autoattribute:: RBMSymm.symmetries
    
       
    .. rst-class:: class-dl-groups

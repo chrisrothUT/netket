@@ -14,6 +14,7 @@
 
    Attributes
       .. autoattribute:: CustomRuleNumpy.weight_list
+      .. autoattribute:: CustomRuleNumpy.operator
    
       
    .. rst-class:: class-dl-groups

@@ -21,6 +21,7 @@
       .. autoattribute:: MetropolisSampler.n_sweeps
       .. autoattribute:: MetropolisSampler.reset_chains
       .. autoattribute:: MetropolisSampler.rule
+      .. autoattribute:: MetropolisSampler.hilbert
    
       
    .. rst-class:: class-dl-groups
