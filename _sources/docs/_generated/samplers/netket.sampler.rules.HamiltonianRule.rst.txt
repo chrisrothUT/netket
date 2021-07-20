@@ -6,14 +6,10 @@
 .. autoclass:: HamiltonianRule
    :show-inheritance:
 
-   .. automethod:: HamiltonianRule.__init__
 
    
+   
       
-   .. rst-class:: class-dl-groups
-
-   Attributes
-      .. autoattribute:: HamiltonianRule.operator
    
       
    .. rst-class:: class-dl-groups

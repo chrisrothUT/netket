@@ -6,9 +6,11 @@
 .. autoclass:: Fock
    :show-inheritance:
 
-   .. automethod:: Fock.__init__
 
    
+   
+
+   .. automethod:: Fock.__init__
       
    .. rst-class:: class-dl-groups
 

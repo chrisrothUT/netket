@@ -6,15 +6,18 @@
 .. autoclass:: MCState
    :show-inheritance:
 
-   .. automethod:: MCState.__init__
 
    
+   
+
+   .. automethod:: MCState.__init__
       
    .. rst-class:: class-dl-groups
 
    Attributes
       .. autoattribute:: MCState.chain_length
       .. autoattribute:: MCState.hilbert
+      .. autoattribute:: MCState.model
       .. autoattribute:: MCState.model_state
       .. autoattribute:: MCState.n_discard
       .. autoattribute:: MCState.n_discard_per_chain
@@ -25,7 +28,6 @@
       .. autoattribute:: MCState.sampler
       .. autoattribute:: MCState.samples
       .. autoattribute:: MCState.variables
-      .. autoattribute:: MCState.sampler_state
    
       
    .. rst-class:: class-dl-groups

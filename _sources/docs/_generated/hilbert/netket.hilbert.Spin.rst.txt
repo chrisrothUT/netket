@@ -6,9 +6,11 @@
 .. autoclass:: Spin
    :show-inheritance:
 
-   .. automethod:: Spin.__init__
 
    
+   
+
+   .. automethod:: Spin.__init__
       
    .. rst-class:: class-dl-groups
 

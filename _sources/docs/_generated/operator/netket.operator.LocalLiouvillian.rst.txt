@@ -6,8 +6,8 @@
 .. autoclass:: LocalLiouvillian
    :show-inheritance:
 
-   .. automethod:: LocalLiouvillian.__init__
 
+   
    
       
    .. rst-class:: class-dl-groups

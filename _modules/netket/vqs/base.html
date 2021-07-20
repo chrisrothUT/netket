@@ -5,15 +5,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>netket.vqs.base &#8212; netket v3.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/bootstrap-sphinx.css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/jumbo-style.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/all.min.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/rtd_theme.css" />
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
@@ -42,7 +42,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="../../../index.html"><span><img src="../../../_static/_static/logonav.png"></span>
+        <a class="navbar-brand" href="../../../index.html"><span><img src="../../../_static/logonav.png"></span>
           NetKet</a>
         <span class="navbar-text navbar-version pull-left"><b></b></span>
       </div>
@@ -124,6 +124,7 @@
 <span class="kn">from</span> <span class="nn">netket.operator</span> <span class="kn">import</span> <span class="n">AbstractOperator</span>
 <span class="kn">from</span> <span class="nn">netket.hilbert</span> <span class="kn">import</span> <span class="n">AbstractHilbert</span>
 <span class="kn">from</span> <span class="nn">netket.utils.types</span> <span class="kn">import</span> <span class="n">PyTree</span><span class="p">,</span> <span class="n">PRNGKeyT</span><span class="p">,</span> <span class="n">NNInitFunc</span>
+<span class="kn">from</span> <span class="nn">netket.utils.dispatch</span> <span class="kn">import</span> <span class="n">dispatch</span><span class="p">,</span> <span class="n">TrueT</span><span class="p">,</span> <span class="n">FalseT</span>
 <span class="kn">from</span> <span class="nn">netket.stats</span> <span class="kn">import</span> <span class="n">Stats</span>
 
 
@@ -243,10 +244,9 @@
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Resets the internal cache of th variational state.</span>
 <span class="sd">        Called automatically when the parameters/state is updated.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">pass</span></div>
+        <span class="k">pass</span>  <span class="c1"># pragma: no cover</span></div>
 
-<div class="viewcode-block" id="VariationalState.expect"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.vqs.VariationalState.html#netket.vqs.VariationalState.expect">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-    <span class="k">def</span> <span class="nf">expect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Ô</span><span class="p">:</span> <span class="n">AbstractOperator</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Stats</span><span class="p">:</span>
+<div class="viewcode-block" id="VariationalState.expect"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.vqs.VariationalState.html#netket.vqs.VariationalState.expect">[docs]</a>    <span class="k">def</span> <span class="nf">expect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Ô</span><span class="p">:</span> <span class="n">AbstractOperator</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Stats</span><span class="p">:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Estimates the quantum expectation value for a given operator O.</span>
 <span class="sd">            In the case of a pure state $\psi$, this is $&lt;O&gt;= &lt;Psi|O|Psi&gt;/&lt;Psi|Psi&gt;$</span>
 <span class="sd">            otherwise for a mixed state $\rho$, this is $&lt;O&gt; = \Tr[\rho \hat{O}/\Tr[\rho]$.</span>
@@ -257,7 +257,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            An estimation of the quantum expectation value &lt;O&gt;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+        <span class="k">return</span> <span class="n">expect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Ô</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="VariationalState.grad"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.vqs.VariationalState.html#netket.vqs.VariationalState.grad">[docs]</a>    <span class="k">def</span> <span class="nf">grad</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">Ô</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">is_hermitian</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">mutable</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -279,7 +279,7 @@
         <span class="n">Ô</span><span class="p">:</span> <span class="n">AbstractOperator</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">mutable</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">is_hermitian</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">use_covariance</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Stats</span><span class="p">,</span> <span class="n">PyTree</span><span class="p">]:</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Estimates both the gradient of the quantum expectation value of a given operator O.</span>
 
@@ -299,7 +299,10 @@
 <span class="sd">            An estimation of the quantum expectation value &lt;O&gt;.</span>
 <span class="sd">            An estimation of the average gradient of the quantum expectation value &lt;O&gt;.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+        <span class="k">if</span> <span class="n">mutable</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">mutable</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mutable</span>
+
+        <span class="k">return</span> <span class="n">expect_and_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Ô</span><span class="p">,</span> <span class="n">use_covariance</span><span class="o">=</span><span class="n">use_covariance</span><span class="p">,</span> <span class="n">mutable</span><span class="o">=</span><span class="n">mutable</span><span class="p">)</span></div>
 
     <span class="c1"># @abc.abstractmethod</span>
 <div class="viewcode-block" id="VariationalState.quantum_geometric_tensor"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.vqs.VariationalState.html#netket.vqs.VariationalState.quantum_geometric_tensor">[docs]</a>    <span class="k">def</span> <span class="nf">quantum_geometric_tensor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qgt_T</span><span class="p">):</span>
@@ -314,7 +317,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            nk.optimizer.LinearOperator: A linear operator representing the quantum geometric tensor.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>  <span class="c1"># pragma: no cover</span></div>
 
 <div class="viewcode-block" id="VariationalState.to_array"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.vqs.VariationalState.html#netket.vqs.VariationalState.to_array">[docs]</a>    <span class="k">def</span> <span class="nf">to_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -327,7 +330,7 @@
 <span class="sd">            An exponentially large vector representing the state in the computational</span>
 <span class="sd">            basis.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">NotImplemented</span></div></div>
+        <span class="k">return</span> <span class="bp">NotImplemented</span>  <span class="c1"># pragma: no cover</span></div></div>
 
 
 <span class="k">class</span> <span class="nc">VariationalMixedState</span><span class="p">(</span><span class="n">VariationalState</span><span class="p">):</span>
@@ -338,45 +341,6 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">hilbert_physical</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AbstractHilbert</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_hilbert_physical</span>
-
-    <span class="k">def</span> <span class="nf">expect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Ô</span><span class="p">:</span> <span class="n">AbstractOperator</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Stats</span><span class="p">:</span>
-        <span class="c1"># If it is super-operator treat, they act on the same space so</span>
-        <span class="c1"># the expectation value is standard.</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hilbert</span> <span class="o">==</span> <span class="n">Ô</span><span class="o">.</span><span class="n">hilbert</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="n">Ô</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">hilbert_physical</span> <span class="o">==</span> <span class="n">Ô</span><span class="o">.</span><span class="n">hilbert</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">expect_operator</span><span class="p">(</span><span class="n">Ô</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">NotImplemented</span>
-
-    <span class="k">def</span> <span class="nf">expect_and_grad</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">Ô</span><span class="p">:</span> <span class="n">AbstractOperator</span><span class="p">,</span>
-        <span class="n">mutable</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">is_hermitian</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Stats</span><span class="p">,</span> <span class="n">PyTree</span><span class="p">]:</span>
-        <span class="c1"># do the computation in super-operator space</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">hilbert</span> <span class="o">==</span> <span class="n">Ô</span><span class="o">.</span><span class="n">hilbert</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">expect_and_grad</span><span class="p">(</span>
-                <span class="n">Ô</span><span class="p">,</span> <span class="n">mutable</span><span class="o">=</span><span class="n">mutable</span><span class="p">,</span> <span class="n">is_hermitian</span><span class="o">=</span><span class="n">is_hermitian</span>
-            <span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">hilbert_physical</span> <span class="o">==</span> <span class="n">Ô</span><span class="o">.</span><span class="n">hilbert</span><span class="p">:</span>
-            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">expect_and_grad</span><span class="p">(</span>
-                <span class="n">Ô</span><span class="p">,</span> <span class="n">mutable</span><span class="o">=</span><span class="n">mutable</span><span class="p">,</span> <span class="n">is_hermitian</span><span class="o">=</span><span class="n">is_hermitian</span>
-            <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">NotImplemented</span>
-
-    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
-    <span class="k">def</span> <span class="nf">expect_operator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Ô</span><span class="p">:</span> <span class="n">AbstractOperator</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Stats</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-
-    <span class="k">def</span> <span class="nf">grad_operator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Ô</span><span class="p">:</span> <span class="n">AbstractOperator</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Stats</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">expect_and_grad_operator</span><span class="p">(</span><span class="n">Ô</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
-
-    <span class="c1"># @abc.abstractmethod</span>
-    <span class="k">def</span> <span class="nf">expect_and_grad_operator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Ô</span><span class="p">:</span> <span class="n">AbstractOperator</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Stats</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
     <span class="k">def</span> <span class="nf">to_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">normalize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -389,7 +353,86 @@
 <span class="sd">            An exponentially large matrix representing the state in the computational</span>
 <span class="sd">            basis.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">NotImplemented</span>
+        <span class="k">return</span> <span class="bp">NotImplemented</span>  <span class="c1"># pragma: no cover</span>
+
+
+<div class="viewcode-block" id="expect"><a class="viewcode-back" href="../../../docs/custom_expect.html#netket.vqs.expect">[docs]</a><span class="nd">@dispatch</span><span class="o">.</span><span class="n">abstract</span>
+<span class="k">def</span> <span class="nf">expect</span><span class="p">(</span><span class="n">vstate</span><span class="p">:</span> <span class="n">VariationalState</span><span class="p">,</span> <span class="n">operator</span><span class="p">:</span> <span class="n">AbstractOperator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes the expectation value of the given operator over the</span>
+<span class="sd">    variational state.</span>
+
+<span class="sd">    Additional Information:</span>
+<span class="sd">        To implement `vstate.expect` for a custom operator, implement</span>
+<span class="sd">        the multiple-dispatch (plum-dispatc) based method according</span>
+
+<span class="sd">        .. code:</span>
+
+<span class="sd">            @nk.vqs.expect.register</span>
+<span class="sd">            expect(vstate : VStateType operator: OperatorType):</span>
+<span class="sd">                return ...</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        vstate: The VariationalState</span>
+<span class="sd">        operator: The Operator or SuperOperator.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The expectation value wrapped in a `Stats` object.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>  <span class="c1"># pragma: no cover</span></div>
+
+
+<span class="c1"># default dispatch where use_covariance is not specified</span>
+<div class="viewcode-block" id="expect_and_grad"><a class="viewcode-back" href="../../../docs/custom_expect.html#netket.vqs.expect_and_grad">[docs]</a><span class="nd">@dispatch</span>
+<span class="k">def</span> <span class="nf">expect_and_grad</span><span class="p">(</span>
+    <span class="n">vstate</span><span class="p">:</span> <span class="n">VariationalState</span><span class="p">,</span>
+    <span class="n">operator</span><span class="p">:</span> <span class="n">AbstractOperator</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">use_covariance</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">mutable</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Estimates both the gradient of the quantum expectation value of a given operator O.</span>
+
+<span class="sd">    Additional Information:</span>
+<span class="sd">        To implement `vstate.expect` for a custom operator, implement</span>
+<span class="sd">        the multiple-dispatch (plum-dispatc) based method according to the signature below.</span>
+
+<span class="sd">        .. code:</span>
+
+<span class="sd">            @nk.vqs.expect.register</span>
+<span class="sd">            expect_and_grad(vstate : VStateType, operator: OperatorType,</span>
+<span class="sd">                            use_covariance : bool/TrueT/FalseT, * mutable)</span>
+<span class="sd">                return ...</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        vstate: The variational state</span>
+<span class="sd">        Ô: the operator Ô for which we compute the expectation value and it&#39;s gradient</span>
+<span class="sd">        use_covariance: whever to use the covariance formula, usually reserved for</span>
+<span class="sd">            hermitian operators.</span>
+<span class="sd">        mutable: Can be bool, str, or list. Specifies which collections in the model_state should</span>
+<span class="sd">                 be treated as  mutable: bool: all/no collections are mutable. str: The name of a</span>
+<span class="sd">                 single mutable  collection. list: A list of names of mutable collections.</span>
+<span class="sd">                 This is used to mutate the state of the model while you train it (for example</span>
+<span class="sd">                 to implement BatchNorm. Consult</span>
+<span class="sd">                 `Flax&#39;s Module.apply documentation &lt;https://flax.readthedocs.io/en/latest/_modules/flax/linen/module.html#Module.apply&gt;`_</span>
+<span class="sd">                 for a more in-depth exaplanation).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        An estimation of the quantum expectation value &lt;O&gt;.</span>
+<span class="sd">        An estimation of the average gradient of the quantum expectation value &lt;O&gt;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># convert to type-static True/False</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">use_covariance</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="n">use_covariance</span> <span class="o">=</span> <span class="n">TrueT</span><span class="p">()</span> <span class="k">if</span> <span class="n">use_covariance</span> <span class="k">else</span> <span class="n">FalseT</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">use_covariance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">use_covariance</span> <span class="o">=</span> <span class="n">TrueT</span><span class="p">()</span> <span class="k">if</span> <span class="n">operator</span><span class="o">.</span><span class="n">is_hermitian</span> <span class="k">else</span> <span class="n">FalseT</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">mutable</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">mutable</span> <span class="o">=</span> <span class="n">vstate</span><span class="o">.</span><span class="n">mutable</span>
+
+    <span class="k">return</span> <span class="n">expect_and_grad</span><span class="p">(</span><span class="n">vstate</span><span class="p">,</span> <span class="n">operator</span><span class="p">,</span> <span class="n">use_covariance</span><span class="p">,</span> <span class="n">mutable</span><span class="p">)</span></div>
 </pre></div>
 
     </div>
@@ -405,7 +448,7 @@
     </p>
     <p>
         &copy; Copyright 2019-2021, The Netket authors - All rights reserved.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.0.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
     </p>
   </div>
 </footer>

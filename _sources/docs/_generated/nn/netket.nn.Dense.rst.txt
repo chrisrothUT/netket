@@ -6,8 +6,8 @@
 .. autoclass:: Dense
    :show-inheritance:
 
-   .. automethod:: Dense.__init__
 
+   
    
       
    .. rst-class:: class-dl-groups
@@ -19,7 +19,6 @@
       .. autoattribute:: Dense.scope
       .. autoattribute:: Dense.use_bias
       .. autoattribute:: Dense.variables
-      .. autoattribute:: Dense.features
    
       
    .. rst-class:: class-dl-groups

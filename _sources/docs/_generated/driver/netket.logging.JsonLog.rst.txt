@@ -6,9 +6,11 @@
 .. autoclass:: JsonLog
    :show-inheritance:
 
-   .. automethod:: JsonLog.__init__
 
    
+   
+
+   .. automethod:: JsonLog.__init__
       
    .. rst-class:: class-dl-groups
 

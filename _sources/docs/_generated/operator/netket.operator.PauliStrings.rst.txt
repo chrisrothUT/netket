@@ -6,9 +6,11 @@
 .. autoclass:: PauliStrings
    :show-inheritance:
 
-   .. automethod:: PauliStrings.__init__
 
    
+   
+
+   .. automethod:: PauliStrings.__init__
       
    .. rst-class:: class-dl-groups
 

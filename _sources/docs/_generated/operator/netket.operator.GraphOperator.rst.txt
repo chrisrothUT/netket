@@ -6,9 +6,11 @@
 .. autoclass:: GraphOperator
    :show-inheritance:
 
-   .. automethod:: GraphOperator.__init__
 
    
+   
+
+   .. automethod:: GraphOperator.__init__
       
    .. rst-class:: class-dl-groups
 

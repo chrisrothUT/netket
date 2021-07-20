@@ -6,9 +6,11 @@
 .. autoclass:: SteadyState
    :show-inheritance:
 
-   .. automethod:: SteadyState.__init__
 
    
+   
+
+   .. automethod:: SteadyState.__init__
       
    .. rst-class:: class-dl-groups
 

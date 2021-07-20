@@ -6,9 +6,11 @@
 .. autoclass:: StateLog
    :show-inheritance:
 
-   .. automethod:: StateLog.__init__
 
    
+   
+
+   .. automethod:: StateLog.__init__
       
    
       

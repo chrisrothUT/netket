@@ -3,4 +3,13 @@
 
 .. currentmodule:: netket.graph
 
-.. autofunction:: Grid
+.. autoclass:: Grid
+   :show-inheritance:
+
+
+   
+      
+   
+      
+
+   

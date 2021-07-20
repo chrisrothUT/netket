@@ -6,9 +6,11 @@
 .. autoclass:: MetropolisSamplerNumpy
    :show-inheritance:
 
-   .. automethod:: MetropolisSamplerNumpy.__init__
 
    
+   
+
+   .. automethod:: MetropolisSamplerNumpy.__init__
       
    .. rst-class:: class-dl-groups
 
@@ -21,7 +23,6 @@
       .. autoattribute:: MetropolisSamplerNumpy.n_sweeps
       .. autoattribute:: MetropolisSamplerNumpy.reset_chains
       .. autoattribute:: MetropolisSamplerNumpy.rule
-      .. autoattribute:: MetropolisSamplerNumpy.hilbert
    
       
    .. rst-class:: class-dl-groups

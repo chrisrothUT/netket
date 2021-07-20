@@ -6,9 +6,11 @@
 .. autoclass:: VMC
    :show-inheritance:
 
-   .. automethod:: VMC.__init__
 
    
+   
+
+   .. automethod:: VMC.__init__
       
    .. rst-class:: class-dl-groups
 

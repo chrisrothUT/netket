@@ -6,7 +6,6 @@
 .. autoclass:: MetropolisExchangePt
    :show-inheritance:
 
-   .. automethod:: MetropolisExchangePt.__init__
 
    
       

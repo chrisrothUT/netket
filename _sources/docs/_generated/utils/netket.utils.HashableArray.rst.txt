@@ -6,15 +6,14 @@
 .. autoclass:: HashableArray
    :show-inheritance:
 
-   .. automethod:: HashableArray.__init__
 
+   
    
       
    .. rst-class:: class-dl-groups
 
    Attributes
       .. autoattribute:: HashableArray.shape
-      .. autoattribute:: HashableArray.wrapped
    
       
    .. rst-class:: class-dl-groups

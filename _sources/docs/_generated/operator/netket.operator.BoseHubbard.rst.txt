@@ -6,9 +6,11 @@
 .. autoclass:: BoseHubbard
    :show-inheritance:
 
-   .. automethod:: BoseHubbard.__init__
 
    
+   
+
+   .. automethod:: BoseHubbard.__init__
       
    .. rst-class:: class-dl-groups
 

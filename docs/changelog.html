@@ -3,18 +3,17 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Change Log &#8212; netket v3.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../_static/jumbo-style.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/all.min.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/rtd_theme.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
@@ -45,7 +44,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="../index.html"><span><img src="../_static/_static/logonav.png"></span>
+        <a class="navbar-brand" href="../index.html"><span><img src="../_static/logonav.png"></span>
           NetKet</a>
         <span class="navbar-text navbar-version pull-left"><b></b></span>
       </div>
@@ -112,7 +111,7 @@
   ---->
 </div>
 
-<p class="caption" role="heading"><span class="caption-text">Reference Documentation</span></p>
+<p class="caption"><span class="caption-text">Reference Documentation</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html#installation-and-requirements">Installation and requirements</a><ul>
@@ -193,7 +192,7 @@
 </ul>
 </li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Extending NetKet</span></p>
+<p class="caption"><span class="caption-text">Extending NetKet</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="custom_models.html">Defining Custom Models</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="custom_models.html#commonalities">Commonalities</a><ul>
@@ -205,17 +204,25 @@
 <li class="toctree-l2"><a class="reference internal" href="custom_models.html#using-haiku">Using Haiku</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="custom_preconditioners.html">The preconditioner interface</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="custom_preconditioners.html#the-linearpreconditioner-interface">The LinearPreconditioner interface</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="custom_preconditioners.html#bare-interface">Bare interface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="custom_preconditioners.html#linearoperator-interface">LinearOperator interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_preconditioners.html">Defining Custom Preconditioners</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="custom_preconditioners.html#the-preconditioner-interface">The preconditioner interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="custom_preconditioners.html#the-linearpreconditioner-interface">The LinearPreconditioner interface</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="custom_preconditioners.html#bare-interface">Bare interface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="custom_preconditioners.html#linearoperator-interface">LinearOperator interface</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="custom_preconditioners.html#the-preconditioner-function-api">The preconditioner function API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="custom_preconditioners.html#the-preconditioner-function-api">The preconditioner function API</a></li>
 </ul>
 </li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="custom_expect.html">Overriding behaviour and defining custom operators</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="custom_expect.html#netket-architecture-multiple-dispatch">NetKet Architecture: Multiple Dispatch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_expect.html#defining-custom-implementations-for-expectation-values">Defining custom implementations for expectation values</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Documentation</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing to NetKet</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="contributing.html#ways-to-contribute">Ways to contribute</a></li>
@@ -236,7 +243,7 @@
 </ul>
 </li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">API documentation</span></p>
+<p class="caption"><span class="caption-text">API documentation</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api.html">Public API: netket package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api.html#graph">Graph</a><ul>
@@ -439,51 +446,51 @@
       </div>
     <div class="body col-md-9 content" role="main">
       
-  <section class="tex2jax_ignore mathjax_ignore" id="change-log">
+  <div class="tex2jax_ignore mathjax_ignore section" id="change-log">
 <h1>Change Log<a class="headerlink" href="#change-log" title="Permalink to this headline">¶</a></h1>
-<section id="netket-3-0b4-unreleased">
+<div class="section" id="netket-3-0b4-unreleased">
 <h2>NetKet 3.0b4 (unreleased)<a class="headerlink" href="#netket-3-0b4-unreleased" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference external" href="https://github.com/netket/netket/compare/v3.0b3...master">GitHub commits</a>.</p>
-<section id="new-features">
+<div class="section" id="new-features">
 <h3>New features<a class="headerlink" href="#new-features" title="Permalink to this headline">¶</a></h3>
-</section>
-<section id="breaking-changes">
+</div>
+<div class="section" id="breaking-changes">
 <h3>Breaking Changes<a class="headerlink" href="#breaking-changes" title="Permalink to this headline">¶</a></h3>
-</section>
-<section id="internal-changes">
+</div>
+<div class="section" id="internal-changes">
 <h3>Internal Changes<a class="headerlink" href="#internal-changes" title="Permalink to this headline">¶</a></h3>
-</section>
-<section id="bug-fixes">
+</div>
+<div class="section" id="bug-fixes">
 <h3>Bug Fixes<a class="headerlink" href="#bug-fixes" title="Permalink to this headline">¶</a></h3>
-</section>
-</section>
-<section id="netket-3-0b3-published-on-9-july-2021">
+</div>
+</div>
+<div class="section" id="netket-3-0b3-published-on-9-july-2021">
 <h2>NetKet 3.0b3 (published on 9 july 2021)<a class="headerlink" href="#netket-3-0b3-published-on-9-july-2021" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference external" href="https://github.com/netket/netket/compare/v3.0b2...v3.0b3">GitHub commits</a>.</p>
-<section id="id1">
+<div class="section" id="id1">
 <h3>New features<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>The <span class="xref std std-ref">utils.group</span> submodule provides utilities for geometrical and permutation groups. <code class="docutils literal notranslate"><span class="pre">Lattice</span></code> (and its specialisations like <code class="docutils literal notranslate"><span class="pre">Grid</span></code>) use these to automatically construct the space groups of lattices, as well as their character tables for generating wave functions with broken symmetry. <a class="reference external" href="https://github.com/netket/netket/pull/724">#724</a></p></li>
 <li><p>Autoregressive neural networks, sampler, and masked linear layers have been added to <code class="docutils literal notranslate"><span class="pre">models</span></code>, <code class="docutils literal notranslate"><span class="pre">sampler</span></code> and <code class="docutils literal notranslate"><span class="pre">nn</span></code> <a class="reference external" href="https://github.com/netket/netket/pull/705">#705</a>.</p></li>
 </ul>
-</section>
-<section id="id2">
+</div>
+<div class="section" id="id2">
 <h3>Breaking Changes<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>The <code class="docutils literal notranslate"><span class="pre">graph.Grid</span></code> class has been removed. <span class="xref std std-ref">graph.Grid</span> will now return an instance of <span class="xref std std-ref">graph.Lattice</span> supporting the same API but with new functionalities related to spatial symmetries. The <code class="docutils literal notranslate"><span class="pre">color_edges</span></code> optional keyword argument has been removed without deprecation. <a class="reference external" href="https://github.com/netket/netket/pull/724">#724</a></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">MCState.n_discard</span></code> has been renamed <code class="docutils literal notranslate"><span class="pre">MCState.n_discard_per_chain</span></code> and the old binding has been deprecated <a class="reference external" href="https://github.com/netket/netket/pull/739">#739</a>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">nk.optimizer.qgt.QGTOnTheFly</span></code> option <code class="docutils literal notranslate"><span class="pre">centered=True</span></code> has been removed because we are now convinced the two options yielded equivalent results. <code class="docutils literal notranslate"><span class="pre">QGTOnTheFly</span></code> now always behaves as if <code class="docutils literal notranslate"><span class="pre">centered=False</span></code> <a class="reference external" href="https://github.com/netket/netket/pull/706">#706</a>.</p></li>
 </ul>
-</section>
-<section id="id3">
+</div>
+<div class="section" id="id3">
 <h3>Internal Changes<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">networkX</span></code> has been replaced by <code class="docutils literal notranslate"><span class="pre">igraph</span></code>, yielding a considerable speedup for some graph-related operations <a class="reference external" href="https://github.com/netket/netket/pull/729">#729</a>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">netket.hilbert.random</span></code> module now uses <code class="docutils literal notranslate"><span class="pre">plum-dispatch</span></code> (through <code class="docutils literal notranslate"><span class="pre">netket.utils.dispatch</span></code>) to select the correct implementation of <code class="docutils literal notranslate"><span class="pre">random_state</span></code> and <code class="docutils literal notranslate"><span class="pre">flip_state</span></code>. This makes it easy to define new hilbert states and extend their functionality easily.  <a class="reference external" href="https://github.com/netket/netket/pull/734">#734</a>.</p></li>
 <li><p>The AbstractHilbert interface is now much smaller in order to also support continuous Hilbert spaces. Any functionality specific to discrete hilbert spaces (what was previously supported) has been moved to a new abstract type <code class="docutils literal notranslate"><span class="pre">nk.hilbert.DiscreteHilbert</span></code>. Any Hilbert space previously subclassing <span class="xref std std-ref">nk.hilbert.AbstractHilbert</span> should be modified to subclass <span class="xref std std-ref">nk.hilbert.DiscreteHilbert</span> <a class="reference external" href="https://github.com/netket/netket/pull/800">#800</a>.</p></li>
 </ul>
-</section>
-<section id="id4">
+</div>
+<div class="section" id="id4">
 <h3>Bug Fixes<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">nn.to_array</span></code> and <code class="docutils literal notranslate"><span class="pre">MCState.to_array</span></code>, if <code class="docutils literal notranslate"><span class="pre">normalize=False</span></code>, do not subtract the logarithm of the maximum value from the state  <a class="reference external" href="https://github.com/netket/netket/pull/705">#705</a>.</p></li>
@@ -492,12 +499,12 @@
 <li><p>Do not throw errors when calling <code class="docutils literal notranslate"><span class="pre">operator.get_conn_flattened(states)</span></code> with a jax array  <a class="reference external" href="https://github.com/netket/netket/pull/764">#764</a>.</p></li>
 <li><p>Fix bug with the driver progress bar when <code class="docutils literal notranslate"><span class="pre">step_size</span> <span class="pre">!=</span> <span class="pre">1</span></code>  <a class="reference external" href="https://github.com/netket/netket/pull/747">#747</a>.</p></li>
 </ul>
-</section>
-</section>
-<section id="netket-3-0b2-published-on-31-may-2021">
+</div>
+</div>
+<div class="section" id="netket-3-0b2-published-on-31-may-2021">
 <h2>NetKet 3.0b2 (published on 31 May 2021)<a class="headerlink" href="#netket-3-0b2-published-on-31-may-2021" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference external" href="https://github.com/netket/netket/compare/v3.0b1...v3.0b2">GitHub commits</a>.</p>
-<section id="id5">
+<div class="section" id="id5">
 <h3>New features<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Group Equivariant Neural Networks have been added to <code class="docutils literal notranslate"><span class="pre">models</span></code> <a class="reference external" href="https://github.com/netket/netket/pull/620">#620</a></p></li>
@@ -521,8 +528,8 @@ it. <a class="reference external" href="https://github.com/netket/netket/pull/67
 on your model and the solver to pick one.
 This might affect SR performance. <a class="reference external" href="https://github.com/netket/netket/pull/674">#674</a></p></li>
 </ul>
-</section>
-<section id="id6">
+</div>
+<div class="section" id="id6">
 <h3>Breaking Changes<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>For all samplers, <code class="docutils literal notranslate"><span class="pre">n_chains</span></code> now sets the <em>total</em> number of chains across all MPI ranks. This is a breaking change
@@ -543,8 +550,8 @@ inside the closure or <code class="docutils literal notranslate"><span class="pr
 <li><p>Parts of the <code class="docutils literal notranslate"><span class="pre">Lattice</span></code> API have been overhauled, with deprecations of several methods in favor of a consistent usage of <code class="docutils literal notranslate"><span class="pre">Lattice.position</span></code> for real-space location of sites and <code class="docutils literal notranslate"><span class="pre">Lattice.basis_coords</span></code> for location of sites in terms of basis vectors. <code class="docutils literal notranslate"><span class="pre">Lattice.sites</span></code> has been added, which provides a sequence of <code class="docutils literal notranslate"><span class="pre">LatticeSite</span></code> objects combining all site properties. Furthermore, <code class="docutils literal notranslate"><span class="pre">Lattice</span></code> now provides lookup of sites from their position via <code class="docutils literal notranslate"><span class="pre">id_from_position</span></code> using a hashing scheme that works across periodic boundaries. <a class="reference external" href="https://github.com/netket/netket/pull/703">#703</a> <a class="reference external" href="https://github.com/netket/netket/pull/715">#715</a></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">nk.variational</span></code> has been renamed to <code class="docutils literal notranslate"><span class="pre">nk.vqs</span></code> and will be removed in a future release.</p></li>
 </ul>
-</section>
-<section id="id7">
+</div>
+<div class="section" id="id7">
 <h3>Bug Fixes<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Fix <code class="docutils literal notranslate"><span class="pre">operator.BoseHubbard</span></code> usage under jax Hamiltonian Sampling <a class="reference external" href="https://github.com/netket/netket/pull/662">#662</a></p></li>
@@ -555,12 +562,12 @@ inside the closure or <code class="docutils literal notranslate"><span class="pr
 <li><p>Fix bug <a class="reference external" href="https://github.com/netket/netket/pull/635">#635</a> where the <code class="docutils literal notranslate"><span class="pre">graph.Lattice</span></code> was not correctly computing neighbours because of floating point issues. <a class="reference external" href="https://github.com/netket/netket/pull/633">#633</a></p></li>
 <li><p>Fix bug the Y Pauli matrix, which was stored as its conjugate. <a class="reference external" href="https://github.com/netket/netket/pull/618">#618</a> <a class="reference external" href="https://github.com/netket/netket/pull/617">#617</a> <a class="reference external" href="https://github.com/netket/netket/pull/615">#615</a></p></li>
 </ul>
-</section>
-</section>
-<section id="netket-3-0b1-published-beta-release">
+</div>
+</div>
+<div class="section" id="netket-3-0b1-published-beta-release">
 <h2>NetKet 3.0b1 (published beta release)<a class="headerlink" href="#netket-3-0b1-published-beta-release" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference external" href="https://github.com/netket/netket/compare/v2.1.1...v3.0b1">GitHub commits</a>.</p>
-<section id="api-changes">
+<div class="section" id="api-changes">
 <h3>API Changes<a class="headerlink" href="#api-changes" title="Permalink to this headline">¶</a></h3>
 <ul class="simple">
 <li><p>Hilbert space constructors do not store the lattice graph anymore. As a consequence, the constructor does not accept the graph anymore.</p></li>
@@ -592,9 +599,9 @@ Also note that several keyword arguments of the samplers have changed, and new o
 <li><p><a class="reference internal" href="_generated/models/netket.models.RBM.html#netket-models-rbm"><span class="std std-ref">netket.models.RBM</span></a> replaces the old <code class="code docutils literal notranslate"><span class="pre">RBM</span></code> machine, but has real parameters by default.</p></li>
 <li><p>As we rely on Jax, using <code class="code docutils literal notranslate"><span class="pre">dtype=float</span></code> or <code class="code docutils literal notranslate"><span class="pre">dtype=complex</span></code>, which are weak types, will sometimes lead to loss of precision because they might be converted to <code class="docutils literal notranslate"><span class="pre">float32</span></code>. Use <code class="code docutils literal notranslate"><span class="pre">np.float64</span></code> or <code class="code docutils literal notranslate"><span class="pre">np.complex128</span></code> instead if you want double precision when defining your models.</p></li>
 </ul>
-</section>
-</section>
-</section>
+</div>
+</div>
+</div>
 
 
     </div>
@@ -610,7 +617,7 @@ Also note that several keyword arguments of the samplers have changed, and new o
     </p>
     <p>
         &copy; Copyright 2019-2021, The Netket authors - All rights reserved.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.0.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
     </p>
   </div>
 </footer>

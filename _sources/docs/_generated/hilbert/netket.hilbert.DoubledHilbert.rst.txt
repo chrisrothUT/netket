@@ -6,9 +6,11 @@
 .. autoclass:: DoubledHilbert
    :show-inheritance:
 
-   .. automethod:: DoubledHilbert.__init__
 
    
+   
+
+   .. automethod:: DoubledHilbert.__init__
       
    .. rst-class:: class-dl-groups
 

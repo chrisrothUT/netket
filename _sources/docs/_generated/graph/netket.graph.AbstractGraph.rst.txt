@@ -6,9 +6,11 @@
 .. autoclass:: AbstractGraph
    :show-inheritance:
 
-   .. automethod:: AbstractGraph.__init__
 
    
+   
+
+   .. automethod:: AbstractGraph.__init__
       
    .. rst-class:: class-dl-groups
 

@@ -6,9 +6,11 @@
 .. autoclass:: RuntimeLog
    :show-inheritance:
 
-   .. automethod:: RuntimeLog.__init__
 
    
+   
+
+   .. automethod:: RuntimeLog.__init__
       
    .. rst-class:: class-dl-groups
 

@@ -5,15 +5,15 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>netket.logging.tensorboard &#8212; netket v3.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/bootstrap-sphinx.css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/jumbo-style.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/all.min.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/rtd_theme.css" />
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
@@ -42,7 +42,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="../../../index.html"><span><img src="../../../_static/_static/logonav.png"></span>
+        <a class="navbar-brand" href="../../../index.html"><span><img src="../../../_static/logonav.png"></span>
           NetKet</a>
         <span class="navbar-text navbar-version pull-left"><b></b></span>
       </div>
@@ -110,6 +110,8 @@
 <span class="c1"># See the License for the specific language governing permissions and</span>
 <span class="c1"># limitations under the License.</span>
 
+<span class="kn">from</span> <span class="nn">numbers</span> <span class="kn">import</span> <span class="n">Number</span>
+
 <span class="kn">from</span> <span class="nn">netket.stats.mc_stats</span> <span class="kn">import</span> <span class="n">Stats</span>
 
 
@@ -117,9 +119,15 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Maps all elements in tree, recursively calling tree_log with a new root string,</span>
 <span class="sd">    and when it reaches leaves pushes (string, leave) tuples to data.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        tree: a pytree where the leaf nodes contain data</span>
+<span class="sd">        root: the root of the tags used to log to tensorboard</span>
+<span class="sd">        data: a container modified in place</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">tree</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">data</span>
+        <span class="k">return</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
         <span class="k">for</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
             <span class="n">tree_log</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">root</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
@@ -134,11 +142,20 @@
 
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">tree</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="n">key</span><span class="p">:</span> <span class="n">tree_log</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">root</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>  <span class="c1"># noqa: F722</span>
+            <span class="n">tree_log</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">root</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>  <span class="c1"># noqa: F722</span>
+
+    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="s2">&quot;to_compound&quot;</span><span class="p">):</span>
+        <span class="n">tree_log</span><span class="p">(</span><span class="n">tree</span><span class="o">.</span><span class="n">to_compound</span><span class="p">()[</span><span class="mi">1</span><span class="p">],</span> <span class="n">root</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>  <span class="c1"># noqa: F722</span>
+
+    <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="s2">&quot;to_dict&quot;</span><span class="p">):</span>
+        <span class="n">tree_log</span><span class="p">(</span><span class="n">tree</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">root</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>  <span class="c1"># noqa: F722</span>
+
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="nb">complex</span><span class="p">):</span>
+        <span class="n">tree_log</span><span class="p">(</span><span class="n">tree</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">root</span> <span class="o">+</span> <span class="s2">&quot;/re&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>  <span class="c1"># noqa: F722</span>
+        <span class="n">tree_log</span><span class="p">(</span><span class="n">tree</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">root</span> <span class="o">+</span> <span class="s2">&quot;/im&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>  <span class="c1"># noqa: F722</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">root</span><span class="p">,</span> <span class="n">tree</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">data</span>
 
 
 <div class="viewcode-block" id="TBLog"><a class="viewcode-back" href="../../../docs/_generated/driver/netket.logging.TBLog.html#netket.logging.TBLog">[docs]</a><span class="k">class</span> <span class="nc">TBLog</span><span class="p">:</span>
@@ -190,7 +207,7 @@
 <span class="sd">        &gt;&gt;&gt; # folder location: runs/May04_22-14-54_s-MacBook-Pro.localLR_0.1_BATCH_16/</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="TBLog.__init__"><a class="viewcode-back" href="../../../docs/_generated/driver/netket.logging.TBLog.html#netket.logging.TBLog.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="n">args</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
@@ -199,7 +216,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span> <span class="o">=</span> <span class="n">SummaryWriter</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_old_step</span> <span class="o">=</span> <span class="mi">0</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_old_step</span> <span class="o">=</span> <span class="mi">0</span>
 
 <div class="viewcode-block" id="TBLog.__call__"><a class="viewcode-back" href="../../../docs/_generated/driver/netket.logging.TBLog.html#netket.logging.TBLog.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">,</span> <span class="n">item</span><span class="p">,</span> <span class="n">machine</span><span class="p">):</span>
 
@@ -207,13 +224,7 @@
         <span class="n">tree_log</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">Stats</span><span class="p">):</span>
-                <span class="n">val</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">mean</span>
-
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">complex</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="n">key</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="s2">&quot;/re&quot;</span><span class="p">,</span> <span class="n">val</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="n">key</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">+</span> <span class="s2">&quot;/im&quot;</span><span class="p">,</span> <span class="n">val</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">Number</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="n">key</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">val</span><span class="p">,</span> <span class="n">step</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_writer</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span>
@@ -250,7 +261,7 @@
     </p>
     <p>
         &copy; Copyright 2019-2021, The Netket authors - All rights reserved.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.0.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
     </p>
   </div>
 </footer>

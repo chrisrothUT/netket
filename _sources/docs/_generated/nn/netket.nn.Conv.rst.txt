@@ -6,8 +6,8 @@
 .. autoclass:: Conv
    :show-inheritance:
 
-   .. automethod:: Conv.__init__
 
+   
    
       
    .. rst-class:: class-dl-groups
@@ -24,8 +24,6 @@
       .. autoattribute:: Conv.strides
       .. autoattribute:: Conv.use_bias
       .. autoattribute:: Conv.variables
-      .. autoattribute:: Conv.features
-      .. autoattribute:: Conv.kernel_size
    
       
    .. rst-class:: class-dl-groups

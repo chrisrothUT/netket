@@ -6,8 +6,8 @@
 .. autoclass:: MetropolisRule
    :show-inheritance:
 
-   .. automethod:: MetropolisRule.__init__
 
+   
    
       
    

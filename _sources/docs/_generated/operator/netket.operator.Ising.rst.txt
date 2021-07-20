@@ -6,9 +6,11 @@
 .. autoclass:: Ising
    :show-inheritance:
 
-   .. automethod:: Ising.__init__
 
    
+   
+
+   .. automethod:: Ising.__init__
       
    .. rst-class:: class-dl-groups
 

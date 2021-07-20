@@ -3,24 +3,23 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Using JAX as a backend in NetKet - Feature Preview for v3.0 &#8212; netket v3.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../_static/jumbo-style.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/all.min.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/rtd_theme.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
     <script src="../_static/js/rtd_theme.js"></script>
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
@@ -45,7 +44,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="../index.html"><span><img src="../_static/_static/logonav.png"></span>
+        <a class="navbar-brand" href="../index.html"><span><img src="../_static/logonav.png"></span>
           NetKet</a>
         <span class="navbar-text navbar-version pull-left"><b></b></span>
       </div>
@@ -346,11 +345,11 @@ div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
 </style>
-<section id="Using-JAX-as-a-backend-in-NetKet---Feature-Preview-for-v3.0">
+<div class="section" id="Using-JAX-as-a-backend-in-NetKet---Feature-Preview-for-v3.0">
 <h1>Using JAX as a backend in NetKet - Feature Preview for v3.0<a class="headerlink" href="#Using-JAX-as-a-backend-in-NetKet---Feature-Preview-for-v3.0" title="Permalink to this headline">¶</a></h1>
 <p>In this tutorial we will show how differentiable functions (for example deep networks) written in <a class="reference external" href="https://github.com/google/jax">JAX</a> can be used as variational quantum states in NetKet.</p>
 <p>This feature will be available in the upcoming major release (version 3.0). While version 3.0 is still in beta development, users can already try this feature.</p>
-<section id="Prerequisites">
+<div class="section" id="Prerequisites">
 <h2>Prerequisites<a class="headerlink" href="#Prerequisites" title="Permalink to this headline">¶</a></h2>
 <p>To try out integration with JAX, you first need to fetch the beta version of NetKet v3 We recommend using a virtual environment (either a python environment or a conda environment), for example</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>python3 -m venv nk_env
@@ -358,8 +357,8 @@ div.rendered_html tbody tr:hover {
 pip install --pre -U netket
 </pre></div>
 </div>
-</section>
-<section id="Defining-the-quantum-system">
+</div>
+<div class="section" id="Defining-the-quantum-system">
 <h2>Defining the quantum system<a class="headerlink" href="#Defining-the-quantum-system" title="Permalink to this headline">¶</a></h2>
 <p>NetKet allows for full flexibility in defining quantum systems, for example when tackling a ground-state search problem. While there are a few pre-defined hamiltonians, it is relatively straightforward to implement new quantum operators/ Hamiltonians.</p>
 <p>In the following, we consider the case of a transverse-field Ising model defined on a graph with random edges.</p>
@@ -418,8 +417,8 @@ for edge in graph.edges():
 </pre></div>
 </div>
 </div>
-</section>
-<section id="Defining-a-JAX-module-to-be-used-as-a-wave-function">
+</div>
+<div class="section" id="Defining-a-JAX-module-to-be-used-as-a-wave-function">
 <h2>Defining a JAX module to be used as a wave function<a class="headerlink" href="#Defining-a-JAX-module-to-be-used-as-a-wave-function" title="Permalink to this headline">¶</a></h2>
 <p>We now want to define a suitable JAX wave function to be used as a wave function ansatz. To simplify the discusssion, we consider here a simple single-layer fully connected network with complex weights and a <span class="math notranslate nohighlight">\(tanh\)</span> activation function. These are easy to define in JAX, using for example a model built with <a class="reference external" href="https://github.com/google/jax/tree/master/jax/experimental">STAX</a>. The only requirement is that these networks take as inputs JAX arrays of shape <code class="docutils literal notranslate"><span class="pre">(batch_size,n)</span></code>, where batch_size
 is an arbitrary <code class="docutils literal notranslate"><span class="pre">batch</span> <span class="pre">size</span></code> and <code class="docutils literal notranslate"><span class="pre">n</span></code> is the number of quantum degrees of freedom (for example, the number of spins, in the previous example). Notice that regardless of the dimensionality of the problem, the last dimension is always flattened into a single index.</p>
@@ -461,8 +460,8 @@ model=stax.serial(stax.Dense(2 * graph.n_nodes, W_init=nk.nn.initializers.normal
 </pre></div>
 </div>
 </div>
-</section>
-<section id="Train-the-neural-network-to-find-an-approximate-ground-state">
+</div>
+<div class="section" id="Train-the-neural-network-to-find-an-approximate-ground-state">
 <h2>Train the neural network to find an approximate ground state<a class="headerlink" href="#Train-the-neural-network-to-find-an-approximate-ground-state" title="Permalink to this headline">¶</a></h2>
 <p>In order to perform Variational Monte Carlo, we further need to specify a suitable sampler (to compute expectation values over the variational state) as well as an optimizer. In the following we will adopt the Stochatic Gradient Descent coupled with quantum natural gradients (this scheme is known in the VMC literature as Stochastic Reconfiguration)</p>
 <div class="nbinput nblast docutils container">
@@ -515,7 +514,7 @@ vmc = nk.VMC(
 </pre></div>
 </div>
 </div>
-<section id="Running-the-training-loop">
+<div class="section" id="Running-the-training-loop">
 <h3>Running the training loop<a class="headerlink" href="#Running-the-training-loop" title="Permalink to this headline">¶</a></h3>
 <p>The last version of NetKet also allows for a finer control of the vmc loop. In the simplest case, one can just iterate through the vmc object and print the current value of the energy. More sophisticated output schemes based on tensorboard have been also implemented, but are not discussed in this Tutorial.</p>
 <div class="nbinput docutils container">
@@ -547,9 +546,9 @@ for it in vmc.iter(500,50):
 450 -11.872+0.011j ± 0.010 [σ²=0.055, R̂=0.9991]
 </pre></div></div>
 </div>
-</section>
-</section>
-<section id="Comparing-to-exact-diagonalization">
+</div>
+</div>
+<div class="section" id="Comparing-to-exact-diagonalization">
 <h2>Comparing to exact diagonalization<a class="headerlink" href="#Comparing-to-exact-diagonalization" title="Permalink to this headline">¶</a></h2>
 <p>Since this is a relatively small quantum system, we can still diagonalize the Hamiltonian using exact diagonalization. For this purpose, NetKet conveniently exposes a <code class="docutils literal notranslate"><span class="pre">.to_sparse</span></code> method that just converts the Hamiltonian into a <code class="docutils literal notranslate"><span class="pre">scipy</span></code> sparse matrix. Here we first obtain this sparse matrix, and then diagonalize it with scipy builtins.</p>
 <div class="nbinput docutils container">
@@ -573,8 +572,8 @@ Exact energy is :  -11.932889012463688
 Relative error is :  0.0034391959338140226
 </pre></div></div>
 </div>
-</section>
-</section>
+</div>
+</div>
 
 
     </div>
@@ -590,7 +589,7 @@ Relative error is :  0.0034391959338140226
     </p>
     <p>
         &copy; Copyright 2019-2021, The Netket authors - All rights reserved.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.0.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
     </p>
   </div>
 </footer>

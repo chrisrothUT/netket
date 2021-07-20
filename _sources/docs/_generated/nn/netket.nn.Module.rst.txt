@@ -6,8 +6,8 @@
 .. autoclass:: Module
    :show-inheritance:
 
-   .. automethod:: Module.__init__
 
+   
    
       
    .. rst-class:: class-dl-groups

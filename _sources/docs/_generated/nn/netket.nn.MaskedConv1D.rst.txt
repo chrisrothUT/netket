@@ -6,8 +6,8 @@
 .. autoclass:: MaskedConv1D
    :show-inheritance:
 
-   .. automethod:: MaskedConv1D.__init__
 
+   
    
       
    .. rst-class:: class-dl-groups
@@ -20,10 +20,6 @@
       .. autoattribute:: MaskedConv1D.scope
       .. autoattribute:: MaskedConv1D.use_bias
       .. autoattribute:: MaskedConv1D.variables
-      .. autoattribute:: MaskedConv1D.features
-      .. autoattribute:: MaskedConv1D.kernel_size
-      .. autoattribute:: MaskedConv1D.kernel_dilation
-      .. autoattribute:: MaskedConv1D.exclusive
    
       
    .. rst-class:: class-dl-groups

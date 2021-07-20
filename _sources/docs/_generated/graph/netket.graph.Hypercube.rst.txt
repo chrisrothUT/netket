@@ -3,4 +3,13 @@
 
 .. currentmodule:: netket.graph
 
-.. autofunction:: Hypercube
+.. autoclass:: Hypercube
+   :show-inheritance:
+
+
+   
+      
+   
+      
+
+   

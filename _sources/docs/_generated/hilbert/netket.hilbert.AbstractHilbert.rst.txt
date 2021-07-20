@@ -6,8 +6,8 @@
 .. autoclass:: AbstractHilbert
    :show-inheritance:
 
-   .. automethod:: AbstractHilbert.__init__
 
+   
    
       
    .. rst-class:: class-dl-groups

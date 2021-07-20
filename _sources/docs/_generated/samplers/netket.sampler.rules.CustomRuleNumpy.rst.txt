@@ -6,15 +6,14 @@
 .. autoclass:: CustomRuleNumpy
    :show-inheritance:
 
-   .. automethod:: CustomRuleNumpy.__init__
 
+   
    
       
    .. rst-class:: class-dl-groups
 
    Attributes
       .. autoattribute:: CustomRuleNumpy.weight_list
-      .. autoattribute:: CustomRuleNumpy.operator
    
       
    .. rst-class:: class-dl-groups

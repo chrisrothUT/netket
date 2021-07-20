@@ -6,8 +6,8 @@
 .. autoclass:: ARDirectSampler
    :show-inheritance:
 
-   .. automethod:: ARDirectSampler.__init__
 
+   
    
       
    .. rst-class:: class-dl-groups
@@ -18,7 +18,6 @@
       .. autoattribute:: ARDirectSampler.n_batches
       .. autoattribute:: ARDirectSampler.n_chains
       .. autoattribute:: ARDirectSampler.n_chains_per_rank
-      .. autoattribute:: ARDirectSampler.hilbert
    
       
    .. rst-class:: class-dl-groups

@@ -6,9 +6,11 @@
 .. autoclass:: Sampler
    :show-inheritance:
 
-   .. automethod:: Sampler.__init__
 
    
+   
+
+   .. automethod:: Sampler.__init__
       
    .. rst-class:: class-dl-groups
 
@@ -18,7 +20,6 @@
       .. autoattribute:: Sampler.n_batches
       .. autoattribute:: Sampler.n_chains
       .. autoattribute:: Sampler.n_chains_per_rank
-      .. autoattribute:: Sampler.hilbert
    
       
    .. rst-class:: class-dl-groups

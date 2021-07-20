@@ -3,4 +3,13 @@
 
 .. currentmodule:: netket.models
 
-.. autofunction:: GCNN
+.. autoclass:: GCNN
+   :show-inheritance:
+
+
+   
+      
+   
+      
+
+   

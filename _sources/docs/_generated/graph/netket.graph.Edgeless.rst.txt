@@ -3,4 +3,13 @@
 
 .. currentmodule:: netket.graph
 
-.. autofunction:: Edgeless
+.. autoclass:: Edgeless
+   :show-inheritance:
+
+
+   
+      
+   
+      
+
+   

@@ -3,24 +3,23 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>The Lindblad Master Equation &#8212; netket v3.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/bootstrap-sphinx.css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../_static/jumbo-style.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/all.min.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/rtd_theme.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
     <script src="../_static/js/rtd_theme.js"></script>
     <link rel="author" title="About these documents" href="../about.html" />
     <link rel="index" title="Index" href="../genindex.html" />
@@ -47,7 +46,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="../index.html"><span><img src="../_static/_static/logonav.png"></span>
+        <a class="navbar-brand" href="../index.html"><span><img src="../_static/logonav.png"></span>
           NetKet</a>
         <span class="navbar-text navbar-version pull-left"><b></b></span>
       </div>
@@ -114,7 +113,7 @@
   ---->
 </div>
 
-<p class="caption" role="heading"><span class="caption-text">Reference Documentation</span></p>
+<p class="caption"><span class="caption-text">Reference Documentation</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="getting_started.html#installation-and-requirements">Installation and requirements</a><ul>
@@ -195,7 +194,7 @@
 </ul>
 </li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Extending NetKet</span></p>
+<p class="caption"><span class="caption-text">Extending NetKet</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="custom_models.html">Defining Custom Models</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="custom_models.html#commonalities">Commonalities</a><ul>
@@ -207,17 +206,25 @@
 <li class="toctree-l2"><a class="reference internal" href="custom_models.html#using-haiku">Using Haiku</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="custom_preconditioners.html">The preconditioner interface</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="custom_preconditioners.html#the-linearpreconditioner-interface">The LinearPreconditioner interface</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="custom_preconditioners.html#bare-interface">Bare interface</a></li>
-<li class="toctree-l3"><a class="reference internal" href="custom_preconditioners.html#linearoperator-interface">LinearOperator interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="custom_preconditioners.html">Defining Custom Preconditioners</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="custom_preconditioners.html#the-preconditioner-interface">The preconditioner interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="custom_preconditioners.html#the-linearpreconditioner-interface">The LinearPreconditioner interface</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="custom_preconditioners.html#bare-interface">Bare interface</a></li>
+<li class="toctree-l4"><a class="reference internal" href="custom_preconditioners.html#linearoperator-interface">LinearOperator interface</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="custom_preconditioners.html#the-preconditioner-function-api">The preconditioner function API</a></li>
+<li class="toctree-l3"><a class="reference internal" href="custom_preconditioners.html#the-preconditioner-function-api">The preconditioner function API</a></li>
 </ul>
 </li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">Developer Documentation</span></p>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="custom_expect.html">Overriding behaviour and defining custom operators</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="custom_expect.html#netket-architecture-multiple-dispatch">NetKet Architecture: Multiple Dispatch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_expect.html#defining-custom-implementations-for-expectation-values">Defining custom implementations for expectation values</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Documentation</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing to NetKet</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="contributing.html#ways-to-contribute">Ways to contribute</a></li>
@@ -238,7 +245,7 @@
 </ul>
 </li>
 </ul>
-<p class="caption" role="heading"><span class="caption-text">API documentation</span></p>
+<p class="caption"><span class="caption-text">API documentation</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api.html">Public API: netket package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api.html#graph">Graph</a><ul>
@@ -441,7 +448,7 @@
       </div>
     <div class="body col-md-9 content" role="main">
       
-  <section id="the-lindblad-master-equation">
+  <div class="section" id="the-lindblad-master-equation">
 <h1>The Lindblad Master Equation<a class="headerlink" href="#the-lindblad-master-equation" title="Permalink to this headline">¶</a></h1>
 <p>In short: Many-body states in NetKet are stored in <a class="reference external" href="https://en.wikipedia.org/wiki/Endianness#Bi-endianness">big-endian format</a>, and that applies to super-operators too.</p>
 <p>This means that, if the local basis of your Hilbert space is <code class="code docutils literal notranslate"><span class="pre">[0,1]</span></code>, the joint Hilbert space
@@ -453,7 +460,7 @@ and Fortran which are column-major.
 It is the format that arises if you take the kronecker product with numpy.</p>
 <p>This same ordering is then used when representing operators, as they inherit the ordering of the hilbert
 space along both of their dimensions.</p>
-<section id="the-density-matrix-and-the-liouvillian">
+<div class="section" id="the-density-matrix-and-the-liouvillian">
 <h2>The Density Matrix and the Liouvillian<a class="headerlink" href="#the-density-matrix-and-the-liouvillian" title="Permalink to this headline">¶</a></h2>
 <p>The lindblad master equation that is encoded in the Liouvillian is:</p>
 <div class="math notranslate nohighlight">
@@ -483,8 +490,8 @@ non hermitian Hamiltonian <span class="math notranslate nohighlight">\(\hat{H}_{
 <span class="math notranslate nohighlight">\(\langle x | \hat{\rho} | y \rangle\)</span>.</p>
 <p>Alternatively, a formal derivation of the formula above is laied out by my fellow Fabrizio in the appendix
 A1 of <a class="reference external" href="https://arxiv.org/pdf/1909.11619.pdf#page=16">this article</a>.</p>
-</section>
-<section id="computing-observables">
+</div>
+<div class="section" id="computing-observables">
 <h2>Computing Observables<a class="headerlink" href="#computing-observables" title="Permalink to this headline">¶</a></h2>
 <p>Expectation values of operators can be computed on a mixed state according to the well known formula</p>
 <div class="math notranslate nohighlight">
@@ -495,8 +502,8 @@ A1 of <a class="reference external" href="https://arxiv.org/pdf/1909.11619.pdf#p
 <p>And since the diagonal elements of the density matrix are positive, real and normalized to 1, they form a well defined probability distribution that we can sample and use to estimate observables.</p>
 <p>The only downside of this approach is that the Markov-Chain that is needed to sample the diagonal elements
 is not the same as the one that can be used to sample the whole density matrix, which is used during optimization of the steady-state.</p>
-</section>
-</section>
+</div>
+</div>
 
 
     </div>
@@ -512,7 +519,7 @@ is not the same as the one that can be used to sample the whole density matrix, 
     </p>
     <p>
         &copy; Copyright 2019-2021, The Netket authors - All rights reserved.<br/>
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 4.1.0.<br/>
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 3.5.4.<br/>
     </p>
   </div>
 </footer>

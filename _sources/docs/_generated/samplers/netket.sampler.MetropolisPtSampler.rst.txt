@@ -6,9 +6,11 @@
 .. autoclass:: MetropolisPtSampler
    :show-inheritance:
 
-   .. automethod:: MetropolisPtSampler.__init__
 
    
+   
+
+   .. automethod:: MetropolisPtSampler.__init__
       
    .. rst-class:: class-dl-groups
 
@@ -22,7 +24,6 @@
       .. autoattribute:: MetropolisPtSampler.n_sweeps
       .. autoattribute:: MetropolisPtSampler.reset_chains
       .. autoattribute:: MetropolisPtSampler.rule
-      .. autoattribute:: MetropolisPtSampler.hilbert
    
       
    .. rst-class:: class-dl-groups

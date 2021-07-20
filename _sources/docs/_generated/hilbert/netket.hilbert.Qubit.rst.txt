@@ -6,9 +6,11 @@
 .. autoclass:: Qubit
    :show-inheritance:
 
-   .. automethod:: Qubit.__init__
 
    
+   
+
+   .. automethod:: Qubit.__init__
       
    .. rst-class:: class-dl-groups
 

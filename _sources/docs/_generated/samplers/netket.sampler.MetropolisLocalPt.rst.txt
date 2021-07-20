@@ -6,7 +6,6 @@
 .. autoclass:: MetropolisLocalPt
    :show-inheritance:
 
-   .. automethod:: MetropolisLocalPt.__init__
 
    
       

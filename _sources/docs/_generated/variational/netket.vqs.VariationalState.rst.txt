@@ -6,9 +6,11 @@
 .. autoclass:: VariationalState
    :show-inheritance:
 
-   .. automethod:: VariationalState.__init__
 
    
+   
+
+   .. automethod:: VariationalState.__init__
       
    .. rst-class:: class-dl-groups
 

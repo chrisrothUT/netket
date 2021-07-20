@@ -6,9 +6,11 @@
 .. autoclass:: Heisenberg
    :show-inheritance:
 
-   .. automethod:: Heisenberg.__init__
 
    
+   
+
+   .. automethod:: Heisenberg.__init__
       
    .. rst-class:: class-dl-groups
 

@@ -6,9 +6,11 @@
 .. autoclass:: Lattice
    :show-inheritance:
 
-   .. automethod:: Lattice.__init__
 
    
+   
+
+   .. automethod:: Lattice.__init__
       
    .. rst-class:: class-dl-groups
 

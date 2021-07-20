@@ -6,9 +6,11 @@
 .. autoclass:: Timeout
    :show-inheritance:
 
-   .. automethod:: Timeout.__init__
 
    
+   
+
+   .. automethod:: Timeout.__init__
       
    
       

@@ -6,8 +6,8 @@
 .. autoclass:: AbstractOperator
    :show-inheritance:
 
-   .. automethod:: AbstractOperator.__init__
 
+   
    
       
    .. rst-class:: class-dl-groups

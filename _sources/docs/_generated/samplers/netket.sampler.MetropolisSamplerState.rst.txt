@@ -6,8 +6,8 @@
 .. autoclass:: MetropolisSamplerState
    :show-inheritance:
 
-   .. automethod:: MetropolisSamplerState.__init__
 
+   
    
       
    .. rst-class:: class-dl-groups
@@ -19,9 +19,6 @@
       .. autoattribute:: MetropolisSamplerState.n_accepted_proc
       .. autoattribute:: MetropolisSamplerState.n_steps
       .. autoattribute:: MetropolisSamplerState.n_steps_proc
-      .. autoattribute:: MetropolisSamplerState.σ
-      .. autoattribute:: MetropolisSamplerState.rng
-      .. autoattribute:: MetropolisSamplerState.rule_state
    
       
    .. rst-class:: class-dl-groups

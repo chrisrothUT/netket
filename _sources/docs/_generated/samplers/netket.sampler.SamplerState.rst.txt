@@ -6,8 +6,8 @@
 .. autoclass:: SamplerState
    :show-inheritance:
 
-   .. automethod:: SamplerState.__init__
 
+   
    
       
    

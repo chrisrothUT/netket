@@ -6,8 +6,8 @@
 .. autoclass:: EarlyStopping
    :show-inheritance:
 
-   .. automethod:: EarlyStopping.__init__
 
+   
    
       
    .. rst-class:: class-dl-groups
@@ -19,9 +19,5 @@
       .. autoattribute:: EarlyStopping.patience
    
       
-   .. rst-class:: class-dl-groups
-
-   Methods
-      .. automethod:: EarlyStopping.__call__
 
    

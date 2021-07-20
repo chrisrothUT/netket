@@ -6,8 +6,8 @@
 .. autoclass:: AbstractVariationalDriver
    :show-inheritance:
 
-   .. automethod:: AbstractVariationalDriver.__init__
 
+   
    
       
    .. rst-class:: class-dl-groups

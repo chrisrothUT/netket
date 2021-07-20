@@ -3,4 +3,13 @@
 
 .. currentmodule:: netket.graph
 
-.. autofunction:: Chain
+.. autoclass:: Chain
+   :show-inheritance:
+
+
+   
+      
+   
+      
+
+   

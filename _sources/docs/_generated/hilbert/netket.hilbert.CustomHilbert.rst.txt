@@ -6,9 +6,11 @@
 .. autoclass:: CustomHilbert
    :show-inheritance:
 
-   .. automethod:: CustomHilbert.__init__
 
    
+   
+
+   .. automethod:: CustomHilbert.__init__
       
    .. rst-class:: class-dl-groups
 
