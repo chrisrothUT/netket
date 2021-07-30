@@ -424,7 +424,7 @@
 <li class="toctree-l3"><a class="reference internal" href="_generated/driver/netket.logging.RuntimeLog.html">netket.logging.RuntimeLog</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/driver/netket.logging.JsonLog.html">netket.logging.JsonLog</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_generated/driver/netket.logging.StateLog.html">netket.logging.StateLog</a></li>
-<li class="toctree-l3"><a class="reference internal" href="_generated/driver/netket.logging.TBLog.html">netket.logging.TBLog</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_generated/driver/netket.logging.TensorBoardLog.html">netket.logging.TensorBoardLog</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="api.html#utils">Utils</a><ul>
@@ -463,7 +463,7 @@ To disable this behaviour, refer to <a class="reference external" href="https://
 <p>Note that when using <code class="code docutils literal notranslate"><span class="pre">netket</span></code> it is crucial to run Python with the same implementation and version of MPI that the <code class="code docutils literal notranslate"><span class="pre">mpi4py</span></code> module is compiled against.
 If you encounter issues, you can check whether your MPI environment is set up properly by running:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ mpirun -np 2 python3 -m netket.tools.check_mpi
-mpi_available                : True
+mpi4py_available             : True
 mpi4jax_available            : True
 avalable_cpus (rank 0)       : 12
 n_nodes                      : 1

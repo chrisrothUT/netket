@@ -147,7 +147,14 @@
 
 
 <span class="nd">@partial</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">,</span> <span class="n">static_argnums</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">jit_evaluate</span><span class="p">(</span><span class="n">fun</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    call `fun(*args)` inside of a `jax.jit` frame.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        fun: the hashable callable to be evaluated.</span>
+<span class="sd">        args: the arguments to the function.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">fun</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 
 
@@ -327,7 +334,7 @@
 
         <span class="n">dummy_input</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hilbert</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
 
-        <span class="n">variables</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_init_fun</span><span class="p">({</span><span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">},</span> <span class="n">dummy_input</span><span class="p">)</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="n">jit_evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_init_fun</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="n">key</span><span class="p">},</span> <span class="n">dummy_input</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">variables</span> <span class="o">=</span> <span class="n">variables</span></div>
 
     <span class="nd">@property</span>
@@ -532,7 +539,7 @@
 
 <span class="sd">        Given a batch of inputs (Nb, N), returns a batch of outputs (Nb,).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">apply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_apply_fun</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">,</span> <span class="n">σ</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">jit_evaluate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_apply_fun</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">variables</span><span class="p">,</span> <span class="n">σ</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="MCState.evaluate"><a class="viewcode-back" href="../../../docs/_generated/variational/netket.vqs.MCState.html#netket.vqs.MCState.evaluate">[docs]</a>    <span class="nd">@deprecated</span><span class="p">(</span><span class="s2">&quot;Use MCState.log_value(σ) instead.&quot;</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">σ</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>

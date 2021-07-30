@@ -134,7 +134,7 @@
 
 
 <span class="k">def</span> <span class="nf">_symmetrizer_col</span><span class="p">(</span><span class="n">perms</span><span class="p">,</span> <span class="n">features</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates the mapping from symmetry-reduced kernel w to full kernel W, s.t.</span>
 <span class="sd">        W[ij] = S[ij][kl] w[kl]</span>
 <span class="sd">    where [ij] ∈ [0,...,n_sites×n_hidden) and [kl] ∈ [0,...,n_sites×features).</span>
@@ -160,7 +160,7 @@
 
 
 <span class="k">class</span> <span class="nc">DenseSymmMatrix</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Implements a symmetrized linear transformation over a permutation group</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Implements a symmetrized linear transformation over a permutation group</span>
 <span class="sd">    using matrix multiplication.&quot;&quot;&quot;</span>
 
     <span class="n">symmetries</span><span class="p">:</span> <span class="n">HashableArray</span>
@@ -224,7 +224,7 @@
             <span class="s2">&quot;kernel&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_init</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_sites</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">dtype</span>
         <span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
         <span class="n">kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_kernel</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_symm</span><span class="p">)</span>
@@ -248,7 +248,7 @@
 
 
 <span class="k">class</span> <span class="nc">DenseSymmFFT</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Implements a symmetrized projection onto a space group using a Fast Fourier Transform&quot;&quot;&quot;</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Implements a symmetrized projection onto a space group using a Fast Fourier Transform&quot;&quot;&quot;</span>
 
     <span class="n">space_group</span><span class="p">:</span> <span class="n">HashableArray</span>
     <span class="sd">&quot;&quot;&quot;Array that lists the space group as permutations&quot;&quot;&quot;</span>
@@ -312,7 +312,7 @@
 
         <span class="n">kernel</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
         <span class="n">kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_kernel</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span>
@@ -344,7 +344,7 @@
 
 
 <span class="k">class</span> <span class="nc">DenseEquivariantFFT</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Implements a group convolution using a fast fourier transform over the translation group.</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Implements a group convolution using a fast fourier transform over the translation group.</span>
 <span class="sd">    The group convolution can be written in terms of translational convolutions with</span>
 <span class="sd">    symmetry transformed filters as desribed in ` Cohen et. *al* &lt;http://proceedings.mlr.press/v48/cohenc16.pdf&gt;`_</span>
 <span class="sd">    The translational convolutions are then implemented with Fast Fourier Transforms.</span>
@@ -417,7 +417,7 @@
 
         <span class="n">kernel</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 
         <span class="n">kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_kernel</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span>
@@ -450,21 +450,27 @@
 
 
 <span class="k">class</span> <span class="nc">DenseEquivariantIrrep</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Implements a group convolutional layer by projecting onto irreducible</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Implements a group convolutional layer by projecting onto irreducible</span>
 <span class="sd">    representations of the group.</span>
 
 <span class="sd">    Acts on a feature map of shape [batch_size, in_features, n_symm] and</span>
 <span class="sd">    eeturns a feature map of shape [batch_size, out_features, n_symm].</span>
 <span class="sd">    The input and the output are related by</span>
-<span class="sd">    :: math ::</span>
+
+<span class="sd">    .. math ::</span>
+
 <span class="sd">        y^{(i)}_g = \sum_{h,j} f^{(j)}_h W^{(ij)}_{h^{-1}g}.</span>
+
 <span class="sd">    Note that this switches the convention of Cohen et al. to use an actual group</span>
 <span class="sd">    convolution, but this doesn&#39;t affect equivariance.</span>
 <span class="sd">    The convolution is implemented in terms of a group Fourier transform.</span>
 <span class="sd">    Therefore, the group structure is represented internally as the set of its</span>
 <span class="sd">    irrep matrices. After Fourier transforming, the convolution translates to</span>
-<span class="sd">    :: math ::</span>
+
+<span class="sd">    .. math ::</span>
+
 <span class="sd">        y^{(i)}_\rho = \sum_j f^{(j)}_\rho W^{(ij)}_\rho,</span>
+
 <span class="sd">    where all terms are d x d matrices rather than numbers, and the juxtaposition</span>
 <span class="sd">    stands for matrix multiplication.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -532,10 +538,13 @@
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">forward_ft</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Array</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Performs a forward group Fourier transform on the input.</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Performs a forward group Fourier transform on the input.</span>
 <span class="sd">        This is defined by</span>
-<span class="sd">        :: math ::</span>
+
+<span class="sd">        .. math ::</span>
+
 <span class="sd">            \hat{f}_\rho = \sum_g f(g) \rho(g),</span>
+
 <span class="sd">        where :math:`\rho` is an irrep of the group.</span>
 <span class="sd">        The Fourier transform is performed over the last index, and is returned</span>
 <span class="sd">        as a tuple of arrays, each entry corresponding to the entry of `irreps`</span>
@@ -545,10 +554,13 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">disassemble</span><span class="p">(</span><span class="n">jnp</span><span class="o">.</span><span class="n">tensordot</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">inverse_ft</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Array</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Array</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Performs an inverse group Fourier transform on the input.</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Performs an inverse group Fourier transform on the input.</span>
 <span class="sd">        This is defined by</span>
-<span class="sd">        :: math ::</span>
+
+<span class="sd">        .. math ::</span>
+
 <span class="sd">            f(g) = \frac{1}{|G|} \sum_\rho d_\rho {\rm Tr}(\rho(g^{-1}) \hat{f}_\rho)</span>
+
 <span class="sd">        where the sum runs over all irreps of the group.</span>
 <span class="sd">        The input is a tuple of arrays whose the last two dimensions match the</span>
 <span class="sd">        dimensions of each irrep. The inverse Fourier transform is performed</span>
@@ -581,7 +593,7 @@
 
         <span class="n">kernel</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 
         <span class="n">kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">forward_ft</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span>
@@ -687,7 +699,7 @@
 
         <span class="n">kernel</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">kernel</span><span class="p">,</span> <span class="n">dtype</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span> <span class="o">*</span> <span class="n">jnp</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mask</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 
         <span class="n">kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">full_kernel</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span>
@@ -711,7 +723,7 @@
 
 
 <div class="viewcode-block" id="DenseSymm"><a class="viewcode-back" href="../../../docs/_generated/nn/netket.nn.DenseSymm.html#netket.nn.DenseSymm">[docs]</a><span class="k">def</span> <span class="nf">DenseSymm</span><span class="p">(</span><span class="n">symmetries</span><span class="p">,</span> <span class="n">point_group</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Implements a projection onto a symmetry group. The output will be</span>
 <span class="sd">    equivariant with respect to the symmetry operations in the group and can</span>
 <span class="sd">    be averaged to produce an invariant model.</span>
@@ -744,7 +756,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">symmetries</span><span class="p">,</span> <span class="n">Lattice</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
-        <span class="ow">not</span> <span class="n">point_group</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">symmetries</span><span class="o">.</span><span class="n">_point_group</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="n">point_group</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">symmetries</span><span class="o">.</span><span class="n">_point_group</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
     <span class="p">):</span>
         <span class="n">shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">symmetries</span><span class="o">.</span><span class="n">extent</span><span class="p">)</span>
         <span class="n">sym</span> <span class="o">=</span> <span class="n">HashableArray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">symmetries</span><span class="o">.</span><span class="n">space_group</span><span class="p">(</span><span class="n">point_group</span><span class="p">)))</span>
@@ -809,8 +821,10 @@
 <span class="sd">            fourier transform over the translation group, a fourier transform using</span>
 <span class="sd">            the irreducible representations or by constructing the full kernel matrix.</span>
 <span class="sd">        shape: A tuple specifying the dimensions of the translation group.</span>
-<span class="sd">        features: The number of symmetry-reduced features. The full output size</span>
-<span class="sd">            is n_symm*features.</span>
+<span class="sd">        in_features: The number of symmetry-reduced features. The full input size</span>
+<span class="sd">            is n_symm*in_features.</span>
+<span class="sd">        out_features: The number of symmetry-reduced features. The full output size</span>
+<span class="sd">            is n_symm*out_features.</span>
 <span class="sd">        use_bias: A bool specifying whether to add a bias to the output (default: True).</span>
 <span class="sd">        mask: An optional array of shape [n_sites] consisting of ones and zeros</span>
 <span class="sd">            that can be used to give the kernel a particular shape.</span>
@@ -822,7 +836,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">symmetries</span><span class="p">,</span> <span class="n">Lattice</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span>
-        <span class="ow">not</span> <span class="n">point_group</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">symmetries</span><span class="o">.</span><span class="n">_point_group</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="n">point_group</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">symmetries</span><span class="o">.</span><span class="n">_point_group</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
     <span class="p">):</span>
         <span class="n">shape</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">symmetries</span><span class="o">.</span><span class="n">extent</span><span class="p">)</span>
         <span class="c1"># With graph try to find point group, otherwise default to automorphisms</span>
@@ -830,7 +844,7 @@
         <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
             <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;fft&quot;</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">symmetries</span><span class="p">,</span> <span class="n">Graph</span><span class="p">):</span>
-        <span class="n">sg</span> <span class="o">=</span> <span class="n">symmetry_info</span><span class="o">.</span><span class="n">automorphisms</span><span class="p">()</span>
+        <span class="n">sg</span> <span class="o">=</span> <span class="n">symmetries</span><span class="o">.</span><span class="n">automorphisms</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;auto&quot;</span><span class="p">:</span>
             <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;irreps&quot;</span>
         <span class="k">elif</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;fft&quot;</span><span class="p">:</span>
@@ -845,7 +859,7 @@
         <span class="n">sg</span> <span class="o">=</span> <span class="n">symmetries</span>
 
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">symmetries</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">):</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">mode</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;irreps&quot;</span><span class="p">,</span> <span class="s2">&quot;auto&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;irreps&quot;</span><span class="p">,</span> <span class="s2">&quot;auto&quot;</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Specification of symmetries incompatible with mode&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">DenseEquivariantIrrep</span><span class="p">(</span><span class="n">symmetries</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>

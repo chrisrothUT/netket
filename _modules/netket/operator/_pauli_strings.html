@@ -191,7 +191,8 @@
 
         <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
             <span class="c1"># convert list to tuple</span>
-            <span class="n">key</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>  <span class="c1"># order of X and Y does not matter</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>  <span class="c1"># make hashable</span>
             <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">acting</span><span class="p">:</span>
                 <span class="n">acting</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>

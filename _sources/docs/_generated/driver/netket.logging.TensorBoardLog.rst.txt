@@ -1,0 +1,21 @@
+﻿netket.logging.TensorBoardLog
+=============================
+
+.. currentmodule:: netket.logging
+
+.. autoclass:: TensorBoardLog
+   :show-inheritance:
+
+
+   
+   
+      
+   
+      
+   .. rst-class:: class-dl-groups
+
+   Methods
+      .. automethod:: TensorBoardLog.__call__
+      .. automethod:: TensorBoardLog.flush
+
+   

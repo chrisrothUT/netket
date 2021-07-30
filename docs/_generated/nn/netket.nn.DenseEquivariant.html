@@ -426,7 +426,7 @@
 <li class="toctree-l3"><a class="reference internal" href="../driver/netket.logging.RuntimeLog.html">netket.logging.RuntimeLog</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../driver/netket.logging.JsonLog.html">netket.logging.JsonLog</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../driver/netket.logging.StateLog.html">netket.logging.StateLog</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../driver/netket.logging.TBLog.html">netket.logging.TBLog</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../driver/netket.logging.TensorBoardLog.html">netket.logging.TensorBoardLog</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#utils">Utils</a><ul>
@@ -475,8 +475,10 @@ If symmetries is a graph the default point group is overwritten.</p></li>
 fourier transform over the translation group, a fourier transform using
 the irreducible representations or by constructing the full kernel matrix.</p></li>
 <li><p><strong>shape</strong> – A tuple specifying the dimensions of the translation group.</p></li>
-<li><p><strong>features</strong> – The number of symmetry-reduced features. The full output size
-is n_symm*features.</p></li>
+<li><p><strong>in_features</strong> – The number of symmetry-reduced features. The full input size
+is n_symm*in_features.</p></li>
+<li><p><strong>out_features</strong> – The number of symmetry-reduced features. The full output size
+is n_symm*out_features.</p></li>
 <li><p><strong>use_bias</strong> – A bool specifying whether to add a bias to the output (default: True).</p></li>
 <li><p><strong>mask</strong> – An optional array of shape [n_sites] consisting of ones and zeros
 that can be used to give the kernel a particular shape.</p></li>

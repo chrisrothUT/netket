@@ -236,21 +236,26 @@
 <span class="sd">        connections for every y_i.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            x (matrix): A matrix of shape (batch_size,hilbert.size) containing</span>
-<span class="sd">                        the batch of quantum numbers x.</span>
+<span class="sd">            x : A N-tensor of shape (...,hilbert.size) containing</span>
+<span class="sd">                        the batch/batches of quantum numbers x.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            matrix: The connected states x&#39;, in a 3D tensor.</span>
-<span class="sd">            array: A matrix containing the matrix elements :math:`O(x,x&#39;)` associated to each x&#39; for every batch.</span>
+<span class="sd">            x_primes: The connected states x&#39;, in a N+1-tensor.</span>
+<span class="sd">            mels: A N-tensor containing the matrix elements :math:`O(x,x&#39;)`</span>
+<span class="sd">                associated to each x&#39; for every batch.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">sections</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
-        <span class="n">x_primes</span><span class="p">,</span> <span class="n">mels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_conn_flattened</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sections</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">n_visible</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">n_samples</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">size</span> <span class="o">//</span> <span class="n">n_visible</span>
+
+        <span class="n">sections</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+        <span class="n">x_primes</span><span class="p">,</span> <span class="n">mels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_conn_flattened</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">sections</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
 
         <span class="n">n_primes</span> <span class="o">=</span> <span class="n">sections</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">n_visible</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-        <span class="n">x_primes_r</span> <span class="o">=</span> <span class="n">x_primes</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_primes</span><span class="p">,</span> <span class="n">n_visible</span><span class="p">)</span>
-        <span class="n">mels_r</span> <span class="o">=</span> <span class="n">mels</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_primes</span><span class="p">)</span>
+        <span class="n">x_primes_r</span> <span class="o">=</span> <span class="n">x_primes</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">n_primes</span><span class="p">,</span> <span class="n">n_visible</span><span class="p">)</span>
+        <span class="n">mels_r</span> <span class="o">=</span> <span class="n">mels</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">n_primes</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">x_primes_r</span><span class="p">,</span> <span class="n">mels_r</span></div>
 
