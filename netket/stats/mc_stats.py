@@ -155,14 +155,12 @@ def statistics(data, block_size=32, precompute=True) -> StatsBase:
     This is particularly useful to analyze Markov Chain data, but it can be used
     also for other type of time series.
     Assumes same shape on all MPI processes.
-
     Args:
         data (vector or matrix): The input data. It can be real or complex valued.
                                 * if a vector, it is assumed that this is a time
                                   series of data (not necessarily independent).
                                 * if a matrix, it is assumed that that rows data[i]
                                   contain independent time series.
-
     Returns:
        Stats: A dictionary-compatible class containing the average (mean),
              the variance (variance),
