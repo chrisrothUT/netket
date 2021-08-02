@@ -13,7 +13,7 @@
 # limitations under the License.
 
 import abc
-from typing import Any, Optional, Tuple
+from typing import Any, Optional, Tuple, Union
 
 import jax
 import flax
@@ -26,30 +26,25 @@ import netket.nn as nknn
 from netket.operator import AbstractOperator
 from netket.hilbert import AbstractHilbert
 from netket.utils.types import PyTree, PRNGKeyT, NNInitFunc
-from netket.utils.dispatch import dispatch, TrueT, FalseT
+from netket.utils.dispatch import dispatch, TrueT, FalseT, Bool
 from netket.stats import Stats
 
 
 class VariationalState(abc.ABC):
     """Abstract class for variational states representing either pure states
     or mixed quantum states.
-
     A variational state is a quantum state depending on a set of
     parameters, and that supports operations such
     as computing quantum expectation values and their gradients.
-
     A Variational stat can be serialized using flax's msgpack machinery.
     See `their docs <https://flax.readthedocs.io/en/latest/flax.serialization.html>`_.
-
     """
 
     def __init__(self, hilbert: AbstractHilbert):
         """Initialize the Abstract base class of a Variational State defined
         on an hilbert space.
-
         Args:
             hilbert: The hilbert space upon which this state is defined.
-
         """
         self._hilbert = hilbert  # type: AbstractHilbert
 
@@ -116,12 +111,9 @@ class VariationalState(abc.ABC):
         r"""
         Re-initializes all the parameters with the provided initialization function, defaulting to
         the normal distribution of standard deviation 0.01.
-
         .. warning::
-
             The init function will not change the dtype of the parameters, which is determined by the
             model. DO NOT SPECIFY IT INSIDE THE INIT FUNCTION
-
         Args:
             init_fun: a jax initializer such as :ref:`netket.nn.initializers.normal`. Must be a Callable
                 taking 3 inputs, the jax PRNG key, the shape and the dtype, and outputting an array with
@@ -152,10 +144,8 @@ class VariationalState(abc.ABC):
         r"""Estimates the quantum expectation value for a given operator O.
             In the case of a pure state $\psi$, this is $<O>= <Psi|O|Psi>/<Psi|Psi>$
             otherwise for a mixed state $\rho$, this is $<O> = \Tr[\rho \hat{O}/\Tr[\rho]$.
-
         Args:
             Ô: the operator O.
-
         Returns:
             An estimation of the quantum expectation value <O>.
         """
@@ -165,12 +155,10 @@ class VariationalState(abc.ABC):
         self, Ô, *, is_hermitian: Optional[bool] = None, mutable: Optional[Any] = None
     ) -> PyTree:
         r"""Estimates the gradient of the quantum expectation value of a given operator O.
-
         Args:
             op (netket.operator.AbstractOperator): the operator O.
             is_hermitian: optional override for whever to use or not the hermitian logic. By default
                 it's automatically detected.
-
         Returns:
             array: An estimation of the average gradient of the quantum expectation value <O>.
         """
@@ -184,7 +172,6 @@ class VariationalState(abc.ABC):
         use_covariance: Optional[bool] = None,
     ) -> Tuple[Stats, PyTree]:
         r"""Estimates both the gradient of the quantum expectation value of a given operator O.
-
         Args:
             Ô: the operator Ô for which we compute the expectation value and it's gradient
             mutable: Can be bool, str, or list. Specifies which collections in the model_state should
@@ -196,7 +183,6 @@ class VariationalState(abc.ABC):
                      for a more in-depth exaplanation).
             is_hermitian: optional override for whever to use or not the hermitian logic. By default
                           it's automatically detected.
-
         Returns:
             An estimation of the quantum expectation value <O>.
             An estimation of the average gradient of the quantum expectation value <O>.
@@ -204,18 +190,18 @@ class VariationalState(abc.ABC):
         if mutable is None:
             mutable = self.mutable
 
-        return expect_and_grad(self, Ô, use_covariance=use_covariance, mutable=mutable)
+        if use_covariance is None:
+            use_covariance = TrueT() if operator.is_hermitian else FalseT()
+
+        return expect_and_grad(self, Ô, use_covariance, mutable)
 
     # @abc.abstractmethod
     def quantum_geometric_tensor(self, qgt_T):
         r"""Computes an estimate of the quantum geometric tensor G_ij.
-
         This function returns a linear operator that can be used to apply G_ij to a given vector
         or can be converted to a full matrix.
-
         Args:
             qgt_T: the optional type of the quantum geometric tensor. By default it's automatically selected.
-
         Returns:
             nk.optimizer.LinearOperator: A linear operator representing the quantum geometric tensor.
         """
@@ -224,10 +210,8 @@ class VariationalState(abc.ABC):
     def to_array(self, normalize: bool = True) -> jnp.ndarray:
         """
         Returns the dense-vector representation of this state.
-
         Args:
             normalize: If True, the vector is normalized to have L2-norm 1.
-
         Returns:
             An exponentially large vector representing the state in the computational
             basis.
@@ -247,10 +231,8 @@ class VariationalMixedState(VariationalState):
     def to_matrix(self, normalize: bool = True) -> jnp.ndarray:
         """
         Returns the dense-matrix representation of this operator.
-
         Args:
             normalize: If True, the matrix is normalized to have trace 1.
-
         Returns:
             An exponentially large matrix representing the state in the computational
             basis.
@@ -263,21 +245,16 @@ def expect(vstate: VariationalState, operator: AbstractOperator):
     """
     Computes the expectation value of the given operator over the
     variational state.
-
     Additional Information:
         To implement `vstate.expect` for a custom operator, implement
         the multiple-dispatch (plum-dispatc) based method according
-
         .. code:
-
             @nk.vqs.expect.register
             expect(vstate : VStateType operator: OperatorType):
                 return ...
-
     Args:
         vstate: The VariationalState
         operator: The Operator or SuperOperator.
-
     Returns:
         The expectation value wrapped in a `Stats` object.
     """
@@ -285,27 +262,23 @@ def expect(vstate: VariationalState, operator: AbstractOperator):
 
 
 # default dispatch where use_covariance is not specified
-@dispatch
+@dispatch.abstract
 def expect_and_grad(
     vstate: VariationalState,
     operator: AbstractOperator,
-    *,
-    use_covariance: Optional[bool] = None,
-    mutable=None,
+    use_covariance: Union[bool, TrueT, FalseT],
+    mutable,
+    *args: Any,
 ):
     r"""Estimates both the gradient of the quantum expectation value of a given operator O.
-
     Additional Information:
         To implement `vstate.expect` for a custom operator, implement
         the multiple-dispatch (plum-dispatc) based method according to the signature below.
-
         .. code:
-
             @nk.vqs.expect.register
             expect_and_grad(vstate : VStateType, operator: OperatorType,
                             use_covariance : bool/TrueT/FalseT, * mutable)
                 return ...
-
     Args:
         vstate: The variational state
         Ô: the operator Ô for which we compute the expectation value and it's gradient
@@ -318,20 +291,45 @@ def expect_and_grad(
                  to implement BatchNorm. Consult
                  `Flax's Module.apply documentation <https://flax.readthedocs.io/en/latest/_modules/flax/linen/module.html#Module.apply>`_
                  for a more in-depth exaplanation).
-
     Returns:
         An estimation of the quantum expectation value <O>.
         An estimation of the average gradient of the quantum expectation value <O>.
     """
 
-    # convert to type-static True/False
-    if isinstance(use_covariance, bool):
-        use_covariance = TrueT() if use_covariance else FalseT()
 
-    if use_covariance is None:
-        use_covariance = TrueT() if operator.is_hermitian else FalseT()
+@expect_and_grad.dispatch
+def expect_and_grad(
+    vstate: VariationalState,
+    operator: AbstractOperator,
+    use_covariance: bool,
+    *args,
+    **kwargs,
+):
+    use_covariance = TrueT() if use_covariance else FalseT()
+    return expect_and_grad(vstate, operator, use_covariance, *args, **kwargs)
 
-    if mutable is None:
-        mutable = vstate.mutable
 
-    return expect_and_grad(vstate, operator, use_covariance, mutable)
+@expect_and_grad.dispatch
+def expect_and_grad(
+    vstate: VariationalState,
+    operator: AbstractOperator,
+    use_covariance: None,
+    *args,
+    **kwargs,
+):
+    use_covariance = TrueT() if operator.is_hermitian else FalseT()
+    return expect_and_grad(vstate, operator, use_covariance, *args, **kwargs)
+
+
+@expect_and_grad.dispatch
+def expect_and_grad(
+    vstate: VariationalState,
+    operator: AbstractOperator,
+    use_covariance: Bool,
+    mutable: None,
+    *args: Any,
+    **kwargs,
+):
+    return expect_and_grad(
+        vstate, operator, use_covariance, vstate.mutable, *args, **kwargs
+    )
