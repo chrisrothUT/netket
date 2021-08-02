@@ -364,4 +364,3 @@ def grad_expect_operator_Lrho2(
         LdagL_grad,
         model_state,
     )
-)
