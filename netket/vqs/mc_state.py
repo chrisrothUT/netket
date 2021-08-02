@@ -14,7 +14,7 @@
 
 import warnings
 from functools import partial
-from typing import Any, Callable, Dict, Optional, Union
+from typing import Any, Callable, Dict, Optional, Union, Tuple
 
 import numpy as np
 
@@ -26,13 +26,17 @@ from flax import serialization
 
 from netket import jax as nkjax
 from netket import nn
+from netket.operator import AbstractOperator
+from netket.stats import Stats
 from netket.sampler import Sampler, SamplerState
 from netket.utils import maybe_wrap_module, deprecated, warn_deprecation, mpi, wrap_afun
+from netket.utils.dispatch import dispatch, TrueT, FalseT, Bool
+
 from netket.utils.types import PyTree, SeedT, NNInitFunc
 from netket.optimizer import LinearOperator
 from netket.optimizer.qgt import QGTAuto
 
-from .base import VariationalState
+from .base import VariationalState, expect, expect_and_grad
 
 AFunType = Callable[[nn.Module, PyTree, jnp.ndarray], jnp.ndarray]
 ATrainFunType = Callable[
@@ -40,11 +44,16 @@ ATrainFunType = Callable[
 ]
 
 
-def compute_chain_length(n_chains, n_samples):
+def compute_chain_length(n_chains, n_samples, minibatch_size=None):
     if n_samples <= 0:
         raise ValueError("Invalid number of samples: n_samples={}".format(n_samples))
 
     chain_length = int(np.ceil(n_samples / n_chains))
+
+    if minibatch_size is not None:
+        minibatch_length = int(minibatch_size / (n_chains // mpi.n_nodes))
+        chain_length = int(np.ceil(chain_length / minibatch_length)) * minibatch_length
+
     return chain_length
 
 
@@ -52,7 +61,6 @@ def compute_chain_length(n_chains, n_samples):
 def jit_evaluate(fun: Callable, *args):
     """
     call `fun(*args)` inside of a `jax.jit` frame.
-
     Args:
         fun: the hashable callable to be evaluated.
         args: the arguments to the function.
@@ -62,7 +70,6 @@ def jit_evaluate(fun: Callable, *args):
 
 class MCState(VariationalState):
     """Variational State for a Variational Neural Quantum State.
-
     The state is sampled according to the provided sampler.
     """
 
@@ -88,6 +95,8 @@ class MCState(VariationalState):
     _apply_fun: Callable = None
     """The function used to evaluate the model"""
 
+    _minibatch_size: Optional[int] = None
+
     def __init__(
         self,
         sampler: Sampler,
@@ -108,7 +117,6 @@ class MCState(VariationalState):
     ):
         """
         Constructs the MCState.
-
         Args:
             sampler: The sampler
             model: (Optional) The model. If not provided, you must provide init_fun and apply_fun.
@@ -242,7 +250,6 @@ class MCState(VariationalState):
     @property
     def model(self) -> Optional[Any]:
         """Returns the model definition of this variational state.
-
         This field is optional, and is set to `None` if the variational state has
         been initialized using a custom function.
         """
@@ -275,7 +282,9 @@ class MCState(VariationalState):
 
     @n_samples.setter
     def n_samples(self, n_samples: int):
-        chain_length = compute_chain_length(self.sampler.n_chains, n_samples)
+        chain_length = compute_chain_length(
+            self.sampler.n_chains, n_samples, minibatch_size=self.minibatch_size
+        )
 
         n_samples_per_node = chain_length * self.sampler.n_chains_per_rank
         n_samples = chain_length * self.sampler.n_chains
@@ -288,7 +297,7 @@ class MCState(VariationalState):
     @property
     def n_samples_per_rank(self) -> int:
         """The number of samples generated on one MPI rank at every sampling step."""
-        return self._chain_length * mpi.n_nodes
+        return self._n_samples_per_node
 
     @n_samples_per_rank.setter
     def n_samples_per_rank(self, n_samples_per_rank: int) -> int:
@@ -298,7 +307,6 @@ class MCState(VariationalState):
     def chain_length(self) -> int:
         """
         Length of the markov chain used for sampling configurations.
-
         If running under MPI, the total samples will be n_nodes * chain_length * n_batches.
         """
         return self._chain_length
@@ -343,7 +351,6 @@ class MCState(VariationalState):
     def n_discard(self) -> int:
         """
         DEPRECATED: Use `n_discard_per_chain` instead.
-
         Number of discarded samples at the beginning of the markov chain.
         """
         warn_deprecation(
@@ -361,6 +368,33 @@ class MCState(VariationalState):
         )
         self.n_discard_per_chain = val
 
+    @property
+    def minibatch_size(self) -> int:
+        return self._minibatch_size
+
+    @minibatch_size.setter
+    def minibatch_size(self, minibatch_size: int):
+        # disable minibatches if it is None
+        if minibatch_size is None:
+            self._minibatch_size = None
+            return
+
+        self._minibatch_size = minibatch_size
+
+    @property
+    def n_minibatches(self) -> int:
+        if self.minibatch_size is None:
+            return None
+
+        return self.n_samples // self.minibatch_size
+
+    @n_minibatches.setter
+    def n_minibatches(self, n_minibatches):
+        if self.minibatch_size is None:
+            raise ValueError("must first set minibatch_size.")
+
+        self.n_samples_per_rank = n_minibatches * self.minibatch_size
+
     def reset(self):
         """
         Resets the sampled states. This method is called automatically every time
@@ -377,10 +411,8 @@ class MCState(VariationalState):
     ) -> jnp.ndarray:
         """
         Sample a certain number of configurations.
-
         If one among chain_leength or n_samples is defined, that number of samples
         are gen erated. Otherwise the value set internally is used.
-
         Args:
             chain_length: The length of the markov chains.
             n_samples: The total number of samples across all MPI ranks.
@@ -418,11 +450,9 @@ class MCState(VariationalState):
     def samples(self) -> jnp.ndarray:
         """
         Returns the set of cached samples.
-
         The samples returnede are guaranteed valid for the current state of
         the variational state. If no cached parameters are available, then
         they are sampled first and then cached.
-
         To obtain a new set of samples either use :ref:`reset` or :ref:`sample`.
         """
         if self._samples is None:
@@ -438,10 +468,57 @@ class MCState(VariationalState):
         (wavefunction) and a mixed state (density matrix).
         For the density matrix, the left and right-acting states (row and column)
         are obtained as :code:`σr=σ[::,0:N]` and :code:`σc=σ[::,N:]`.
-
         Given a batch of inputs (Nb, N), returns a batch of outputs (Nb,).
         """
         return jit_evaluate(self._apply_fun, self.variables, σ)
+
+    # override to use minibatches
+    def expect(self, Ô: AbstractOperator) -> Stats:
+        r"""Estimates the quantum expectation value for a given operator O.
+            In the case of a pure state $\psi$, this is $<O>= <Psi|O|Psi>/<Psi|Psi>$
+            otherwise for a mixed state $\rho$, this is $<O> = \Tr[\rho \hat{O}/\Tr[\rho]$.
+        Args:
+            Ô: the operator O.
+        Returns:
+            An estimation of the quantum expectation value <O>.
+        """
+        return expect(self, Ô, self.n_minibatches)
+
+    def expect_and_grad(
+        self,
+        Ô: AbstractOperator,
+        *,
+        mutable: Optional[Any] = None,
+        use_covariance: Optional[bool] = None,
+    ) -> Tuple[Stats, PyTree]:
+        r"""Estimates both the gradient of the quantum expectation value of a given operator O.
+        Args:
+            Ô: the operator Ô for which we compute the expectation value and it's gradient
+            mutable: Can be bool, str, or list. Specifies which collections in the model_state should
+                     be treated as  mutable: bool: all/no collections are mutable. str: The name of a
+                     single mutable  collection. list: A list of names of mutable collections.
+                     This is used to mutate the state of the model while you train it (for example
+                     to implement BatchNorm. Consult
+                     `Flax's Module.apply documentation <https://flax.readthedocs.io/en/latest/_modules/flax/linen/module.html#Module.apply>`_
+                     for a more in-depth exaplanation).
+            is_hermitian: optional override for whever to use or not the hermitian logic. By default
+                          it's automatically detected.
+        Returns:
+            An estimation of the quantum expectation value <O>.
+            An estimation of the average gradient of the quantum expectation value <O>.
+        """
+        if mutable is None:
+            mutable = self.mutable
+
+        if use_covariance is None:
+            use_covariance = TrueT() if Ô.is_hermitian else FalseT()
+
+        if self.minibatch_size is None:
+            return expect_and_grad(self, Ô, use_covariance, mutable)
+        else:
+            return expect_and_grad(
+                self, Ô, use_covariance, mutable, self.n_minibatches
+            )
 
     @deprecated("Use MCState.log_value(σ) instead.")
     def evaluate(self, σ: jnp.ndarray) -> jnp.ndarray:
@@ -456,11 +533,8 @@ class MCState(VariationalState):
         r"""Computes an estimate of the quantum geometric tensor G_ij.
         This function returns a linear operator that can be used to apply G_ij to a given vector
         or can be converted to a full matrix.
-
         Args:
             qgt_T: the optional type of the quantum geometric tensor. By default it's automatically selected.
-
-
         Returns:
             nk.optimizer.LinearOperator: A linear operator representing the quantum geometric tensor.
         """
@@ -491,9 +565,44 @@ class MCState(VariationalState):
         )
 
 
+@jax.jit
+def precompute_merge_stats(*stats):
+    stat_acc = None
+    for stat in stats:
+        if stat_acc is None:
+            stat_acc = stat
+        else:
+            stat_acc = stat_acc.merge(stat)
+
+    stat_acc._precompute_cached_properties()
+    return stat_acc
+
+
+# overloads for batched expect
+@expect.dispatch
+def expect_nominibatch(
+    vstate: MCState, operator: AbstractOperator, n_minibatches: None
+):
+    return precompute_merge_stats(expect(vstate, operator))
+
+
+@expect.dispatch
+def expect_minibatch(vstate: MCState, operator: AbstractOperator, n_minibatches: int):
+    σ = vstate.samples
+    σr = σ.reshape(n_minibatches, -1, σ.shape[1], σ.shape[2])
+
+    i = 0
+    stats = []
+    for i in range(σr.shape[0]):
+        vstate._samples = σr[i]
+        stats.append(expect(vstate, operator))
+
+    vstate._samples = σ
+    # merge
+    return precompute_merge_stats(*stats)
+
+
 # serialization
-
-
 def serialize_MCState(vstate):
     state_dict = {
         "variables": serialization.to_state_dict(vstate.variables),
