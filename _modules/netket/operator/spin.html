@@ -186,7 +186,7 @@
 
 <div class="viewcode-block" id="sigmam"><a class="viewcode-back" href="../../../docs/_generated/hilbert/netket.operator.spin.sigmam.html#netket.operator.spin.sigmam">[docs]</a><span class="k">def</span> <span class="nf">sigmam</span><span class="p">(</span><span class="n">hilbert</span><span class="p">:</span> <span class="n">AbstractHilbert</span><span class="p">,</span> <span class="n">site</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">DType</span> <span class="o">=</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_LocalOperator</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Builds the :math:`\\sigma^{-} = \\sigma^x - i \\sigma^y` operator acting on the</span>
+<span class="sd">    Builds the :math:`\\sigma^{-} = \\frac{1}{2}(\\sigma^x - i \\sigma^y)` operator acting on the</span>
 <span class="sd">    `site`-th of the Hilbert space `hilbert`.</span>
 
 <span class="sd">    If `hilbert` is a non-Spin space of local dimension M, it is considered</span>
@@ -209,7 +209,7 @@
 
 <div class="viewcode-block" id="sigmap"><a class="viewcode-back" href="../../../docs/_generated/hilbert/netket.operator.spin.sigmap.html#netket.operator.spin.sigmap">[docs]</a><span class="k">def</span> <span class="nf">sigmap</span><span class="p">(</span><span class="n">hilbert</span><span class="p">:</span> <span class="n">AbstractHilbert</span><span class="p">,</span> <span class="n">site</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">dtype</span><span class="p">:</span> <span class="n">DType</span> <span class="o">=</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_LocalOperator</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Builds the :math:`\\sigma^{+} = \\sigma^x + i \\sigma^y` operator acting on the</span>
+<span class="sd">    Builds the :math:`\\sigma^{+} = \\frac{1}{2}(\\sigma^x + i \\sigma^y)` operator acting on the</span>
 <span class="sd">    `site`-th of the Hilbert space `hilbert`.</span>
 
 <span class="sd">    If `hilbert` is a non-Spin space of local dimension M, it is considered</span>

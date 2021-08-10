@@ -448,7 +448,7 @@
       </div>
     <div class="body col-md-9 content" role="main">
       
-  <div class="tex2jax_ignore mathjax_ignore section" id="quantum-geometric-tensor-and-stochastic-reconfiguration">
+  <div class="section" id="quantum-geometric-tensor-and-stochastic-reconfiguration">
 <span id="qgt-and-sr"></span><h1>Quantum Geometric Tensor and Stochastic Reconfiguration<a class="headerlink" href="#quantum-geometric-tensor-and-stochastic-reconfiguration" title="Permalink to this headline">¶</a></h1>
 <p>The Quantum Geometric Tensor (QGT) is the Fubini-Study metric tensor of the manifold on which a variational state is defined.
 In the general case (and in practise for any NQS ansatz), the QGT varies depending on the current quantum state and thus needs to be computed when the variational parameters <span class="math notranslate nohighlight">\(W\)</span> change.
@@ -503,22 +503,19 @@ If you work with NetKet and determine that a particular implementation works bes
 The derivation in the case of a variational optimization for the ground state, can be sketched as follows:</p>
 <p>Given a a variational wavefunction <span class="math notranslate nohighlight">\( \ket{\psi_W} \)</span>, we consider its first order Taylor expansion around <span class="math notranslate nohighlight">\( W \)</span>, <span class="math notranslate nohighlight">\( \ket{\psi_{W+\delta W}} = \ket{\psi_W} + \delta W_k \hat{O}_k \ket{\psi_W} \)</span>, where <span class="math notranslate nohighlight">\( \bra{\sigma}\hat{O}_k \ket{\eta} = \delta_{\sigma,\eta} \frac{d \log\psi_W(\sigma)}{dW_k}\)</span>.
 We wish to determine the updates <span class="math notranslate nohighlight">\( \delta_{\sigma,\eta} \)</span> of the variational parameters that match a step of imaginary-time evolution, given by</p>
-<div class="amsmath math notranslate nohighlight" id="equation-4f4b856e-df5c-4d11-b476-d613106d2f08">
-<span class="eqno">(1)<a class="headerlink" href="#equation-4f4b856e-df5c-4d11-b476-d613106d2f08" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<p>\begin{equation}
 \ket{\phi} = U(\epsilon)\ket{\psi_W} = e^{\epsilon\hat{H}}\ket{\psi_W} \sim (\mathbb{I} - \epsilon \hat{H})\ket{\psi_W}
-\end{equation}\]</div>
+\end{equation}</p>
 <p>It is possible to show that the updates <span class="math notranslate nohighlight">\(\delta W_k \)</span> that minimise the norm of the state <span class="math notranslate nohighlight">\(\ket{\phi}-\ket{\psi_{W+\delta W}}\)</span> can be determined by solving the linear system</p>
-<div class="amsmath math notranslate nohighlight" id="equation-70c77c87-8e18-42be-82c4-b9eccc67b6d8">
-<span class="eqno">(2)<a class="headerlink" href="#equation-70c77c87-8e18-42be-82c4-b9eccc67b6d8" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<p>\begin{equation}
 S_{i,k} \delta W_k = F_i
-\end{equation}\]</div>
+\end{equation}</p>
 <p>where <span class="math notranslate nohighlight">\( F_i = \langle \hat{E}^{loc} \hat{O}_i\rangle_c \)</span> is the gradient of the Energy and <span class="math notranslate nohighlight">\( S_{i,k} = \langle \hat{O}^\dagger_i \hat{O}_k\rangle_c \)</span> is the Quantum Geometric Tensor.
 The QGT is positive definite, therefore it can be inverted and the solution is formally written as</p>
-<div class="amsmath math notranslate nohighlight" id="equation-209d3291-72e0-4c39-929c-ea8004c67478">
-<span class="eqno">(3)<a class="headerlink" href="#equation-209d3291-72e0-4c39-929c-ea8004c67478" title="Permalink to this equation">¶</a></span>\[\begin{equation}
+<p>\begin{equation}
 \bf{\delta W} = S^{-1} \bf{F},
-\end{equation}\]</div>
-<p>where bold fonts are used for vectors.
+\end{equation}
+where bold fonts are used for vectors.
 A complication is given by the fact that the QGT is determined by Monte Carlo sampling and it might have several eigenvalues that are zero or very small, leading to numerical stability issues when inverting the matrix or in the resulting dynamics.
 The linear system can be solved with several methods. For the models with many parameters and to achieve the best performance, iterative solvers such as those found in <code class="docutils literal notranslate"><span class="pre">jax.scipy.sparse.linalg</span></code>, such as <span class="xref std std-ref">jax.scipy.sparse.linalg.cg</span> <span class="xref std std-ref">jax.scipy.sparse.linalg.gmres</span> are the best choice.
 Do note that to stabilize those algorithms it is often needed to add a small (<span class="math notranslate nohighlight">\(10^{-5} - 10^{-2}\)</span>) shift to the diagonal of the QGT.

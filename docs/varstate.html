@@ -653,7 +653,7 @@ through that interface.</p>
 
 <span class="kn">import</span> <span class="nn">flax</span>
 
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;test.mpack&quot;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;test.mpack&quot;</span><span class="p">,</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
   <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">flax</span><span class="o">.</span><span class="n">serialization</span><span class="o">.</span><span class="n">to_bytes</span><span class="p">(</span><span class="n">vstate</span><span class="p">))</span>
 </pre></div>
 </div>
