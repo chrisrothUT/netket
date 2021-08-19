@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>netket.models.ARNN &#8212; netket v3.0 documentation</title>
+    <title>netket.models.FastARNNConv2D &#8212; netket v3.0 documentation</title>
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
@@ -18,12 +18,14 @@
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "tex2jax_ignore|mathjax_ignore|document", "processClass": "tex2jax_process|mathjax_process|math|output_area"}})</script>
     <script src="../../../_static/js/rtd_theme.js"></script>
     <link rel="author" title="About these documents" href="../../../about.html" />
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="netket.models.ARNNDense" href="netket.models.ARNNDense.html" />
-    <link rel="prev" title="netket.models.GCNN" href="netket.models.GCNN.html" />
+    <link rel="next" title="netket.nn.Module" href="../nn/netket.nn.Module.html" />
+    <link rel="prev" title="netket.models.FastARNNConv1D" href="netket.models.FastARNNConv1D.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -125,24 +127,31 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Change Log</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-0b4-unreleased">NetKet 3.0b4 (unreleased)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-0b5-unreleased">NetKet 3.0b5 (unreleased)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#new-features">New features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#breaking-changes">Breaking Changes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#internal-changes">Internal Changes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#bug-fixes">Bug Fixes</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-0b3-published-on-9-july-2021">NetKet 3.0b3 (published on 9 july 2021)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-0b4-17-august-2021">NetKet 3.0b4 (17 august 2021)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id1">New features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id2">Breaking Changes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id3">Internal Changes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id4">Bug Fixes</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-0b2-published-on-31-may-2021">NetKet 3.0b2 (published on 31 May 2021)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-0b3-published-on-9-july-2021">NetKet 3.0b3 (published on 9 july 2021)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id5">New features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id6">Breaking Changes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id7">Bug Fixes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id7">Internal Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id8">Bug Fixes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-0b2-published-on-31-may-2021">NetKet 3.0b2 (published on 31 May 2021)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id9">New features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id10">Breaking Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id11">Bug Fixes</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-0b1-published-beta-release">NetKet 3.0b1 (published beta release)</a><ul>
@@ -343,8 +352,12 @@
 <li class="toctree-l3"><a class="reference internal" href="netket.models.MPSPeriodic.html">netket.models.MPSPeriodic</a></li>
 <li class="toctree-l3"><a class="reference internal" href="netket.models.NDM.html">netket.models.NDM</a></li>
 <li class="toctree-l3"><a class="reference internal" href="netket.models.GCNN.html">netket.models.GCNN</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">netket.models.ARNN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="netket.models.AbstractARNN.html">netket.models.AbstractARNN</a></li>
 <li class="toctree-l3"><a class="reference internal" href="netket.models.ARNNDense.html">netket.models.ARNNDense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="netket.models.ARNNConv1D.html">netket.models.ARNNConv1D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="netket.models.ARNNConv2D.html">netket.models.ARNNConv2D</a></li>
+<li class="toctree-l3"><a class="reference internal" href="netket.models.FastARNNConv1D.html">netket.models.FastARNNConv1D</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">netket.models.FastARNNConv2D</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#model-tools">Model tools</a><ul>
@@ -446,17 +459,42 @@
       </div>
     <div class="body col-md-9 content" role="main">
       
-  <div class="section" id="netket-models-arnn">
-<h1>netket.models.ARNN<a class="headerlink" href="#netket-models-arnn" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="netket-models-fastarnnconv2d">
+<h1>netket.models.FastARNNConv2D<a class="headerlink" href="#netket-models-fastarnnconv2d" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
-<dt id="netket.models.ARNN">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">netket.models.</span></code><code class="sig-name descname"><span class="pre">ARNN</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">hilbert</span></em>, <em class="sig-param"><span class="pre">parent=&lt;flax.linen.module._Sentinel</span> <span class="pre">object&gt;</span></em>, <em class="sig-param"><span class="pre">name=None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/models/autoreg.html#ARNN"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.models.ARNN" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://flax.readthedocs.io/en/latest/flax.linen.html#flax.linen.Module" title="(in Flax)"><code class="xref py py-class docutils literal notranslate"><span class="pre">flax.linen.module.Module</span></code></a></p>
-<p>Base class for autoregressive neural networks.</p>
+<dt id="netket.models.FastARNNConv2D">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">netket.models.</span></code><code class="sig-name descname"><span class="pre">FastARNNConv2D</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">hilbert</span></em>, <em class="sig-param"><span class="pre">layers</span></em>, <em class="sig-param"><span class="pre">features</span></em>, <em class="sig-param"><span class="pre">kernel_size</span></em>, <em class="sig-param"><span class="pre">kernel_dilation=(1</span></em>, <em class="sig-param"><span class="pre">1)</span></em>, <em class="sig-param"><span class="pre">activation=&lt;function</span> <span class="pre">selu&gt;</span></em>, <em class="sig-param"><span class="pre">use_bias=True</span></em>, <em class="sig-param"><span class="pre">dtype=&lt;class</span> <span class="pre">'jax._src.numpy.lax_numpy.float64'&gt;</span></em>, <em class="sig-param"><span class="pre">precision=None</span></em>, <em class="sig-param"><span class="pre">kernel_init=&lt;function</span> <span class="pre">variance_scaling.&lt;locals&gt;.init&gt;</span></em>, <em class="sig-param"><span class="pre">bias_init=&lt;function</span> <span class="pre">zeros&gt;</span></em>, <em class="sig-param"><span class="pre">parent=&lt;flax.linen.module._Sentinel</span> <span class="pre">object&gt;</span></em>, <em class="sig-param"><span class="pre">name=None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/models/fast_autoreg.html#FastARNNConv2D"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.models.FastARNNConv2D" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">netket.models.autoreg.AbstractARNN</span></code></p>
+<p>Fast autoregressive neural network with 2D convolution layers.</p>
+<p>See <span class="xref std std-ref">netket.nn.FastMaskedConv1D</span> for a brief explanation of fast autoregressive sampling.</p>
 <dl class="class-dl-groups">
 <dt>Attributes</dt><dd><dl class="py attribute">
-<dt id="netket.models.ARNN.variables">
-<code class="sig-name descname"><span class="pre">variables</span></code><a class="headerlink" href="#netket.models.ARNN.variables" title="Permalink to this definition">¶</a></dt>
+<dt id="netket.models.FastARNNConv2D.kernel_dilation">
+<code class="sig-name descname"><span class="pre">kernel_dilation</span></code><em class="property"><span class="pre">:</span> <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></em><em class="property"> <span class="pre">=</span> <span class="pre">(1,</span> <span class="pre">1)</span></em><a class="headerlink" href="#netket.models.FastARNNConv2D.kernel_dilation" title="Permalink to this definition">¶</a></dt>
+<dd><p>a sequence of 2 integers, giving the dilation factor to
+apply in each spatial dimension of the convolution kernel (default: 1).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="netket.models.FastARNNConv2D.precision">
+<code class="sig-name descname"><span class="pre">precision</span></code><em class="property"><span class="pre">:</span> <span class="pre">Any</span></em><em class="property"> <span class="pre">=</span> <span class="pre">None</span></em><a class="headerlink" href="#netket.models.FastARNNConv2D.precision" title="Permalink to this definition">¶</a></dt>
+<dd><p>numerical precision of the computation, see <cite>jax.lax.Precision</cite> for details.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="netket.models.FastARNNConv2D.use_bias">
+<code class="sig-name descname"><span class="pre">use_bias</span></code><em class="property"><span class="pre">:</span> <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.9)"><span class="pre">bool</span></a></em><em class="property"> <span class="pre">=</span> <span class="pre">True</span></em><a class="headerlink" href="#netket.models.FastARNNConv2D.use_bias" title="Permalink to this definition">¶</a></dt>
+<dd><p>True).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>whether to add a bias to the output (default</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="netket.models.FastARNNConv2D.variables">
+<code class="sig-name descname"><span class="pre">variables</span></code><a class="headerlink" href="#netket.models.FastARNNConv2D.variables" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the variables in this module.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -469,25 +507,66 @@
 </dl>
 <dl class="class-dl-groups">
 <dt>Methods</dt><dd><dl class="py method">
-<dt id="netket.models.ARNN.conditionals">
-<em class="property"><span class="pre">abstract</span> </em><code class="sig-name descname"><span class="pre">conditionals</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/models/autoreg.html#ARNN.conditionals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.models.ARNN.conditionals" title="Permalink to this definition">¶</a></dt>
-<dd><p>Computes the probabilities for each spin to take each value.</p>
+<dt id="netket.models.FastARNNConv2D.activation">
+<code class="sig-name descname"><span class="pre">activation</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#netket.models.FastARNNConv2D.activation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scaled exponential linear unit activation.</p>
+<p>Computes the element-wise function:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\mathrm{selu}(x) = \lambda \begin{cases}
+  x, &amp; x &gt; 0\\
+  \alpha e^x - \alpha, &amp; x \le 0
+\end{cases}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\lambda = 1.0507009873554804934193349852946\)</span> and
+<span class="math notranslate nohighlight">\(\alpha = 1.6732632423543772848170429916717\)</span>.</p>
+<p>For more information, see
+<a class="reference external" href="https://papers.nips.cc/paper/6698-self-normalizing-neural-networks.pdf">Self-Normalizing Neural Networks</a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>inputs</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>, <a class="reference external" href="https://jax.readthedocs.io/en/latest/jax.numpy.html#jaxlib.xla_extension.DeviceArray" title="(in JAX)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeviceArray</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Tracer</span></code>]) – configurations with dimensions (batch, Hilbert.size).</p></li>
-<li><p><strong>cache</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – auxiliary states, e.g., used to implement fast autoregressive sampling.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – input array</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>the probabilities with dimensions (batch, Hilbert.size, Hilbert.local_size).
-cache: the updated cache.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>p</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py method">
+<dt id="netket.models.FastARNNConv2D.bias_init">
+<code class="sig-name descname"><span class="pre">bias_init</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">shape</span></em>, <em class="sig-param"><span class="pre">dtype=&lt;class</span> <span class="pre">'jax._src.numpy.lax_numpy.float32'&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.models.FastARNNConv2D.bias_init" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="netket.models.FastARNNConv2D.conditionals">
+<code class="sig-name descname"><span class="pre">conditionals</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/models/fast_autoreg.html#FastARNNConv2D.conditionals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.models.FastARNNConv2D.conditionals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the conditional probabilities for each site to take each value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>inputs</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>, <a class="reference external" href="https://jax.readthedocs.io/en/latest/jax.numpy.html#jaxlib.xla_extension.DeviceArray" title="(in JAX)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeviceArray</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Tracer</span></code>]) – configurations with dimensions (batch, Hilbert.size).</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Union" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code></a>[<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.21)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></a>, <a class="reference external" href="https://jax.readthedocs.io/en/latest/jax.numpy.html#jaxlib.xla_extension.DeviceArray" title="(in JAX)"><code class="xref py py-class docutils literal notranslate"><span class="pre">DeviceArray</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Tracer</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The probabilities with dimensions (batch, Hilbert.size, Hilbert.local_size).</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pytest</span><span class="p">;</span> <span class="n">pytest</span><span class="o">.</span><span class="n">skip</span><span class="p">(</span><span class="s2">&quot;skip automated test of this docstring&quot;</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">p</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">variables</span><span class="p">,</span> <span class="n">σ</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">conditionals</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="p">:])</span>
+<span class="go">[0.3 0.7]</span>
+<span class="go"># For the 3rd spin of the 2nd sample in the batch,</span>
+<span class="go"># it takes probability 0.3 to be spin down (local state index 0),</span>
+<span class="go"># and probability 0.7 to be spin up (local state index 1).</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="netket.models.FastARNNConv2D.kernel_init">
+<code class="sig-name descname"><span class="pre">kernel_init</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">shape</span></em>, <em class="sig-param"><span class="pre">dtype=&lt;class</span> <span class="pre">'jax._src.numpy.lax_numpy.float32'&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.models.FastARNNConv2D.kernel_init" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd>
 </dl>

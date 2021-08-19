@@ -121,7 +121,7 @@
 <span class="kn">from</span> <span class="nn">netket.utils.types</span> <span class="kn">import</span> <span class="n">PyTree</span>
 <span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">warn_deprecation</span>
 
-<span class="kn">from</span> <span class="nn">.qgt_onthefly_logic</span> <span class="kn">import</span> <span class="n">mat_vec</span> <span class="k">as</span> <span class="n">mat_vec_onthefly</span>
+<span class="kn">from</span> <span class="nn">.qgt_onthefly_logic</span> <span class="kn">import</span> <span class="n">mat_vec_factory</span>
 
 <span class="kn">from</span> <span class="nn">..linear_operator</span> <span class="kn">import</span> <span class="n">LinearOperator</span><span class="p">,</span> <span class="n">Uninitialized</span>
 
@@ -147,12 +147,23 @@
         <span class="n">warn_deprecation</span><span class="p">(</span>
             <span class="s2">&quot;The argument `centered` is deprecated. The implementation now always behaves as if centered=False.&quot;</span>
         <span class="p">)</span>
+        <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;centered&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">vstate</span><span class="o">.</span><span class="n">samples</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="n">vstate</span><span class="o">.</span><span class="n">samples</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="n">vstate</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">vstate</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+
+    <span class="n">mat_vec</span> <span class="o">=</span> <span class="n">mat_vec_factory</span><span class="p">(</span>
+        <span class="n">forward_fn</span><span class="o">=</span><span class="n">vstate</span><span class="o">.</span><span class="n">_apply_fun</span><span class="p">,</span>
+        <span class="n">params</span><span class="o">=</span><span class="n">vstate</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span>
+        <span class="n">model_state</span><span class="o">=</span><span class="n">vstate</span><span class="o">.</span><span class="n">model_state</span><span class="p">,</span>
+        <span class="n">samples</span><span class="o">=</span><span class="n">samples</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">QGTOnTheFlyT</span><span class="p">(</span>
-        <span class="n">apply_fun</span><span class="o">=</span><span class="n">vstate</span><span class="o">.</span><span class="n">_apply_fun</span><span class="p">,</span>
-        <span class="n">params</span><span class="o">=</span><span class="n">vstate</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span>
-        <span class="n">samples</span><span class="o">=</span><span class="n">vstate</span><span class="o">.</span><span class="n">samples</span><span class="p">,</span>
-        <span class="n">model_state</span><span class="o">=</span><span class="n">vstate</span><span class="o">.</span><span class="n">model_state</span><span class="p">,</span>
+        <span class="n">_mat_vec</span><span class="o">=</span><span class="n">mat_vec</span><span class="p">,</span>
+        <span class="n">_params</span><span class="o">=</span><span class="n">vstate</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">)</span></div>
 
@@ -170,26 +181,13 @@
 <span class="sd">    the field `sr`.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">apply_fun</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">PyTree</span><span class="p">,</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">field</span><span class="p">(</span>
-        <span class="n">pytree_node</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">Uninitialized</span>
-    <span class="p">)</span>
-    <span class="sd">&quot;&quot;&quot;The forward pass of the Ansatz.&quot;&quot;&quot;</span>
+    <span class="n">_mat_vec</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">PyTree</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">PyTree</span><span class="p">]</span> <span class="o">=</span> <span class="n">Uninitialized</span>
+    <span class="sd">&quot;&quot;&quot;The S matrix-vector product as generated by mat_vec_factory.</span>
+<span class="sd">    It&#39;s a jax.Partial, so can be used as pytree_node.&quot;&quot;&quot;</span>
 
-    <span class="n">params</span><span class="p">:</span> <span class="n">PyTree</span> <span class="o">=</span> <span class="n">Uninitialized</span>
-    <span class="sd">&quot;&quot;&quot;The first input to apply_fun (parameters of the ansatz).&quot;&quot;&quot;</span>
-
-    <span class="n">samples</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">Uninitialized</span>
-    <span class="sd">&quot;&quot;&quot;The second input to apply_fun (points where the ansatz is evaluated).&quot;&quot;&quot;</span>
-
-    <span class="n">model_state</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PyTree</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="sd">&quot;&quot;&quot;Optional state of the ansataz.&quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
-
-        <span class="k">if</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="n">samples_r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
-            <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;samples&quot;</span><span class="p">,</span> <span class="n">samples_r</span><span class="p">)</span>
+    <span class="n">_params</span><span class="p">:</span> <span class="n">PyTree</span> <span class="o">=</span> <span class="n">Uninitialized</span>
+    <span class="sd">&quot;&quot;&quot;The first input to apply_fun (parameters of the ansatz). </span>
+<span class="sd">    Only used as a shape placeholder.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__matmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">onthefly_mat_treevec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
@@ -221,33 +219,22 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">vec</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported mat-vec for batches of vectors&quot;</span><span class="p">)</span>
         <span class="c1"># If the input is a vector</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">nkjax</span><span class="o">.</span><span class="n">tree_size</span><span class="p">(</span><span class="n">S</span><span class="o">.</span><span class="n">params</span><span class="p">)</span> <span class="o">==</span> <span class="n">vec</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">nkjax</span><span class="o">.</span><span class="n">tree_size</span><span class="p">(</span><span class="n">S</span><span class="o">.</span><span class="n">_params</span><span class="p">)</span> <span class="o">==</span> <span class="n">vec</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="sd">&quot;&quot;&quot;Size mismatch between number of parameters ({nkjax.tree_size(S.params)})</span>
 <span class="sd">                                and vector size {vec.size}.</span>
 <span class="sd">                             &quot;&quot;&quot;</span>
             <span class="p">)</span>
 
-        <span class="n">_</span><span class="p">,</span> <span class="n">unravel</span> <span class="o">=</span> <span class="n">nkjax</span><span class="o">.</span><span class="n">tree_ravel</span><span class="p">(</span><span class="n">S</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">unravel</span> <span class="o">=</span> <span class="n">nkjax</span><span class="o">.</span><span class="n">tree_ravel</span><span class="p">(</span><span class="n">S</span><span class="o">.</span><span class="n">_params</span><span class="p">)</span>
         <span class="n">vec</span> <span class="o">=</span> <span class="n">unravel</span><span class="p">(</span><span class="n">vec</span><span class="p">)</span>
         <span class="n">ravel_result</span> <span class="o">=</span> <span class="kc">True</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">ravel_result</span> <span class="o">=</span> <span class="kc">False</span>
 
-    <span class="n">vec</span> <span class="o">=</span> <span class="n">nkjax</span><span class="o">.</span><span class="n">tree_cast</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">S</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">vec</span> <span class="o">=</span> <span class="n">nkjax</span><span class="o">.</span><span class="n">tree_cast</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">S</span><span class="o">.</span><span class="n">_params</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">fun</span><span class="p">(</span><span class="n">W</span><span class="p">,</span> <span class="n">σ</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">S</span><span class="o">.</span><span class="n">apply_fun</span><span class="p">({</span><span class="s2">&quot;params&quot;</span><span class="p">:</span> <span class="n">W</span><span class="p">,</span> <span class="o">**</span><span class="n">S</span><span class="o">.</span><span class="n">model_state</span><span class="p">},</span> <span class="n">σ</span><span class="p">)</span>
-
-    <span class="n">mat_vec</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span>
-        <span class="n">mat_vec_onthefly</span><span class="p">,</span>
-        <span class="n">forward_fn</span><span class="o">=</span><span class="n">fun</span><span class="p">,</span>
-        <span class="n">params</span><span class="o">=</span><span class="n">S</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
-        <span class="n">samples</span><span class="o">=</span><span class="n">S</span><span class="o">.</span><span class="n">samples</span><span class="p">,</span>
-        <span class="n">diag_shift</span><span class="o">=</span><span class="n">S</span><span class="o">.</span><span class="n">diag_shift</span><span class="p">,</span>
-    <span class="p">)</span>
-
-    <span class="n">res</span> <span class="o">=</span> <span class="n">mat_vec</span><span class="p">(</span><span class="n">vec</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">S</span><span class="o">.</span><span class="n">_mat_vec</span><span class="p">(</span><span class="n">vec</span><span class="p">,</span> <span class="n">S</span><span class="o">.</span><span class="n">diag_shift</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">ravel_result</span><span class="p">:</span>
         <span class="n">res</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">nkjax</span><span class="o">.</span><span class="n">tree_ravel</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
@@ -260,7 +247,7 @@
     <span class="bp">self</span><span class="p">:</span> <span class="n">QGTOnTheFlyT</span><span class="p">,</span> <span class="n">solve_fun</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">PyTree</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">x0</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PyTree</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyTree</span><span class="p">:</span>
 
-    <span class="n">y</span> <span class="o">=</span> <span class="n">nkjax</span><span class="o">.</span><span class="n">tree_cast</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">nkjax</span><span class="o">.</span><span class="n">tree_cast</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">)</span>
 
     <span class="c1"># we could cache this...</span>
     <span class="k">if</span> <span class="n">x0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -278,7 +265,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        A dense matrix representation of this S matrix.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">Npars</span> <span class="o">=</span> <span class="n">nkjax</span><span class="o">.</span><span class="n">tree_size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">Npars</span> <span class="o">=</span> <span class="n">nkjax</span><span class="o">.</span><span class="n">tree_size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_params</span><span class="p">)</span>
     <span class="n">I</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">numpy</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">Npars</span><span class="p">)</span>
     <span class="n">out</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">vmap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span> <span class="o">@</span> <span class="n">x</span><span class="p">,</span> <span class="n">in_axes</span><span class="o">=</span><span class="mi">0</span><span class="p">)(</span><span class="n">I</span><span class="p">)</span>
 

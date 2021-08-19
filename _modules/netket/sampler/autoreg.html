@@ -112,12 +112,12 @@
 
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 
-<span class="kn">from</span> <span class="nn">netket.sampler</span> <span class="kn">import</span> <span class="n">Sampler</span><span class="p">,</span> <span class="n">SamplerState</span>
-<span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">struct</span>
-<span class="kn">from</span> <span class="nn">netket.utils.types</span> <span class="kn">import</span> <span class="n">PRNGKeyT</span><span class="p">,</span> <span class="n">PyTree</span>
-
 <span class="kn">import</span> <span class="nn">jax</span>
 <span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">jnp</span>
+
+<span class="kn">from</span> <span class="nn">netket.sampler</span> <span class="kn">import</span> <span class="n">Sampler</span><span class="p">,</span> <span class="n">SamplerState</span>
+<span class="kn">from</span> <span class="nn">netket.utils</span> <span class="kn">import</span> <span class="n">struct</span>
+<span class="kn">from</span> <span class="nn">netket.utils.types</span> <span class="kn">import</span> <span class="n">PRNGKeyT</span>
 
 
 <span class="k">def</span> <span class="nf">batch_choice</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
@@ -143,10 +143,6 @@
 
 <span class="nd">@struct</span><span class="o">.</span><span class="n">dataclass</span>
 <span class="k">class</span> <span class="nc">ARDirectSamplerState</span><span class="p">(</span><span class="n">SamplerState</span><span class="p">):</span>
-    <span class="n">σ</span><span class="p">:</span> <span class="n">jnp</span><span class="o">.</span><span class="n">ndarray</span>
-    <span class="sd">&quot;&quot;&quot;current batch of (maybe partially sampled) configurations.&quot;&quot;&quot;</span>
-    <span class="n">cache</span><span class="p">:</span> <span class="n">PyTree</span>
-    <span class="sd">&quot;&quot;&quot;auxiliary states, e.g., used to implement fast autoregressive sampling.&quot;&quot;&quot;</span>
     <span class="n">key</span><span class="p">:</span> <span class="n">PRNGKeyT</span>
     <span class="sd">&quot;&quot;&quot;state of the random number generator.&quot;&quot;&quot;</span>
 
@@ -163,47 +159,54 @@
         <span class="k">return</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">_init_cache</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">σ</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="n">variables</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">σ</span><span class="p">)</span>
+        <span class="n">variables</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">init</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">σ</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">_conditional</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;cache&quot;</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
-            <span class="n">_</span><span class="p">,</span> <span class="n">cache</span> <span class="o">=</span> <span class="n">variables</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;cache&quot;</span><span class="p">)</span>
+            <span class="n">cache</span> <span class="o">=</span> <span class="n">variables</span><span class="p">[</span><span class="s2">&quot;cache&quot;</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">cache</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">return</span> <span class="n">cache</span>
 
-    <span class="k">def</span> <span class="nf">_init_state</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-        <span class="n">new_key</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-        <span class="n">σ</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">n_chains_per_rank</span><span class="p">,</span> <span class="n">sampler</span><span class="o">.</span><span class="n">hilbert</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">sampler</span><span class="o">.</span><span class="n">dtype</span>
-        <span class="p">)</span>
-        <span class="n">cache</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">_init_cache</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">σ</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">ARDirectSamplerState</span><span class="p">(</span><span class="n">σ</span><span class="o">=</span><span class="n">σ</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">new_key</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_init_state</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ARDirectSamplerState</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_reset</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_reset</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">state</span>
 
-    <span class="k">def</span> <span class="nf">_sample_chain</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">chain_length</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">_sample_chain</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">chain_length</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_sample_chain</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">chain_length</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_sample_chain</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">chain_length</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_sample_next</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-        <span class="n">σ</span><span class="p">,</span> <span class="n">new_state</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">_sample_chain</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_sample_next</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="n">σ</span><span class="p">,</span> <span class="n">new_state</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">_sample_chain</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">σ</span> <span class="o">=</span> <span class="n">σ</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">new_state</span><span class="p">,</span> <span class="n">σ</span></div>
 
 
 <span class="nd">@partial</span><span class="p">(</span><span class="n">jax</span><span class="o">.</span><span class="n">jit</span><span class="p">,</span> <span class="n">static_argnums</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
-<span class="k">def</span> <span class="nf">_sample_chain</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">chain_length</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_sample_chain</span><span class="p">(</span><span class="n">sampler</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">chain_length</span><span class="p">):</span>
+    <span class="k">if</span> <span class="s2">&quot;cache&quot;</span> <span class="ow">in</span> <span class="n">variables</span><span class="p">:</span>
+        <span class="n">variables</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">variables</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;cache&quot;</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">scan_fun</span><span class="p">(</span><span class="n">carry</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="n">σ</span><span class="p">,</span> <span class="n">cache</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="n">carry</span>
+        <span class="k">if</span> <span class="n">cache</span><span class="p">:</span>
+            <span class="n">_variables</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">variables</span><span class="p">,</span> <span class="s2">&quot;cache&quot;</span><span class="p">:</span> <span class="n">cache</span><span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_variables</span> <span class="o">=</span> <span class="n">variables</span>
         <span class="n">new_key</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
-        <span class="n">p</span><span class="p">,</span> <span class="n">cache</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
-            <span class="n">params</span><span class="p">,</span>
+        <span class="n">p</span><span class="p">,</span> <span class="n">mutables</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="n">_variables</span><span class="p">,</span>
             <span class="n">σ</span><span class="p">,</span>
-            <span class="n">cache</span><span class="p">,</span>
-            <span class="n">method</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">conditionals</span><span class="p">,</span>
+            <span class="n">index</span><span class="p">,</span>
+            <span class="n">method</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">_conditional</span><span class="p">,</span>
+            <span class="n">mutable</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;cache&quot;</span><span class="p">],</span>
         <span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;cache&quot;</span> <span class="ow">in</span> <span class="n">mutables</span><span class="p">:</span>
+            <span class="n">cache</span> <span class="o">=</span> <span class="n">mutables</span><span class="p">[</span><span class="s2">&quot;cache&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cache</span> <span class="o">=</span> <span class="kc">None</span>
+
         <span class="n">local_states</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">hilbert</span><span class="o">.</span><span class="n">local_states</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">sampler</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
-        <span class="n">p</span> <span class="o">=</span> <span class="n">p</span><span class="p">[:,</span> <span class="n">index</span><span class="p">,</span> <span class="p">:]</span>
         <span class="n">new_σ</span> <span class="o">=</span> <span class="n">batch_choice</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">local_states</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
         <span class="n">σ</span> <span class="o">=</span> <span class="n">σ</span><span class="o">.</span><span class="n">at</span><span class="p">[:,</span> <span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">new_σ</span><span class="p">)</span>
 
@@ -218,19 +221,15 @@
         <span class="n">dtype</span><span class="o">=</span><span class="n">sampler</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="c1"># Init `cache` before generating each sample,</span>
-    <span class="c1"># even if `params` is not changed and `reset` is not called</span>
+    <span class="c1"># Initialize `cache` before generating each sample,</span>
+    <span class="c1"># even if `variables` is not changed and `reset` is not called</span>
     <span class="n">cache</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">_init_cache</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">σ</span><span class="p">,</span> <span class="n">key_init</span><span class="p">)</span>
 
     <span class="n">indices</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">sampler</span><span class="o">.</span><span class="n">hilbert</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
-    <span class="p">(</span><span class="n">σ</span><span class="p">,</span> <span class="n">cache</span><span class="p">,</span> <span class="n">_</span><span class="p">),</span> <span class="n">_</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span>
-        <span class="n">scan_fun</span><span class="p">,</span>
-        <span class="p">(</span><span class="n">σ</span><span class="p">,</span> <span class="n">cache</span><span class="p">,</span> <span class="n">key_scan</span><span class="p">),</span>
-        <span class="n">indices</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="p">(</span><span class="n">σ</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">),</span> <span class="n">_</span> <span class="o">=</span> <span class="n">jax</span><span class="o">.</span><span class="n">lax</span><span class="o">.</span><span class="n">scan</span><span class="p">(</span><span class="n">scan_fun</span><span class="p">,</span> <span class="p">(</span><span class="n">σ</span><span class="p">,</span> <span class="n">cache</span><span class="p">,</span> <span class="n">key_scan</span><span class="p">),</span> <span class="n">indices</span><span class="p">)</span>
     <span class="n">σ</span> <span class="o">=</span> <span class="n">σ</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">chain_length</span><span class="p">,</span> <span class="n">sampler</span><span class="o">.</span><span class="n">n_chains_per_rank</span><span class="p">,</span> <span class="n">sampler</span><span class="o">.</span><span class="n">hilbert</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
 
-    <span class="n">new_state</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">σ</span><span class="o">=</span><span class="n">σ</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="n">cache</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">new_key</span><span class="p">)</span>
+    <span class="n">new_state</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">new_key</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">σ</span><span class="p">,</span> <span class="n">new_state</span>
 </pre></div>
 
