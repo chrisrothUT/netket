@@ -125,31 +125,38 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="changelog.html">Change Log</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#netket-3-0b5-unreleased">NetKet 3.0b5 (unreleased)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#netket-3-1-under-development">NetKet 3.1 (under development)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="changelog.html#new-features">New features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="changelog.html#breaking-changes">Breaking Changes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="changelog.html#internal-changes">Internal Changes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="changelog.html#bug-fixes">Bug Fixes</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#netket-3-0b4-17-august-2021">NetKet 3.0b4 (17 august 2021)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#netket-3-0-23-august-2021">NetKet 3.0 (23 august 2021)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="changelog.html#id1">New features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="changelog.html#id2">Breaking Changes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="changelog.html#id3">Internal Changes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="changelog.html#id4">Bug Fixes</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#netket-3-0b3-published-on-9-july-2021">NetKet 3.0b3 (published on 9 july 2021)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#netket-3-0b4-17-august-2021">NetKet 3.0b4 (17 august 2021)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="changelog.html#id5">New features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="changelog.html#id6">Breaking Changes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="changelog.html#id7">Internal Changes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="changelog.html#id8">Bug Fixes</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="changelog.html#netket-3-0b2-published-on-31-may-2021">NetKet 3.0b2 (published on 31 May 2021)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#netket-3-0b3-published-on-9-july-2021">NetKet 3.0b3 (published on 9 july 2021)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="changelog.html#id9">New features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="changelog.html#id10">Breaking Changes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="changelog.html#id11">Bug Fixes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id11">Internal Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id12">Bug Fixes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="changelog.html#netket-3-0b2-published-on-31-may-2021">NetKet 3.0b2 (published on 31 May 2021)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id13">New features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id14">Breaking Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="changelog.html#id15">Bug Fixes</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="changelog.html#netket-3-0b1-published-beta-release">NetKet 3.0b1 (published beta release)</a><ul>
@@ -252,6 +259,12 @@
 </ul>
 <p class="caption"><span class="caption-text">API documentation</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="api-stability.html">API Stability</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="api-stability.html#public-api-definition">Public API Definition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-stability.html#netket-nn-module">Netket.nn module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="api-stability.html#storing-the-environment">Storing the environment</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">Public API: netket package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="api.html#graph">Graph</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="_generated/graph/netket.graph.AbstractGraph.html">netket.graph.AbstractGraph</a></li>
@@ -459,24 +472,23 @@
       
   <div class="section" id="getting-started">
 <h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
-<p>Welcome to the documentation for Netket 3.0 (alpha).</p>
+<p>Welcome to the documentation for Netket 3.0.</p>
 <p>Please read the release notes to see what has changed since the last release.</p>
 <div class="section" id="installation-and-requirements">
 <h2>Installation and requirements<a class="headerlink" href="#installation-and-requirements" title="Permalink to this headline">¶</a></h2>
 <p>Netket v3.0 requires <cite>python&gt;= 3.8</cite> and optionally a recent MPI install.
 To install, run one of the two following commands</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install --pre netket
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install netket
 </pre></div>
 </div>
-<p>The flag <code class="code docutils literal notranslate"><span class="pre">--pre</span></code> tells pip to also install pre-release versions. As NetKet 3 is in beta, this is necessary.</p>
-<p>If you want to run NetKet on a GPU, you must install a GPU-compatible <code class="code docutils literal notranslate"><span class="pre">jaxlib</span></code>. For that, we advise you to
+<p>If you want to run NetKet on a GPU, you must install a GPU-compatible <code class="code docutils literal notranslate"><span class="pre">jaxlib</span></code>. For that, we advise you to
 look at the instructions on <a class="reference external" href="https://github.com/google/jax#pip-installation">jax repository</a>, however at the time
 of writing, this means you should run the following command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install -U jax <span class="nv">jaxlib</span><span class="o">==</span>X.XX.XX+cudaYYY -f https://storage.googleapis.com/jax-releases/jax_releases.html
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install --upgrade <span class="s2">&quot;jax[cuda111]&quot;</span> -f https://storage.googleapis.com/jax-releases/jax_releases.html
 </pre></div>
 </div>
-<p>where X.XX.XX should be a recent jaxlib version and YYY the cuda version installed on your computer.
-At the time of writing, Netket was tested with X=0.1.62 and cuda=111</p>
+<p>Where the jaxlib version must correspond to the version of the existing CUDA installation you want to use. Refer to jax
+documentation to learn more about matching cuda versions with python wheels.</p>
 <p>To query the installed <cite>netket</cite> version you can run the following command in your shell</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python -e <span class="s2">&quot;import netket; print(netket.version)&quot;</span>
 </pre></div>
@@ -485,7 +497,7 @@ At the time of writing, Netket was tested with X=0.1.62 and cuda=111</p>
 <h3>MPI<a class="headerlink" href="#mpi" title="Permalink to this headline">¶</a></h3>
 <p>If you want to use MPI, you will need to have a working MPI compiler. You can install the
 dependencies necessary to run with MPI with the following command:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install --pre netket<span class="o">[</span>mpi<span class="o">]</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install netket<span class="o">[</span>mpi<span class="o">]</span>
 </pre></div>
 </div>
 <p>Subsequently, NetKet will exploit MPI-level parallelism for the Monte-Carlo sampling.
