@@ -45,6 +45,11 @@ def unit_normal_scaling(key, shape, dtype):
         jnp.prod(jnp.asarray(shape[1:]))
     )
 
+def selu(x):
+    if jnp.iscomplexobj(x):
+        return jax.lax.complex(jax.nn.selu(x.real),jax.nn.selu(x.imag))
+    else:
+        return jax.nn.selu(x)
 
 class GCNN_FFT(nn.Module):
     r"""Implements a GCNN using a fast fourier transform over the translation group.
@@ -72,7 +77,7 @@ class GCNN_FFT(nn.Module):
     """Array specifying the characters of the desired symmetry representation"""
     dtype: Any = float
     """The dtype of the weights."""
-    activation: Any = jax.nn.selu
+    activation: Any = selu
     """The nonlinear activation function between hidden layers."""
     output_activation: Any = identity
     """The nonlinear activation before the output. Defaults to the identity."""
@@ -179,7 +184,7 @@ class GCNN_Irrep(nn.Module):
     """Array specifying the characters of the desired symmetry representation"""
     dtype: Any = np.float64
     """The dtype of the weights."""
-    activation: Any = jax.nn.selu
+    activation: Any = selu
     """The nonlinear activation function between hidden layers."""
     output_activation: Any = identity
     """The nonlinear activation before the output."""
@@ -271,7 +276,7 @@ class GCNN_Parity_FFT(nn.Module):
     """Integer specifying the eigenvalue with respect to parity"""
     dtype: Any = np.float64
     """The dtype of the weights."""
-    activation: Any = jax.nn.selu
+    activation: Any = selu
     """The nonlinear activation function between hidden layers."""
     output_activation: Any = identity
     """The nonlinear activation before the output."""
@@ -425,7 +430,7 @@ class GCNN_Parity_Irrep(nn.Module):
     """Integer specifying the eigenvalue with respect to parity"""
     dtype: Any = np.float64
     """The dtype of the weights."""
-    activation: Any = jax.nn.selu
+    activation: Any = selu
     """The nonlinear activation function between hidden layers."""
     output_activation: Any = identity
     """The nonlinear activation before the output."""
