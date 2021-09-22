@@ -490,6 +490,7 @@ class MCState(VariationalState):
         *,
         mutable: Optional[Any] = None,
         use_covariance: Optional[bool] = None,
+        alpha: float
     ) -> Tuple[Stats, PyTree]:
         r"""Estimates both the gradient of the quantum expectation value of a given operator O.
         Args:
@@ -517,7 +518,7 @@ class MCState(VariationalState):
             return expect_and_grad(self, Ô, use_covariance, mutable)
         else:
             return expect_and_grad(
-                self, Ô, use_covariance, mutable, self.n_minibatches
+                self, Ô, use_covariance, mutable, self.n_minibatches, alpha
             )
 
     @deprecated("Use MCState.log_value(σ) instead.")
