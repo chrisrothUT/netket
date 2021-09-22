@@ -87,6 +87,7 @@ def _grad_expect_hermitian_minibatch_iterate(
     σ_batches: jnp.ndarray,
     σp: jnp.ndarray,
     mels: jnp.ndarray,
+    alpha: float
 ) -> Tuple[PyTree, PyTree]:
 
     n_minibatches = σ_batches.shape[0]
@@ -102,6 +103,7 @@ def _grad_expect_hermitian_minibatch_iterate(
                 σ_batches[i],
                 σp[i],
                 mels[i],
+                alpha,
             )
         )
 
