@@ -129,7 +129,7 @@ class VMC(AbstractVariationalDriver):
         self.state.reset()
 
         # Compute the local energy estimator and average Energy
-        self._loss_stats, self._loss_grad = self.state.expect_and_grad(self._ham)
+        self._loss_stats, self._loss_grad = self.state.expect_and_grad(self._ham,self.alpha)
 
         # if it's the identity it does
         # self._dp = self._loss_grad
