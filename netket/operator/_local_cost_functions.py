@@ -200,7 +200,7 @@ def local_costs_and_grads_function(local_cost_fun, machine, parameters, *args):
     )
 
 
-@partial(define_local_cost_function, static_argnums=0, batch_axes=(None, None, 0, 0, 0, None))
+@partial(define_local_cost_function, static_argnums=0, batch_axes=(None, None, 0, 0, 0))
 def local_value_cost(logpsi, pars, vp, mel, v):
     return jnp.sum(mel * jnp.exp(logpsi(pars, vp) - logpsi(pars, v)))
 
