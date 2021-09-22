@@ -47,7 +47,6 @@ def expect_and_grad_minibatch(  # noqa: F811
     use_covariance: TrueT,
     mutable: Any,
     n_minibatches: int,
-    alpha: float
 ) -> Tuple[Stats, PyTree]:
 
     σ = vstate.samples
@@ -64,7 +63,6 @@ def expect_and_grad_minibatch(  # noqa: F811
         σ_batches,
         σp,
         mels,
-        alpha,
     )
 
     if mutable is not False:
@@ -89,7 +87,6 @@ def _grad_expect_hermitian_minibatch_iterate(
     σ_batches: jnp.ndarray,
     σp: jnp.ndarray,
     mels: jnp.ndarray,
-    alpha: float
 ) -> Tuple[PyTree, PyTree]:
 
     n_minibatches = σ_batches.shape[0]
@@ -105,7 +102,6 @@ def _grad_expect_hermitian_minibatch_iterate(
                 σ_batches[i],
                 σp[i],
                 mels[i],
-                alpha,
             )
         )
 
@@ -144,7 +140,6 @@ def grad_expect_hermitian_minibatch_forward(
     σ: jnp.ndarray,
     σp: jnp.ndarray,
     mels: jnp.ndarray,
-    alpha: float
 ) -> Tuple[PyTree, PyTree]:
 
     σ_shape = σ.shape
@@ -157,7 +152,6 @@ def grad_expect_hermitian_minibatch_forward(
         σp.reshape(-1, *σp.shape[-2:]),
         mels.reshape(-1, mels.shape[-1]),
         σ.reshape(-1, σ.shape[-1]),
-        alpha
     )
 
     return O_loc.reshape(σ_shape[:-1])
