@@ -47,6 +47,7 @@ def expect_and_grad_minibatch(  # noqa: F811
     use_covariance: TrueT,
     mutable: Any,
     n_minibatches: int,
+    alpha: float
 ) -> Tuple[Stats, PyTree]:
 
     σ = vstate.samples
@@ -63,6 +64,7 @@ def expect_and_grad_minibatch(  # noqa: F811
         σ_batches,
         σp,
         mels,
+        alpha,
     )
 
     if mutable is not False:
