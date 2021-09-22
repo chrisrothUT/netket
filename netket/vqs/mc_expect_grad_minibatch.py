@@ -140,6 +140,7 @@ def grad_expect_hermitian_minibatch_forward(
     σ: jnp.ndarray,
     σp: jnp.ndarray,
     mels: jnp.ndarray,
+    alpha: float
 ) -> Tuple[PyTree, PyTree]:
 
     σ_shape = σ.shape
@@ -152,6 +153,7 @@ def grad_expect_hermitian_minibatch_forward(
         σp.reshape(-1, *σp.shape[-2:]),
         mels.reshape(-1, mels.shape[-1]),
         σ.reshape(-1, σ.shape[-1]),
+        alpha
     )
 
     return O_loc.reshape(σ_shape[:-1])
