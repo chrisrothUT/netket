@@ -589,7 +589,7 @@ def expect_nominibatch(
 @expect.dispatch
 def expect_minibatch(vstate: MCState, operator: AbstractOperator, n_minibatches: int):
     σ = vstate.samples
-    σr = σ.reshape(n_minibatches, -1, σ.shape[1], σ.shape[2])
+    σr = σ.reshape(n_minibatches, 1, -1, σ.shape[2])
 
     i = 0
     stats = []
