@@ -163,11 +163,10 @@ class PermutationGroup(FiniteGroup):
             n_symm = len(perms)
             product_table = np.zeros([n_symm, n_symm], dtype=int)
 
-            inv_t = inverse.transpose()
-            perms_t = perms.transpose()
-            inv_elements = perms_t[inv_t].reshape(-1, n_symm * n_symm).transpose()
-
-            inv_perms = [HashableArray(element) for element in inv_elements]
+            inv_perms = []
+            for perm in perms:
+              for inv_perm in inverse:
+                inv_perms.append(HashableArray(perm[inv_perm]))
 
             lookup = self._canonical_lookup()
 
@@ -178,6 +177,7 @@ class PermutationGroup(FiniteGroup):
             product_table[inds[:, 0] // n_symm, inds[:, 0] % n_symm] = inds[:, 1]
 
             return product_table
+
         except KeyError as err:
             raise RuntimeError(
                 "PermutationGroup is not closed under multiplication"
