@@ -221,9 +221,9 @@ class DenseSymmFFT(Module):
 
         x = jnp.fft.fftn(x, s=self.shape).reshape(*x.shape[:2], self.n_cells)
 
-        kernel = jnp.fft.fftn(kernel, s=self.shape).reshape(
-            *kernel.shape[:3], self.n_cells
-        )
+#        kernel = jnp.fft.fftn(kernel, s=self.shape).reshape(
+#           *kernel.shape[:3], self.n_cells
+#        )
 
         x = lax.dot_general(
             x, kernel, (((1,), (2,)), ((2,), (3,))), precision=self.precision
@@ -326,9 +326,9 @@ class DenseEquivariantFFT(Module):
 
         x = jnp.fft.fftn(x, s=self.shape).reshape(*x.shape[:3], self.n_cells)
 
-        kernel = jnp.fft.fftn(kernel, s=self.shape).reshape(
-            *kernel.shape[:4], self.n_cells
-        )
+ #      kernel = jnp.fft.fftn(kernel, s=self.shape).reshape(
+#            *kernel.shape[:4], self.n_cells
+ #       )
 
         x = lax.dot_general(
             x, kernel, (((1, 2), (1, 2)), ((3,), (4,))), precision=self.precision
