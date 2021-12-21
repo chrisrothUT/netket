@@ -14,6 +14,7 @@
 
    Attributes
       .. autoattribute:: FastARNNConv1D.kernel_dilation
+      .. autoattribute:: FastARNNConv1D.machine_pow
       .. autoattribute:: FastARNNConv1D.precision
       .. autoattribute:: FastARNNConv1D.use_bias
       .. autoattribute:: FastARNNConv1D.variables

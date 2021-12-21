@@ -7,6 +7,7 @@
     <title>netket.models.fast_autoreg &#8212; netket v3.0 documentation</title>
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/jumbo-style.css" />
@@ -26,9 +27,9 @@
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
 <meta name="apple-mobile-web-app-capable" content="yes">
-<script type="text/javascript" src="../../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../../_static/js/jquery-1.12.4.min.js "></script>
 <script type="text/javascript" src="../../../_static/js/jquery-fix.js "></script>
-<script type="text/javascript" src="../../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../../_static/bootstrap-3.4.1/js/bootstrap.min.js "></script>
 <script type="text/javascript" src="../../../_static/bootstrap-sphinx.js "></script>
 
   </head><body>
@@ -115,17 +116,17 @@
 
 <span class="kn">import</span> <span class="nn">jax</span>
 <span class="kn">from</span> <span class="nn">jax</span> <span class="kn">import</span> <span class="n">numpy</span> <span class="k">as</span> <span class="n">jnp</span>
+<span class="kn">from</span> <span class="nn">jax.nn.initializers</span> <span class="kn">import</span> <span class="n">zeros</span>
 <span class="kn">from</span> <span class="nn">plum</span> <span class="kn">import</span> <span class="n">dispatch</span>
 
 <span class="kn">from</span> <span class="nn">netket.models.autoreg</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">AbstractARNN</span><span class="p">,</span>
     <span class="n">_call</span><span class="p">,</span>
     <span class="n">_conditionals</span><span class="p">,</span>
+    <span class="n">_normalize</span><span class="p">,</span>
     <span class="n">_reshape_inputs</span><span class="p">,</span>
-    <span class="n">l2_normalize</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">netket.nn</span> <span class="kn">import</span> <span class="n">FastMaskedConv1D</span><span class="p">,</span> <span class="n">FastMaskedConv2D</span><span class="p">,</span> <span class="n">FastMaskedDense1D</span>
-<span class="kn">from</span> <span class="nn">netket.nn.initializers</span> <span class="kn">import</span> <span class="n">zeros</span>
 <span class="kn">from</span> <span class="nn">netket.nn.masked_linear</span> <span class="kn">import</span> <span class="n">default_kernel_init</span>
 <span class="kn">from</span> <span class="nn">netket.utils.types</span> <span class="kn">import</span> <span class="n">Array</span><span class="p">,</span> <span class="n">DType</span><span class="p">,</span> <span class="n">NNInitFunc</span>
 
@@ -157,6 +158,8 @@
     <span class="sd">&quot;&quot;&quot;initializer for the weights.&quot;&quot;&quot;</span>
     <span class="n">bias_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">zeros</span>
     <span class="sd">&quot;&quot;&quot;initializer for the biases.&quot;&quot;&quot;</span>
+    <span class="n">machine_pow</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="sd">&quot;&quot;&quot;exponent to normalize the outputs of `__call__`.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
@@ -218,6 +221,8 @@
     <span class="sd">&quot;&quot;&quot;initializer for the weights.&quot;&quot;&quot;</span>
     <span class="n">bias_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">zeros</span>
     <span class="sd">&quot;&quot;&quot;initializer for the biases.&quot;&quot;&quot;</span>
+    <span class="n">machine_pow</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="sd">&quot;&quot;&quot;exponent to normalize the outputs of `__call__`.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">features</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
@@ -281,6 +286,8 @@
     <span class="sd">&quot;&quot;&quot;initializer for the weights.&quot;&quot;&quot;</span>
     <span class="n">bias_init</span><span class="p">:</span> <span class="n">NNInitFunc</span> <span class="o">=</span> <span class="n">zeros</span>
     <span class="sd">&quot;&quot;&quot;initializer for the biases.&quot;&quot;&quot;</span>
+    <span class="n">machine_pow</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="sd">&quot;&quot;&quot;exponent to normalize the outputs of `__call__`.&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">L</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hilbert</span><span class="o">.</span><span class="n">size</span><span class="p">))</span>
@@ -335,8 +342,8 @@
             <span class="n">x</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">activation</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">_layers</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">update_site</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
 
-    <span class="n">log_psi</span> <span class="o">=</span> <span class="n">l2_normalize</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">p</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">log_psi</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
+    <span class="n">log_psi</span> <span class="o">=</span> <span class="n">_normalize</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">machine_pow</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">jnp</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">machine_pow</span> <span class="o">*</span> <span class="n">log_psi</span><span class="o">.</span><span class="n">real</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">p</span>
 
 

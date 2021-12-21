@@ -7,6 +7,7 @@
     <title>netket.sampler.rules.CustomRuleNumpy &#8212; netket v3.0 documentation</title>
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/bootstrap-sphinx.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-main.c949a650a448cc0ae9fd3441c0e17fb0.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/panels-variables.06eb56fa6e07937060861dad626602ad.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/jumbo-style.css" />
@@ -28,9 +29,9 @@
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
 <meta name="apple-mobile-web-app-capable" content="yes">
-<script type="text/javascript" src="../../../_static/js/jquery-1.11.0.min.js "></script>
+<script type="text/javascript" src="../../../_static/js/jquery-1.12.4.min.js "></script>
 <script type="text/javascript" src="../../../_static/js/jquery-fix.js "></script>
-<script type="text/javascript" src="../../../_static/bootstrap-3.3.7/js/bootstrap.min.js "></script>
+<script type="text/javascript" src="../../../_static/bootstrap-3.4.1/js/bootstrap.min.js "></script>
 <script type="text/javascript" src="../../../_static/bootstrap-sphinx.js "></script>
 
   </head><body>
@@ -116,6 +117,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../getting_started.html">Getting Started</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../getting_started.html#installation-and-requirements">Installation and requirements</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../getting_started.html#mpi">MPI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../getting_started.html#apple-m1-arm">Apple M1 (ARM)</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../getting_started.html#introduction">Introduction</a></li>
@@ -125,38 +127,58 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../changelog.html">Change Log</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-1-under-development">NetKet 3.1 (under development)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-4-in-development">NetKet 3.4 (⚙️ In development)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#new-features">New features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#breaking-changes">Breaking Changes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#internal-changes">Internal Changes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#bug-fixes">Bug Fixes</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-0-23-august-2021">NetKet 3.0 (23 august 2021)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-3-20-december-2021">NetKet 3.3 (🎁 20 December 2021)</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id1">New features</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id2">Breaking Changes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id3">Internal Changes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id4">Bug Fixes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#deprecations">Deprecations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#internal-changes">Internal Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id3">Bug Fixes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-2-26-november-2021">NetKet 3.2 (26 November 2021)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id4">New features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id5">Breaking Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id6">Bug Fixes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-1-20-october-2021">NetKet 3.1 (20 October 2021)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id7">New features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id8">Breaking Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id9">Internal Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id10">Bug Fixes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-0-23-august-2021">NetKet 3.0 (23 august 2021)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id11">New features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id12">Breaking Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id13">Internal Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id14">Bug Fixes</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-0b4-17-august-2021">NetKet 3.0b4 (17 august 2021)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id5">New features</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id6">Breaking Changes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id7">Internal Changes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id8">Bug Fixes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id15">New features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id16">Breaking Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id17">Internal Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id18">Bug Fixes</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-0b3-published-on-9-july-2021">NetKet 3.0b3 (published on 9 july 2021)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id9">New features</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id10">Breaking Changes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id11">Internal Changes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id12">Bug Fixes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id19">New features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id20">Breaking Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id21">Internal Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id22">Bug Fixes</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-0b2-published-on-31-may-2021">NetKet 3.0b2 (published on 31 May 2021)</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id13">New features</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id14">Breaking Changes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id15">Bug Fixes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id23">New features</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id24">Breaking Changes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../changelog.html#id25">Bug Fixes</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../changelog.html#netket-3-0b1-published-beta-release">NetKet 3.0b1 (published beta release)</a><ul>
@@ -168,6 +190,25 @@
 <li class="toctree-l1"><a class="reference internal" href="../../superop.html">The Lindblad Master Equation</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../superop.html#the-density-matrix-and-the-liouvillian">The Density Matrix and the Liouvillian</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../superop.html#computing-observables">Computing Observables</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../hilbert.html">The Hilbert module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../hilbert.html#the-abstracthilbert-interface">The <code class="docutils literal notranslate"><span class="pre">AbstractHilbert</span></code> interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../hilbert.html#attributes">Attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../hilbert.html#composing-hilbert-spaces">Composing Hilbert spaces</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../hilbert.html#the-discretehilbert-interface">The <code class="docutils literal notranslate"><span class="pre">DiscreteHilbert</span></code> interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../hilbert.html#indexable-spaces">Indexable spaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../hilbert.html#constrained-hilbert-spaces">Constrained Hilbert spaces</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../hilbert.html#defining-custom-constraints">Defining Custom constraints</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../hilbert.html#using-hilbert-spaces-with-jax-jitted-functions">Using Hilbert spaces with <span class="xref std std-ref">jax.jit</span>ted functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../operator.html">The Operator module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../operator.html#the-discreteoperator-interface">The DiscreteOperator interface</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../varstate.html">The Variational State Interface</a><ul>
@@ -184,6 +225,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../varstate.html#saving-and-loading-a-variational-state">Saving and Loading a Variational State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../varstate.html#using-exactstate-for-testing">Using ExactState for testing</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../../sr.html">Quantum Geometric Tensor and Stochastic Reconfiguration</a><ul>
@@ -218,6 +260,10 @@
 <li class="toctree-l2"><a class="reference internal" href="../../custom_models.html#using-haiku">Using Haiku</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../custom_expect.html">Overriding defaults in NetKet</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../custom_expect.html#netket-architecture-multiple-dispatch">NetKet Architecture: Multiple Dispatch</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="../../custom_preconditioners.html">Defining Custom Preconditioners</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../custom_preconditioners.html#the-preconditioner-interface">The preconditioner interface</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../custom_preconditioners.html#the-linearpreconditioner-interface">The LinearPreconditioner interface</a><ul>
@@ -230,9 +276,11 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="../../custom_expect.html">Overriding behaviour and defining custom operators</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../custom_expect.html#netket-architecture-multiple-dispatch">NetKet Architecture: Multiple Dispatch</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../custom_expect.html#defining-custom-implementations-for-expectation-values">Defining custom implementations for expectation values</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../custom_operator.html">Defining Custom Operators</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../custom_operator.html#defining-a-custom-zero-operator">Defining a custom <em>zero</em> operator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../custom_operator.html#defining-an-operator-from-scratch">Defining an operator from scratch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../custom_operator.html#defining-an-operator-the-easy-way">Defining an operator the easy way</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../custom_operator.html#comparison-of-the-two-approaches">Comparison of the two approaches</a></li>
 </ul>
 </li>
 </ul>
@@ -265,13 +313,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../../api-stability.html#storing-the-environment">Storing the environment</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current"><a class="reference internal" href="../../api.html">Public API: netket package</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../api.html">Public API</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#graph">Graph</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.AbstractGraph.html">netket.graph.AbstractGraph</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Graph.html">netket.graph.Graph</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Lattice.html">netket.graph.Lattice</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Edgeless.html">netket.graph.Edgeless</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Hypercube.html">netket.graph.Hypercube</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Lattice.html">netket.graph.Lattice</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.lattice.LatticeSite.html">netket.graph.lattice.LatticeSite</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Chain.html">netket.graph.Chain</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../graph/netket.graph.Grid.html">netket.graph.Grid</a></li>
@@ -279,15 +327,21 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#hilbert">Hilbert</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../hilbert/netket.hilbert.AbstractHilbert.html">netket.hilbert.AbstractHilbert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../hilbert/netket.hilbert.ContinuousHilbert.html">netket.hilbert.ContinuousHilbert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../hilbert/netket.hilbert.DiscreteHilbert.html">netket.hilbert.DiscreteHilbert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../hilbert/netket.hilbert.HomogeneousHilbert.html">netket.hilbert.HomogeneousHilbert</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../hilbert/netket.hilbert.CustomHilbert.html">netket.hilbert.CustomHilbert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../hilbert/netket.hilbert.TensorHilbert.html">netket.hilbert.TensorHilbert</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../hilbert/netket.hilbert.DoubledHilbert.html">netket.hilbert.DoubledHilbert</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../hilbert/netket.hilbert.Fock.html">netket.hilbert.Fock</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../hilbert/netket.hilbert.Qubit.html">netket.hilbert.Qubit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../hilbert/netket.hilbert.Spin.html">netket.hilbert.Spin</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../hilbert/netket.hilbert.Qubit.html">netket.hilbert.Qubit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../hilbert/netket.hilbert.Fock.html">netket.hilbert.Fock</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../hilbert/netket.hilbert.Particle.html">netket.hilbert.Particle</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#operators">Operators</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../operator/netket.operator.AbstractOperator.html">netket.operator.AbstractOperator</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../operator/netket.operator.DiscreteOperator.html">netket.operator.DiscreteOperator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../operator/netket.operator.BoseHubbard.html">netket.operator.BoseHubbard</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../operator/netket.operator.GraphOperator.html">netket.operator.GraphOperator</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../operator/netket.operator.LocalOperator.html">netket.operator.LocalOperator</a></li>
@@ -296,15 +350,22 @@
 <li class="toctree-l3"><a class="reference internal" href="../operator/netket.operator.PauliStrings.html">netket.operator.PauliStrings</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../operator/netket.operator.LocalLiouvillian.html">netket.operator.LocalLiouvillian</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../api.html#pre-defined-operators">Pre-defined operators</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="../hilbert/netket.operator.boson.create.html">netket.operator.boson.create</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../hilbert/netket.operator.boson.destroy.html">netket.operator.boson.destroy</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../hilbert/netket.operator.boson.number.html">netket.operator.boson.number</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../hilbert/netket.operator.boson.proj.html">netket.operator.boson.proj</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../hilbert/netket.operator.spin.sigmax.html">netket.operator.spin.sigmax</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../hilbert/netket.operator.spin.sigmay.html">netket.operator.spin.sigmay</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../hilbert/netket.operator.spin.sigmaz.html">netket.operator.spin.sigmaz</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../hilbert/netket.operator.spin.sigmap.html">netket.operator.spin.sigmap</a></li>
-<li class="toctree-l4"><a class="reference internal" href="../hilbert/netket.operator.spin.sigmam.html">netket.operator.spin.sigmam</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../operator/netket.operator.boson.create.html">netket.operator.boson.create</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../operator/netket.operator.boson.destroy.html">netket.operator.boson.destroy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../operator/netket.operator.boson.number.html">netket.operator.boson.number</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../operator/netket.operator.boson.proj.html">netket.operator.boson.proj</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../operator/netket.operator.spin.sigmax.html">netket.operator.spin.sigmax</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../operator/netket.operator.spin.sigmay.html">netket.operator.spin.sigmay</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../operator/netket.operator.spin.sigmaz.html">netket.operator.spin.sigmaz</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../operator/netket.operator.spin.sigmap.html">netket.operator.spin.sigmap</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../operator/netket.operator.spin.sigmam.html">netket.operator.spin.sigmam</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../api.html#continuous-space-operators">Continuous space operators</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../operator/netket.operator.ContinuousOperator.html">netket.operator.ContinuousOperator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../operator/netket.operator.KineticEnergy.html">netket.operator.KineticEnergy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../operator/netket.operator.PotentialEnergy.html">netket.operator.PotentialEnergy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../operator/netket.operator.SumOperator.html">netket.operator.SumOperator</a></li>
 </ul>
 </li>
 </ul>
@@ -329,12 +390,12 @@
 <li class="toctree-l4"><a class="reference internal" href="netket.sampler.ExactSampler.html">netket.sampler.ExactSampler</a></li>
 <li class="toctree-l4"><a class="reference internal" href="netket.sampler.MetropolisSampler.html">netket.sampler.MetropolisSampler</a></li>
 <li class="toctree-l4"><a class="reference internal" href="netket.sampler.MetropolisSamplerNumpy.html">netket.sampler.MetropolisSamplerNumpy</a></li>
-<li class="toctree-l4"><a class="reference internal" href="netket.sampler.MetropolisPtSampler.html">netket.sampler.MetropolisPtSampler</a></li>
+<li class="toctree-l4"><a class="reference internal" href="netket.experimental.sampler.MetropolisPtSampler.html">netket.experimental.sampler.MetropolisPtSampler</a></li>
 <li class="toctree-l4"><a class="reference internal" href="netket.sampler.MetropolisLocal.html">netket.sampler.MetropolisLocal</a></li>
 <li class="toctree-l4"><a class="reference internal" href="netket.sampler.MetropolisExchange.html">netket.sampler.MetropolisExchange</a></li>
 <li class="toctree-l4"><a class="reference internal" href="netket.sampler.MetropolisHamiltonian.html">netket.sampler.MetropolisHamiltonian</a></li>
-<li class="toctree-l4"><a class="reference internal" href="netket.sampler.MetropolisLocalPt.html">netket.sampler.MetropolisLocalPt</a></li>
-<li class="toctree-l4"><a class="reference internal" href="netket.sampler.MetropolisExchangePt.html">netket.sampler.MetropolisExchangePt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="netket.experimental.sampler.MetropolisLocalPt.html">netket.experimental.sampler.MetropolisLocalPt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="netket.experimental.sampler.MetropolisExchangePt.html">netket.experimental.sampler.MetropolisExchangePt</a></li>
 <li class="toctree-l4"><a class="reference internal" href="netket.sampler.ARDirectSampler.html">netket.sampler.ARDirectSampler</a></li>
 </ul>
 </li>
@@ -399,14 +460,19 @@
 <li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.softplus.html">netket.nn.softplus</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.swish.html">netket.nn.swish</a></li>
 <li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.log_cosh.html">netket.nn.log_cosh</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.reim_relu.html">netket.nn.reim_relu</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../nn/netket.nn.reim_selu.html">netket.nn.reim_selu</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#variational-state-interface">Variational State Interface</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="../variational/netket.vqs.VariationalState.html">netket.vqs.VariationalState</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../variational/netket.vqs.ExactState.html">netket.vqs.ExactState</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../variational/netket.vqs.MCState.html">netket.vqs.MCState</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../variational/netket.vqs.MCMixedState.html">netket.vqs.MCMixedState</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../variational/netket.vqs.get_local_kernel.html">netket.vqs.get_local_kernel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../variational/netket.vqs.get_local_kernel_arguments.html">netket.vqs.get_local_kernel_arguments</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="../../api.html#optimizer-module">Optimizer Module</a><ul>
@@ -462,6 +528,26 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../../api-experimental.html">Experimental API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api-experimental.html#samplers">Samplers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../experimental/samplers/netket.experimental.sampler.MetropolisPtSampler.html">netket.experimental.sampler.MetropolisPtSampler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../experimental/samplers/netket.experimental.sampler.MetropolisLocalPt.html">netket.experimental.sampler.MetropolisLocalPt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../experimental/samplers/netket.experimental.sampler.MetropolisExchangePt.html">netket.experimental.sampler.MetropolisExchangePt</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../experimental/samplers/netket.experimental.sampler.MetropolisSamplerPmap.html">netket.experimental.sampler.MetropolisSamplerPmap</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api-experimental.html#variational-state-interface">Variational State Interface</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../experimental/variational/netket.experimental.vqs.variables_from_file.html">netket.experimental.vqs.variables_from_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../experimental/variational/netket.experimental.vqs.variables_from_tar.html">netket.experimental.vqs.variables_from_tar</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api-experimental.html#time-evolution-driver">Time Evolution Driver</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../experimental/dynamics/netket.experimental.driver.TDVP.html">netket.experimental.driver.TDVP</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../api-experimental.html#ode-integrators">ODE Integrators</a></li>
+</ul>
+</li>
 </ul>
 
 
@@ -474,8 +560,15 @@
 <h1>netket.sampler.rules.CustomRuleNumpy<a class="headerlink" href="#netket-sampler-rules-customrulenumpy" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
 <dt id="netket.sampler.rules.CustomRuleNumpy">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">netket.sampler.rules.</span></code><code class="sig-name descname"><span class="pre">CustomRuleNumpy</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/sampler/rules/custom_numpy.html#CustomRuleNumpy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.sampler.rules.CustomRuleNumpy" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">netket.sampler.metropolis.MetropolisRule</span></code></p>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">netket.sampler.rules.</span></code><code class="sig-name descname"><span class="pre">CustomRuleNumpy</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">operator</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#netket.sampler.rules.CustomRuleNumpy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="netket.sampler.MetropolisRule.html#netket.sampler.MetropolisRule" title="netket.sampler.MetropolisRule"><code class="xref py py-class docutils literal notranslate"><span class="pre">netket.sampler.MetropolisRule</span></code></a></p>
+<dl class="class-dl-groups">
+<dt>Inheritance</dt><dd><div class="graphviz"><img src="../../../_images/inheritance-0f908da0814baed991d173b13b1c22d8278564a8.png" alt="Inheritance diagram of netket.sampler.rules.CustomRuleNumpy" usemap="#inheritanceaeee455fa6" class="inheritance graphviz" /></div>
+<map id="inheritanceaeee455fa6" name="inheritanceaeee455fa6">
+<area shape="rect" id="node1" href="#netket.sampler.rules.CustomRuleNumpy" target="_top" title="CustomRuleNumpy(operator: Any, weight_list: Any = None)" alt="" coords="229,5,413,31"/>
+<area shape="rect" id="node2" href="netket.sampler.MetropolisRule.html#netket.sampler.MetropolisRule" target="_top" title="Base class for transition rules of Metropolis, such as Local, Exchange, Hamiltonian" alt="" coords="5,5,181,31"/>
+</map></dd>
+</dl>
 <dl class="class-dl-groups">
 <dt>Attributes</dt><dd><dl class="py attribute">
 <dt id="netket.sampler.rules.CustomRuleNumpy.weight_list">
@@ -488,21 +581,21 @@
 <dt>Methods</dt><dd><dl class="py method">
 <dt id="netket.sampler.rules.CustomRuleNumpy.init_state">
 <code class="sig-name descname"><span class="pre">init_state</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampler</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">machine</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/netket/sampler/rules/custom_numpy.html#CustomRuleNumpy.init_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#netket.sampler.rules.CustomRuleNumpy.init_state" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialises the optional internal state of the Metropolis Sampler Transition
-Rule.</p>
-<p>The provided key is unique and does not need to be splitted.
-It should return an immutable datastructure.</p>
+<dd><p>Initialises the optional internal state of the Metropolis sampler transition
+rule.</p>
+<p>The provided key is unique and does not need to be splitted.</p>
+<p>It should return an immutable data structure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sampler</strong> – The Metropolis sampler</p></li>
-<li><p><strong>machine</strong> – The forward evaluation function of the model, accepting PyTrees of parameters and inputs.</p></li>
-<li><p><strong>params</strong> – The dict of variables needed to evaluate the model.</p></li>
-<li><p><strong>key</strong> – A Jax PRNGKey rng state.</p></li>
+<li><p><strong>sampler</strong> – The Metropolis sampler.</p></li>
+<li><p><strong>machine</strong> – A Flax module with the forward pass of the log-pdf.</p></li>
+<li><p><strong>params</strong> – The PyTree of parameters of the model.</p></li>
+<li><p><strong>key</strong> – A Jax PRNGKey.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>An Optional State.</p>
+<dd class="field-even"><p>An optional state.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -515,11 +608,11 @@ It should return an immutable datastructure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sampler</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code>) – the sampler</p></li>
-<li><p><strong>machine</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>) – the function to evaluate the model</p></li>
-<li><p><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – the parameters of the model</p></li>
-<li><p><strong>state</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">SamplerState</span></code>) – the current sampler state</p></li>
-<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – the PRNGKey to use to generate the random state</p></li>
+<li><p><strong>sampler</strong> (<a class="reference internal" href="netket.sampler.MetropolisSampler.html#netket.sampler.MetropolisSampler" title="netket.sampler.MetropolisSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetropolisSampler</span></code></a>) – The Metropolis sampler.</p></li>
+<li><p><strong>machine</strong> (<a class="reference external" href="https://flax.readthedocs.io/en/latest/flax.linen.html#flax.linen.Module" title="(in Flax)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a>) – A Flax module with the forward pass of the log-pdf.</p></li>
+<li><p><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – The PyTree of parameters of the model.</p></li>
+<li><p><strong>state</strong> (<a class="reference internal" href="netket.sampler.SamplerState.html#netket.sampler.SamplerState" title="netket.sampler.SamplerState"><code class="xref py py-class docutils literal notranslate"><span class="pre">SamplerState</span></code></a>) – The current state of the sampler. Should not modify it.</p></li>
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – The PRNGKey to use to generate the random state.</p></li>
 </ul>
 </dd>
 </dl>
@@ -538,17 +631,17 @@ It should return an immutable datastructure.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sampler</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code>) – The Metropolis sampler</p></li>
-<li><p><strong>machine</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Callable" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></a>) – The forward evaluation function of the model, accepting PyTrees of parameters and inputs.</p></li>
-<li><p><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – The dict of variables needed to evaluate the model.</p></li>
-<li><p><strong>sampler_state</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">SamplerState</span></code>) – The current state of the sampler. Should not modify it.</p></li>
+<li><p><strong>sampler</strong> (<a class="reference internal" href="netket.sampler.MetropolisSampler.html#netket.sampler.MetropolisSampler" title="netket.sampler.MetropolisSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">MetropolisSampler</span></code></a>) – The Metropolis sampler.</p></li>
+<li><p><strong>machine</strong> (<a class="reference external" href="https://flax.readthedocs.io/en/latest/flax.linen.html#flax.linen.Module" title="(in Flax)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a>) – A Flax module with the forward pass of the log-pdf.</p></li>
+<li><p><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>) – The PyTree of parameters of the model.</p></li>
+<li><p><strong>sampler_state</strong> (<a class="reference internal" href="netket.sampler.SamplerState.html#netket.sampler.SamplerState" title="netket.sampler.SamplerState"><code class="xref py py-class docutils literal notranslate"><span class="pre">SamplerState</span></code></a>) – The current state of the sampler. Should not modify it.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.9)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Any" title="(in Python v3.10)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code></a>]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>A new, resetted, state of the rule. This returns the same type of <code class="xref py py-meth docutils literal notranslate"><span class="pre">sampler_state.rule_state()</span></code> and might be None.</p>
+<dd class="field-odd"><p>A new, resetted, state of the rule. This returns the same type of <code class="xref py py-meth docutils literal notranslate"><span class="pre">sampler_state.rule_state()</span></code> and might be <cite>None</cite>.</p>
 </dd>
 </dl>
 </dd></dl>

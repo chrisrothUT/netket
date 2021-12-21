@@ -14,6 +14,7 @@
 
    Attributes
       .. autoattribute:: ARNNConv2D.kernel_dilation
+      .. autoattribute:: ARNNConv2D.machine_pow
       .. autoattribute:: ARNNConv2D.precision
       .. autoattribute:: ARNNConv2D.use_bias
       .. autoattribute:: ARNNConv2D.variables
