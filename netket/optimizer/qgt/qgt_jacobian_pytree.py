@@ -34,6 +34,7 @@ from netket.nn import split_array_mpi
 
 def QGTJacobianPyTree(
     vstate=None,
+    chunk_size=None
     *,
     mode: str = None,
     holomorphic: bool = None,
@@ -91,14 +92,6 @@ def QGTJacobianPyTree(
         )
     elif holomorphic is not None:
         raise ValueError("Cannot specify both `mode` and `holomorphic`.")
-
-    try:
-        chunk_size
-    except:
-        if hasattr(vstate, "chunk_size"):
-            chunk_size = vstate.chunk_size
-        else:
-            chunk_size = None
 
     O, scale = prepare_centered_oks(
         vstate._apply_fun,
