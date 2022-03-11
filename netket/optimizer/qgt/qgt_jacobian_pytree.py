@@ -34,7 +34,7 @@ from netket.nn import split_array_mpi
 
 def QGTJacobianPyTree(
     vstate=None,
-    chunk_size=None
+    chunk_size=None,
     *,
     mode: str = None,
     holomorphic: bool = None,
