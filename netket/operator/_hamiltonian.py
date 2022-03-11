@@ -26,7 +26,6 @@ from . import spin, boson
 from ._local_operator import LocalOperator
 from ._graph_operator import GraphOperator
 from ._discrete_operator import DiscreteOperator
-from ._lazy import Squared
 
 
 class SpecialHamiltonian(DiscreteOperator):
@@ -91,16 +90,15 @@ class SpecialHamiltonian(DiscreteOperator):
         return self.to_local_operator().__rmul__(other)
 
     def _op__matmul__(self, other):
+        if hasattr(other, "to_local_operator"):
+            other = other.to_local_operator()
         return self.to_local_operator().__matmul__(other)
 
     def _op__rmatmul__(self, other):
-        if self == other and self.is_hermitian:
-            return Squared(self)
+        if hasattr(other, "to_local_operator"):
+            other = other.to_local_operator()
 
         return self.to_local_operator().__matmul__(other)
-
-    def _concrete_matmul_(self, other):
-        return self.to_local_operator() @ other
 
 
 class Ising(SpecialHamiltonian):
@@ -209,7 +207,7 @@ class Ising(SpecialHamiltonian):
     @property
     def max_conn_size(self) -> int:
         """The maximum number of non zero ⟨x|O|x'⟩ for every x."""
-        return self.size + 1
+        return self.hilbert.size + 1
 
     def copy(self):
         graph = Graph(edges=[list(edge) for edge in self.edges])
@@ -573,7 +571,7 @@ class BoseHubbard(SpecialHamiltonian):
         if self.U != 0 or self.mu != 0:
             for i in range(self.hilbert.size):
                 n_i = boson.number(self.hilbert, i)
-                ha += self.U * n_i * (n_i - 1) - self.mu * n_i
+                ha += (self.U / 2) * n_i * (n_i - 1) - self.mu * n_i
 
         if self.J != 0:
             for (i, j) in self.edges:

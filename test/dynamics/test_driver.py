@@ -31,7 +31,7 @@ def _setup_system(L, *, dtype=np.complex128):
     hi = nk.hilbert.Spin(s=0.5, N=g.n_nodes)
 
     ma = nk.models.RBM(alpha=1, dtype=dtype)
-    sa = nk.sampler.ExactSampler(hilbert=hi, n_chains=16)
+    sa = nk.sampler.ExactSampler(hilbert=hi)
 
     vs = nk.vqs.MCState(sa, ma, n_samples=1000, seed=SEED)
 
@@ -88,13 +88,10 @@ def l4_norm(x):
     """
     Custom L4 error norm.
     """
-    return (
-        jax.tree_util.tree_reduce(
-            lambda x, y: x + y,
-            jax.tree_map(lambda x: jnp.sum(jnp.abs(x) ** 4), x),
-        )
-        ** (1.0 / 4.0)
-    )
+    return jax.tree_util.tree_reduce(
+        lambda x, y: x + y,
+        jax.tree_map(lambda x: jnp.sum(jnp.abs(x) ** 4), x),
+    ) ** (1.0 / 4.0)
 
 
 @pytest.mark.parametrize("error_norm", ["euclidean", "qgt", "maximum", l4_norm])
@@ -230,3 +227,60 @@ def test_repr_and_info():
     assert "generator" in info
     assert "integrator" in info
     assert "RK23" in info
+
+
+def test_run_twice():
+    # 1100
+    ha, vstate, _ = _setup_system(L=2)
+    driver = nkx.TDVP(
+        ha,
+        vstate,
+        nkx.dynamics.RK23(dt=0.01),
+    )
+    driver.run(0.03)
+    driver.run(0.03)
+    np.testing.assert_allclose(driver.t, 0.06)
+
+
+def test_change_integrator():
+    ha, vstate, _ = _setup_system(L=2)
+    driver = nkx.TDVP(
+        ha,
+        vstate,
+        nkx.dynamics.RK23(dt=0.01, adaptive=False),
+    )
+    driver.run(0.03)
+    np.testing.assert_allclose(driver.t, 0.03)
+
+    integrator = nkx.dynamics.Euler(dt=0.05)
+    driver.integrator = integrator
+    np.testing.assert_allclose(driver.t, 0.03)
+    np.testing.assert_allclose(driver.dt, 0.05)
+
+    driver.run(0.1)
+    np.testing.assert_allclose(driver.t, 0.13)
+
+
+def test_change_norm():
+    ha, vstate, _ = _setup_system(L=2)
+    driver = nkx.TDVP(
+        ha,
+        vstate,
+        nkx.dynamics.RK23(dt=0.01, adaptive=False),
+    )
+    driver.run(0.03)
+
+    def norm(x):
+        return 0.0
+
+    driver.error_norm = norm
+    driver.run(0.02)
+
+    driver.error_norm = "qgt"
+    driver.run(0.02)
+
+    driver.error_norm = "maximum"
+    driver.run(0.02)
+
+    with pytest.raises(ValueError):
+        driver.error_norm = "assd"

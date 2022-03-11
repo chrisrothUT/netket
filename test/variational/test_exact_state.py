@@ -22,6 +22,8 @@ import jax
 import netket as nk
 from jax.nn.initializers import normal
 
+from netket.optimizer.linear_operator import LinearOperator
+
 from .. import common
 
 SEED = 2148364
@@ -51,6 +53,12 @@ machines["model:(C->C)"] = RBM(
     dtype=complex,
     kernel_init=normal(stddev=0.1),
     hidden_bias_init=normal(stddev=0.1),
+)
+machines["model:(C->C,α=5)"] = RBM(
+    alpha=5,
+    dtype=complex,
+    kernel_init=normal(stddev=0.3),
+    hidden_bias_init=normal(stddev=0.3),
 )
 
 operators = {}
@@ -90,6 +98,20 @@ def test_init_parameters(vstate):
 
 
 @common.skipif_mpi
+def test_basic_methods(vstate):
+    key1, key2 = jax.random.split(nk.jax.PRNGKey())
+
+    s = vstate.hilbert.random_state(key1)
+    assert np.shape(vstate.log_value(s)) == ()
+
+    s = vstate.hilbert.random_state(key2, size=2)
+    assert np.shape(vstate.log_value(s)) == (2,)
+
+    qgt = vstate.quantum_geometric_tensor()
+    assert isinstance(qgt, LinearOperator)
+
+
+@common.skipif_mpi
 def test_qutip_conversion(vstate):
     # skip test if qutip not installed
     pytest.importorskip("qutip")
@@ -106,13 +128,15 @@ def test_qutip_conversion(vstate):
     np.testing.assert_allclose(q_obj.data.todense(), ket.reshape(q_obj.shape))
 
 
-def test_derivatives_agree():
+@pytest.mark.parametrize(
+    "machine", [pytest.param(ma, id=name) for name, ma in machines.items()]
+)
+def test_derivatives_agree(machine):
     err = 1e-3
-    g = nk.graph.Hypercube(length=10, n_dim=1, pbc=True)
+    g = nk.graph.Chain(length=8, pbc=True)
     hi = nk.hilbert.Spin(s=1 / 2, N=g.n_nodes)
     ha = nk.operator.Ising(hilbert=hi, graph=g, h=1)
-    ma = nk.models.RBM(alpha=10, dtype=float)
-    vs = nk.vqs.ExactState(hi, ma)
+    vs = nk.vqs.ExactState(hi, machine)
 
     _, grads_exact = vs.expect_and_grad(ha)
 
@@ -155,8 +179,8 @@ def central_diff_grad(func, x, eps, *args, dtype=None):
             grad_i = 0.5 * (func(x + 1j * epsd, *args) - func(x - 1j * epsd, *args))
             grad[i] = 0.5 * grad_r + 0.5j * grad_i
         else:
-            grad_i = 0.0
-            grad[i] = 0.5 * grad_r
+            # grad_i = 0.0
+            grad[i] = grad_r
 
         assert not np.isnan(grad[i])
         grad[i] /= eps
@@ -165,15 +189,20 @@ def central_diff_grad(func, x, eps, *args, dtype=None):
 
 
 @common.skipif_mpi
-@pytest.mark.parametrize("L,n_iterations,h", [(4, 100, 1), (6, 100, 2), (8, 100, 3)])
+@pytest.mark.parametrize(
+    "L,n_iterations,h",
+    [(4, 100, 1), (6, 100, 2), (8, 100, 3)],
+)
+@pytest.mark.parametrize(
+    "machine", [pytest.param(ma, id=name) for name, ma in machines.items()]
+)
 def test_TFIM_energy_strictly_decreases(
-    L, n_iterations, h, abs_eps=1.0e-3, rel_eps=1.0e-4
+    L, n_iterations, h, machine, abs_eps=1.0e-3, rel_eps=1.0e-4
 ):
     g = nk.graph.Hypercube(length=L, n_dim=1, pbc=True)
     hi = nk.hilbert.Spin(s=1 / 2, N=g.n_nodes)
     ha = nk.operator.Ising(hilbert=hi, graph=g, h=h)
-    ma = nk.models.RBM(alpha=10, dtype=float)
-    vs = nk.vqs.ExactState(hi, ma)
+    vs = nk.vqs.ExactState(hi, machine)
 
     op = nk.optimizer.Sgd(learning_rate=0.003)
 

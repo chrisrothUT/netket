@@ -35,29 +35,37 @@ def _axis_reflection(axis: int, ndim: int) -> PGSymmetry:
     return PGSymmetry(M)
 
 
-def _grid_point_group(extent: Sequence[int], pbc: Sequence[bool]) -> PointGroup:
-    # axis permutations
-    # can exchange two axes iff they have the same kind of BC and length
-    # represent open BC by setting kind[i] = -extent[i], so just have to
-    # match these
-    axis_perm = []
-    axes = np.arange(len(extent), dtype=int)
-    extent = np.asarray(extent, dtype=int)
-    kind = np.where(pbc, extent, -extent)
+def _grid_point_group(
+    extent: Sequence[int], pbc: Sequence[bool], color_edges: bool
+) -> PointGroup:
+    """Point group of `Grid`, made up of axis permutations and flipping each axis."""
     ndim = len(extent)
-    for perm in permutations(axes):
-        if np.all(kind == kind[list(perm)]):
-            axis_perm.append(_perm_symm(perm))
-    result = PointGroup(axis_perm, ndim=ndim)
+    # Cannot exchange two axes if they are colored differently; otherwise,
+    # can only exchange them if they have the same kind of BC and length.
+    # Represent open BC by setting kind[i] = -extent[i], so just have to match these
+    if color_edges:
+        result = PointGroup([Identity()], ndim=ndim)
+    else:
+        axis_perm = []
+        axes = np.arange(ndim, dtype=int)
+        extent = np.asarray(extent, dtype=int)
+        kind = np.where(pbc, extent, -extent)
+        for perm in permutations(axes):
+            if np.all(kind == kind[list(perm)]):
+                if np.all(perm == axes):
+                    axis_perm.append(Identity())
+                else:
+                    axis_perm.append(_perm_symm(perm))
+        result = PointGroup(axis_perm, ndim=ndim)
+
     # reflections across axes and setting the origin
     # OBC axes are only symmetric w.r.t. their midpoint, (extent[i]-1)/2
     origin = []
-    for i in axes:
+    for i in range(ndim):
         result = result @ PointGroup([Identity(), _axis_reflection(i, ndim)], ndim=ndim)
         origin.append(0 if pbc[i] else (extent[i] - 1) / 2)
-    result = result.elems
-    result[0] = Identity()  # it would otherwise be an equivalent PGSymmetry
-    return PointGroup(result, ndim=ndim).change_origin(origin)
+
+    return result.change_origin(origin)
 
 
 def Grid(
@@ -65,6 +73,7 @@ def Grid(
     *,
     length: Sequence[int] = None,
     pbc: Union[bool, Sequence[bool]] = True,
+    color_edges: bool = False,
     **kwargs,
 ) -> Lattice:
     """
@@ -78,6 +87,9 @@ def Grid(
              This parameter can also be a list of booleans with same length as
              the parameter `length`, in which case each dimension will have
              PBC/OBC depending on the corresponding entry of `pbc`.
+        color_edges: generates nearest-neighbour edges colored according to direction
+                     i.e. edges along Cartesian direction #i have color i
+                     cannot be used with `max_neighbor_order` or `custom_edges`
         kwargs: Additional keyword arguments are passed on to the constructor of
             :ref:`netket.graph.Lattice`.
 
@@ -116,11 +128,13 @@ def Grid(
     ndim = len(extent)
     if isinstance(pbc, bool):
         pbc = [pbc] * ndim
+    if color_edges:
+        kwargs["custom_edges"] = [(0, 0, vec) for vec in np.eye(ndim)]
     return Lattice(
         basis_vectors=np.eye(ndim),
         extent=extent,
         pbc=pbc,
-        point_group=lambda: _grid_point_group(extent, pbc),
+        point_group=lambda: _grid_point_group(extent, pbc, color_edges),
         **kwargs,
     )
 
@@ -220,7 +234,9 @@ def Chain(length: int, *, pbc: bool = True, **kwargs) -> Lattice:
     return Hypercube(length, pbc=pbc, n_dim=1, **kwargs)
 
 
-def BCC(extent: Sequence[int], *, pbc: Union[bool, Sequence[bool]] = True) -> Lattice:
+def BCC(
+    extent: Sequence[int], *, pbc: Union[bool, Sequence[bool]] = True, **kwargs
+) -> Lattice:
     """Constructs a BCC lattice of a given spatial extent.
     Periodic boundary conditions can also be imposed
     Sites are returned at the Bravais lattice points.
@@ -233,6 +249,9 @@ def BCC(extent: Sequence[int], *, pbc: Union[bool, Sequence[bool]] = True) -> La
              This parameter can also be a list of booleans with same length as
              the parameter `length`, in which case each dimension will have
              PBC/OBC depending on the corresponding entry of `pbc`.
+        kwargs: Additional keyword arguments are passed on to the constructor of
+            :ref:`netket.graph.Lattice`.
+
 
     Example:
         Construct a BCC lattice with 3×3×3 primitive unit cells:
@@ -245,10 +264,14 @@ def BCC(extent: Sequence[int], *, pbc: Union[bool, Sequence[bool]] = True) -> La
     basis = [[-0.5, 0.5, 0.5], [0.5, -0.5, 0.5], [0.5, 0.5, -0.5]]
     # determine if full point group is realised by the simulation box
     point_group = cubic.Oh() if np.all(pbc) and len(set(extent)) == 1 else None
-    return Lattice(basis_vectors=basis, extent=extent, pbc=pbc, point_group=point_group)
+    return Lattice(
+        basis_vectors=basis, extent=extent, pbc=pbc, point_group=point_group, **kwargs
+    )
 
 
-def FCC(extent: Sequence[int], *, pbc: Union[bool, Sequence[bool]] = True) -> Lattice:
+def FCC(
+    extent: Sequence[int], *, pbc: Union[bool, Sequence[bool]] = True, **kwargs
+) -> Lattice:
     """Constructs an FCC lattice of a given spatial extent.
     Periodic boundary conditions can also be imposed
     Sites are returned at the Bravais lattice points.
@@ -261,6 +284,9 @@ def FCC(extent: Sequence[int], *, pbc: Union[bool, Sequence[bool]] = True) -> La
              This parameter can also be a list of booleans with same length as
              the parameter `length`, in which case each dimension will have
              PBC/OBC depending on the corresponding entry of `pbc`.
+        kwargs: Additional keyword arguments are passed on to the constructor of
+            :ref:`netket.graph.Lattice`.
+
 
     Example:
         Construct an FCC lattice with 3×3×3 primitive unit cells:
@@ -273,11 +299,13 @@ def FCC(extent: Sequence[int], *, pbc: Union[bool, Sequence[bool]] = True) -> La
     basis = [[0, 0.5, 0.5], [0.5, 0, 0.5], [0.5, 0.5, 0]]
     # determine if full point group is realised by the simulation box
     point_group = cubic.Oh() if np.all(pbc) and len(set(extent)) == 1 else None
-    return Lattice(basis_vectors=basis, extent=extent, pbc=pbc, point_group=point_group)
+    return Lattice(
+        basis_vectors=basis, extent=extent, pbc=pbc, point_group=point_group, **kwargs
+    )
 
 
 def Diamond(
-    extent: Sequence[int], *, pbc: Union[bool, Sequence[bool]] = True
+    extent: Sequence[int], *, pbc: Union[bool, Sequence[bool]] = True, **kwargs
 ) -> Lattice:
     """Constructs a diamond lattice of a given spatial extent.
     Periodic boundary conditions can also be imposed.
@@ -293,6 +321,9 @@ def Diamond(
              This parameter can also be a list of booleans with same length as
              the parameter `length`, in which case each dimension will have
              PBC/OBC depending on the corresponding entry of `pbc`.
+        kwargs: Additional keyword arguments are passed on to the constructor of
+            :ref:`netket.graph.Lattice`.
+
 
     Example:
         Construct a diamond lattice with 3×3×3 primitive unit cells:
@@ -312,11 +343,12 @@ def Diamond(
         extent=extent,
         pbc=pbc,
         point_group=point_group,
+        **kwargs,
     )
 
 
 def Pyrochlore(
-    extent: Sequence[int], *, pbc: Union[bool, Sequence[bool]] = True
+    extent: Sequence[int], *, pbc: Union[bool, Sequence[bool]] = True, **kwargs
 ) -> Lattice:
     """Constructs a pyrochlore lattice of a given spatial extent.
     Periodic boundary conditions can also be imposed.
@@ -332,6 +364,9 @@ def Pyrochlore(
             This parameter can also be a list of booleans with same length as
             the parameter `length`, in which case each dimension will have
             PBC/OBC depending on the corresponding entry of `pbc`.
+        kwargs: Additional keyword arguments are passed on to the constructor of
+            :ref:`netket.graph.Lattice`.
+
 
     Example:
         Construct a pyrochlore lattice with 3×3×3 primitive unit cells:
@@ -351,13 +386,14 @@ def Pyrochlore(
         extent=extent,
         pbc=pbc,
         point_group=point_group,
+        **kwargs,
     )
 
 
 def _hexagonal_general(
-    extent, *, site_offsets=None, pbc: Union[bool, Sequence[bool]] = True
+    extent, *, site_offsets=None, pbc: Union[bool, Sequence[bool]] = True, **kwargs
 ) -> Lattice:
-    basis = [[1, 0], [0.5, 0.75 ** 0.5]]
+    basis = [[1, 0], [0.5, 0.75**0.5]]
     # determine if full point group is realised by the simulation box
     point_group = planar.D(6) if np.all(pbc) and extent[0] == extent[1] else None
     return Lattice(
@@ -366,10 +402,11 @@ def _hexagonal_general(
         site_offsets=site_offsets,
         pbc=pbc,
         point_group=point_group,
+        **kwargs,
     )
 
 
-def Triangular(extent, *, pbc: Union[bool, Sequence[bool]] = True) -> Lattice:
+def Triangular(extent, *, pbc: Union[bool, Sequence[bool]] = True, **kwargs) -> Lattice:
     r"""Constructs a triangular lattice of a given spatial extent.
     Periodic boundary conditions can also be imposed
     Sites are returned at the Bravais lattice points.
@@ -382,6 +419,9 @@ def Triangular(extent, *, pbc: Union[bool, Sequence[bool]] = True) -> Lattice:
              This parameter can also be a list of booleans with same length as
              the parameter `length`, in which case each dimension will have
              PBC/OBC depending on the corresponding entry of `pbc`.
+        kwargs: Additional keyword arguments are passed on to the constructor of
+            :ref:`netket.graph.Lattice`.
+
 
     Example:
         Construct a triangular lattice with 3 × 3 unit cells:
@@ -391,10 +431,10 @@ def Triangular(extent, *, pbc: Union[bool, Sequence[bool]] = True) -> Lattice:
         >>> print(g.n_nodes)
         9
     """
-    return _hexagonal_general(extent, site_offsets=None, pbc=pbc)
+    return _hexagonal_general(extent, site_offsets=None, pbc=pbc, **kwargs)
 
 
-def Honeycomb(extent, *, pbc: Union[bool, Sequence[bool]] = True) -> Lattice:
+def Honeycomb(extent, *, pbc: Union[bool, Sequence[bool]] = True, **kwargs) -> Lattice:
     r"""Constructs a honeycomb lattice of a given spatial extent.
     Periodic boundary conditions can also be imposed.
     Sites are returned at the 2b Wyckoff positions.
@@ -407,6 +447,9 @@ def Honeycomb(extent, *, pbc: Union[bool, Sequence[bool]] = True) -> Lattice:
              This parameter can also be a list of booleans with same length as
              the parameter `length`, in which case each dimension will have
              PBC/OBC depending on the corresponding entry of `pbc`.
+        kwargs: Additional keyword arguments are passed on to the constructor of
+            :ref:`netket.graph.Lattice`.
+
 
     Example:
         Construct a honeycomb lattice with 3 × 3 unit cells:
@@ -417,11 +460,14 @@ def Honeycomb(extent, *, pbc: Union[bool, Sequence[bool]] = True) -> Lattice:
         18
     """
     return _hexagonal_general(
-        extent, site_offsets=[[0.5, 0.5 / 3 ** 0.5], [1, 1 / 3 ** 0.5]], pbc=pbc
+        extent,
+        site_offsets=[[0.5, 0.5 / 3**0.5], [1, 1 / 3**0.5]],
+        pbc=pbc,
+        **kwargs,
     )
 
 
-def Kagome(extent, *, pbc: Union[bool, Sequence[bool]] = True) -> Lattice:
+def Kagome(extent, *, pbc: Union[bool, Sequence[bool]] = True, **kwargs) -> Lattice:
     r"""Constructs a kagome lattice of a given spatial extent.
     Periodic boundary conditions can also be imposed.
     Sites are returned at the 3c Wyckoff positions.
@@ -434,6 +480,9 @@ def Kagome(extent, *, pbc: Union[bool, Sequence[bool]] = True) -> Lattice:
              This parameter can also be a list of booleans with same length as
              the parameter `length`, in which case each dimension will have
              PBC/OBC depending on the corresponding entry of `pbc`.
+        kwargs: Additional keyword arguments are passed on to the constructor of
+            :ref:`netket.graph.Lattice`.
+
 
     Example:
         Construct a kagome lattice with 3 × 3 unit cells:
@@ -445,6 +494,54 @@ def Kagome(extent, *, pbc: Union[bool, Sequence[bool]] = True) -> Lattice:
     """
     return _hexagonal_general(
         extent,
-        site_offsets=[[0.5, 0], [0.25, 0.75 ** 0.5 / 2], [0.75, 0.75 ** 0.5 / 2]],
+        site_offsets=[[0.5, 0], [0.25, 0.75**0.5 / 2], [0.75, 0.75**0.5 / 2]],
         pbc=pbc,
+        **kwargs,
+    )
+
+
+def KitaevHoneycomb(
+    extent, *, pbc: Union[bool, Sequence[bool]] = True, **kwargs
+) -> Lattice:
+    r"""Constructs a honeycomb lattice of a given spatial extent.
+
+    Nearest-neighbour edges are coloured according to direction
+    (cf. Kitaev, https://doi.org/10.1016/j.aop.2005.10.005).
+    Periodic boundary conditions can also be imposed.
+    Sites are returned at the 2b Wyckoff positions.
+
+    Arguments:
+        extent: Number of unit cells along each direction, needs to be an array
+            of length 2
+        pbc: If `True`, the lattice will have periodic boundary conditions (PBC);
+             if `False`, the lattice will have open boundary conditions (OBC).
+             This parameter can also be a list of booleans with same length as
+             the parameter `length`, in which case each dimension will have
+             PBC/OBC depending on the corresponding entry of `pbc`.
+        kwargs: Additional keyword arguments are passed on to the constructor of
+            :ref:`netket.graph.Lattice`.
+
+
+    Example:
+        Construct a Kitaev honeycomb lattice with 3 × 3 unit cells:
+
+        >>> from netket.graph import Honeycomb
+        >>> g = KitaevHoneycomb(extent=[3, 3])
+        >>> print(g.n_nodes)
+        18
+        >>> print(len(g.edges(filter_color=2)))
+        9
+    """
+    return Lattice(
+        basis_vectors=[[1, 0], [0.5, 0.75**0.5]],
+        extent=extent,
+        site_offsets=[[0.5, 0.5 / 3**0.5], [1, 1 / 3**0.5]],
+        pbc=pbc,
+        point_group=planar.C(2) if np.all(pbc) else None,
+        custom_edges=[
+            (0, 1, [0.5, 0.5 / 3**0.5]),
+            (0, 1, [-0.5, 0.5 / 3**0.5]),
+            (0, 1, [0, -1 / 3**0.5]),
+        ],
+        **kwargs,
     )

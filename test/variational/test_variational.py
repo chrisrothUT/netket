@@ -23,6 +23,7 @@ import jax
 import netket as nk
 from jax.nn.initializers import normal
 
+from .finite_diff import expval as _expval, central_diff_grad, same_derivatives
 from .. import common
 
 nk.config.update("NETKET_EXPERIMENTAL", True)
@@ -68,19 +69,31 @@ L = 4
 g = nk.graph.Hypercube(length=L, n_dim=1)
 hi = nk.hilbert.Spin(s=0.5, N=L)
 
-operators["operator:(Hermitian Real)"] = nk.operator.Ising(hi, graph=g, h=1.0)
+H = nk.operator.Ising(hi, graph=g, h=1.0)
+operators["operator:(Hermitian Real)"] = H
+
+H2 = H @ H
+operators["operator:(Hermitian Real Squared)"] = H2
 
 H = nk.operator.Ising(hi, graph=g, h=1.0)
 for i in range(H.hilbert.size):
     H += nk.operator.spin.sigmay(H.hilbert, i)
 
 operators["operator:(Hermitian Complex)"] = H
+operators["operator:(Hermitian Complex Squared)"] = H.H @ H
 
 H = H.copy()
 for i in range(H.hilbert.size):
     H += nk.operator.spin.sigmap(H.hilbert, i)
 
 operators["operator:(Non Hermitian)"] = H
+
+machines["model:(C->C)-nonholo"] = nk.models.ARNNDense(
+    layers=1,
+    features=2,
+    hilbert=hi,
+    dtype=complex,
+)
 
 
 @pytest.fixture(params=[pytest.param(ma, id=name) for name, ma in machines.items()])
@@ -105,7 +118,15 @@ def test_deprecated_name():
     assert dir(nk.vqs) == dir(nk.variational)
 
 
+def check_consistent(vstate, mpi_size):
+    assert vstate.n_samples == vstate.n_samples_per_rank * mpi_size
+    assert vstate.n_samples == vstate.chain_length * vstate.sampler.n_chains
+
+
 def test_n_samples_api(vstate, _mpi_size):
+    with raises(TypeError, match="should be a subtype"):
+        vstate.sampler = 1
+
     with raises(
         ValueError,
     ):
@@ -218,11 +239,58 @@ def test_deprecations(vstate):
         vstate.n_discard = 10
 
     with pytest.warns(FutureWarning):
-        vstate.n_discard
+        assert vstate.n_discard == 10
 
-    vstate.n_discard = 10
-    assert vstate.n_discard == 10
     assert vstate.n_discard_per_chain == 10
+
+    with pytest.warns(FutureWarning):
+        vstate.n_discard_per_chain = 100
+        assert vstate.n_discard == 100
+
+    x = vstate.hilbert.numbers_to_states(1)
+    with pytest.warns(FutureWarning, match="MCState.log_value"):
+        np.testing.assert_equal(vstate.evaluate(x), vstate.log_value(x))
+
+
+@common.skipif_mpi
+def test_deprecations_constructor():
+    sampler = nk.sampler.MetropolisLocal(hilbert=hi)
+    model = nk.models.RBM()
+
+    with pytest.warns(FutureWarning):
+        vs = nk.vqs.MCState(sampler, model, n_discard=10)
+        assert vs.n_discard_per_chain == 10
+
+    with pytest.raises(ValueError, match="Specify only"):
+        vs = nk.vqs.MCState(sampler, model, n_discard=10, n_discard_per_chain=10)
+
+
+@common.skipif_mpi
+def test_constructor():
+    sampler = nk.sampler.MetropolisLocal(hilbert=hi)
+    model = nk.models.RBM()
+    vs_good = nk.vqs.MCState(sampler, model)
+
+    vs = nk.vqs.MCState(
+        sampler, model, n_samples_per_rank=sampler.n_chains_per_rank * 2
+    )
+    assert vs.n_samples_per_rank == sampler.n_chains_per_rank * 2
+
+    with pytest.raises(ValueError, match="Only one argument between"):
+        vs = nk.vqs.MCState(sampler, model, n_samples=100, n_samples_per_rank=100)
+
+    with pytest.raises(ValueError, match="Must either pass the model or apply_fun"):
+        vs = nk.vqs.MCState(sampler)
+
+    # test init with parameters and variables
+    vs = nk.vqs.MCState(sampler, apply_fun=model.apply, init_fun=model.init)
+
+    vs = nk.vqs.MCState(sampler, apply_fun=model.apply, variables=vs_good.variables)
+    with pytest.raises(RuntimeError, match="you did not supply a valid init_function"):
+        vs.init()
+
+    with pytest.raises(ValueError, match="you must pass a valid init_fun."):
+        vs = nk.vqs.MCState(sampler, apply_fun=model.apply)
 
 
 @common.skipif_mpi
@@ -311,7 +379,7 @@ def test_qutip_conversion(vstate):
     ],
 )
 def test_expect(vstate, operator):
-    #  Use lots of samples
+    # Use lots of samples
     vstate.n_samples = 5 * 1e5
     vstate.n_discard_per_chain = 1e3
 
@@ -321,15 +389,17 @@ def test_expect(vstate, operator):
 
     O1_mean = np.asarray(O_stat1.mean)
     O_mean = np.asarray(O_stat.mean)
+    err = 5 * O_stat1.error_of_mean
 
     # check that vstate.expect gives the right result
     O_expval_exact = _expval(
         vstate.parameters, vstate, operator, real=operator.is_hermitian
     )
-    np.testing.assert_allclose(O_expval_exact.real, O1_mean.real, atol=1e-3, rtol=1e-3)
+
+    np.testing.assert_allclose(O_expval_exact.real, O1_mean.real, atol=err, rtol=err)
     if not operator.is_hermitian:
         np.testing.assert_allclose(
-            O_expval_exact.imag, O1_mean.imag, atol=1e-3, rtol=1e-3
+            O_expval_exact.imag, O1_mean.imag, atol=err, rtol=err
         )
 
     # Check that expect and expect_and_grad give same expect. value
@@ -351,17 +421,19 @@ def test_expect(vstate, operator):
     O_exact = expval_fun(pars, vstate, op_sparse)
     grad_exact = central_diff_grad(expval_fun, pars, 1.0e-5, vstate, op_sparse)
 
-    if not operator.is_hermitian:
-        grad_exact = jax.tree_map(lambda x: x * 2, grad_exact)
-
-    # compare the two
-    err = 5 / np.sqrt(vstate.n_samples)
-
     # check the expectation values
+    err = 5 * O_stat.error_of_mean
     assert O_stat.mean == approx(O_exact, abs=err)
 
     O_grad, _ = nk.jax.tree_ravel(O_grad)
     same_derivatives(O_grad, grad_exact, abs_eps=err, rel_eps=err)
+
+
+# Have a different test because the above is marked as xfail.
+# This only checks that the code runs.
+def test_expect_grad_nonhermitian_works(vstate):
+    op = nk.operator.spin.sigmap(vstate.hilbert, 0)
+    O_stat, O_grad = vstate.expect_and_grad(op)
 
 
 @common.skipif_mpi
@@ -397,60 +469,3 @@ def test_expect_chunking(vstate, operator, n_chunks):
     jax.tree_multimap(
         partial(np.testing.assert_allclose, atol=1e-13), grad_nochunk, grad_chunk
     )
-
-
-###
-
-
-def _expval(par, vstate, H, real=False):
-    vstate.parameters = par
-    psi = vstate.to_array()
-    expval = psi.conj() @ (H @ psi)
-    if real:
-        expval = np.real(expval)
-
-    return expval
-
-
-def central_diff_grad(func, x, eps, *args, dtype=None):
-    if dtype is None:
-        dtype = x.dtype
-
-    grad = np.zeros(
-        len(x), dtype=nk.jax.maybe_promote_to_complex(x.dtype, func(x, *args).dtype)
-    )
-    epsd = np.zeros(len(x), dtype=dtype)
-    epsd[0] = eps
-    for i in range(len(x)):
-        assert not np.any(np.isnan(x + epsd))
-        grad_r = 0.5 * (func(x + epsd, *args) - func(x - epsd, *args))
-        if nk.jax.is_complex(x):
-            grad_i = 0.5 * (func(x + 1j * epsd, *args) - func(x - 1j * epsd, *args))
-            grad[i] = 0.5 * grad_r + 0.5j * grad_i
-        else:
-            grad_i = 0.0
-            grad[i] = 0.5 * grad_r
-
-        assert not np.isnan(grad[i])
-        grad[i] /= eps
-        epsd = np.roll(epsd, 1)
-    return grad
-
-
-def same_derivatives(der_log, num_der_log, abs_eps=1.0e-6, rel_eps=1.0e-6):
-    assert der_log.shape == num_der_log.shape
-
-    np.testing.assert_allclose(
-        der_log.real, num_der_log.real, rtol=rel_eps, atol=abs_eps
-    )
-    np.testing.assert_allclose(
-        np.mod(der_log.imag, np.pi * 2),
-        np.mod(num_der_log.imag, np.pi * 2),
-        rtol=rel_eps,
-        atol=abs_eps,
-    )
-
-
-def check_consistent(vstate, mpi_size):
-    assert vstate.n_samples == vstate.n_samples_per_rank * mpi_size
-    assert vstate.n_samples == vstate.chain_length * vstate.sampler.n_chains

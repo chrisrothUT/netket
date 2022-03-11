@@ -105,7 +105,7 @@ def _exp_grad(
     is_mutable = mutable is not False
 
     expval_O = (Ψ.conj() * OΨ).sum()
-    ΔOΨ = (OΨ - expval_O * Ψ.conj()) * Ψ
+    ΔOΨ = (OΨ - expval_O * Ψ).conj() * Ψ
 
     _, vjp_fun, *new_model_state = nkjax.vjp(
         lambda w: model_apply_fun({"params": w, **model_state}, σ, mutable=mutable),
@@ -117,7 +117,7 @@ def _exp_grad(
     Ō_grad = vjp_fun(ΔOΨ)[0]
 
     Ō_grad = jax.tree_multimap(
-        lambda x, target: (x if jnp.iscomplexobj(target) else x.real).astype(
+        lambda x, target: (x if jnp.iscomplexobj(target) else 2 * x.real).astype(
             target.dtype
         ),
         Ō_grad,

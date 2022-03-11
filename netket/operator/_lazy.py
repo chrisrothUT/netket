@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import numpy as np
+import jax.numpy as jnp
+
 from netket.utils.dispatch import parametric
 
 from ._abstract_operator import AbstractOperator
@@ -63,6 +66,8 @@ class WrappedOperator(AbstractOperator):
                 return Squared(self)
             else:
                 return self._op__matmul__(other)
+        if isinstance(other, np.ndarray) or isinstance(other, jnp.ndarray):
+            return self._op__matmul__(other)
         else:
             return NotImplemented
 
@@ -203,7 +208,7 @@ class Squared(WrappedOperator):
         return self.parent.dtype
 
     def collect(self):
-        return self.parent.H.collect()._concrete_matmul_(self.parent)
+        return self.parent.H.collect()._op__matmul__(self.parent)
 
     @property
     def T(self):
