@@ -153,14 +153,14 @@ def stack_jacobian_tuple(centered_oks_re_im):
     )
 
 
-def _rescale(centered_oks):
+def _rescale(centered_oks,rescale_shift):
     """
     compute ΔOₖ/√Sₖₖ and √Sₖₖ
     to do scale-invariant regularization (Becca & Sorella 2017, pp. 143)
     Sₖₗ/(√Sₖₖ√Sₗₗ) = ΔOₖᴴΔOₗ/(√Sₖₖ√Sₗₗ) = (ΔOₖ/√Sₖₖ)ᴴ(ΔOₗ/√Sₗₗ)
     """
     scale = jax.tree_map(
-        lambda x: mpi.mpi_sum_jax(jnp.sum((x * x.conj()).real, axis=0, keepdims=True))[
+        lambda x: mpi.mpi_sum_jax(jnp.sum((x * x.conj()).real + rescale_shift, axis=0, keepdims=True))[
             0
         ]
         ** 0.5,
@@ -298,7 +298,7 @@ def prepare_centered_oks(
 
         centered_oks = _multiply_by_pdf(centered_oks, jnp.sqrt(pdf))
     if rescale_shift:
-        return _rescale(centered_oks)
+        return _rescale(centered_oks,rescale_shift)
     else:
         return centered_oks, None
 
