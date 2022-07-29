@@ -135,7 +135,7 @@ def partial_jacobian_cplx(
 
 centered_jacobian_real_holo = compose(tree_subtract_mean, jacobian_real_holo)
 centered_jacobian_cplx = compose(tree_subtract_mean, jacobian_cplx)
-centered_jacobian_partial_cplx = compose(tree_subtract_mean, partial_jacobian_cplx)
+centered_partial_jacobian_cplx = compose(tree_subtract_mean, partial_jacobian_cplx)
 
 def _divide_by_sqrt_n_samp(oks, samples):
     """
