@@ -380,7 +380,7 @@ def prepare_partial_centered_oks(
         stack_jacobian_tuple,
         partial(centered_partial_jacobian_cplx, _build_fn=lambda *x: x, name=name),
     )
-    jacobian_fun = partial(parital_jacobian_cplx,name=name)
+    jacobian_fun = partial(partial_jacobian_cplx,name=name)
     
     params, reassemble = tree_to_real(params)
 
