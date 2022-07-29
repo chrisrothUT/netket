@@ -335,7 +335,7 @@ def prepare_partial_centered_oks(
     apply_fun: Callable,
     params: PyTree,
     samples: Array,
-    name: str
+    name: str,
     model_state: Optional[PyTree],
     mode: str,
     rescale_shift: bool,
