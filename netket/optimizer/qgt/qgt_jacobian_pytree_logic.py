@@ -108,7 +108,7 @@ def partial_jacobian_cplx(
     forward_fn: Callable,
     params: PyTree,
     samples: Array,
-    name: str
+    name: str,
     chunk_size: int = None,
     _build_fn: Callable = partial(jax.tree_multimap, jax.lax.complex),
 ) -> PyTree:
