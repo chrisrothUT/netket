@@ -126,7 +126,7 @@ def partial_jacobian_cplx(
         y, vjp_fun = jax.vjp(single_sample(forward_fn), params, samples)
         gr, _ = vjp_fun(np.array(1.0, dtype=jnp.result_type(y)))
         gi, _ = vjp_fun(np.array(-1.0j, dtype=jnp.result_type(y)))
-        return _build_fn(gr, gi)[name]
+        return _build_fn(gr[name], gi[name])
 
     return vmap_chunked(
         _jacobian_cplx, in_axes=(None, None, 0, None), chunk_size=chunk_size
