@@ -104,10 +104,38 @@ def jacobian_cplx(
         _jacobian_cplx, in_axes=(None, None, 0, None), chunk_size=chunk_size
     )(forward_fn, params, samples, _build_fn)
 
+def partial_jacobian_cplx(
+    forward_fn: Callable,
+    params: PyTree,
+    samples: Array,
+    name: str
+    chunk_size: int = None,
+    _build_fn: Callable = partial(jax.tree_multimap, jax.lax.complex),
+) -> PyTree:
+    """Calculates Jacobian entries by vmapping grad.
+    Assumes the function is R→C, backpropagates 1 and -1j
+    Args:
+        forward_fn: the log wavefunction ln Ψ
+        params : a pytree of parameters p
+        samples : an array of n samples σ
+    Returns:
+        The Jacobian matrix ∂/∂pₖ ln Ψ(σⱼ) as a PyTree
+    """
+
+    def _jacobian_cplx(forward_fn, params, samples, _build_fn):
+        y, vjp_fun = jax.vjp(single_sample(forward_fn), params, samples)
+        gr, _ = vjp_fun(np.array(1.0, dtype=jnp.result_type(y)))
+        gi, _ = vjp_fun(np.array(-1.0j, dtype=jnp.result_type(y)))
+        return _build_fn(gr, gi)[name]
+
+    return vmap_chunked(
+        _jacobian_cplx, in_axes=(None, None, 0, None), chunk_size=chunk_size
+    )(forward_fn, params, samples, _build_fn)
+
 
 centered_jacobian_real_holo = compose(tree_subtract_mean, jacobian_real_holo)
 centered_jacobian_cplx = compose(tree_subtract_mean, jacobian_cplx)
-
+centered_jacobian_partial_cplx = compose(tree_subtract_mean, partial_jacobian_cplx)
 
 def _divide_by_sqrt_n_samp(oks, samples):
     """
@@ -302,7 +330,78 @@ def prepare_centered_oks(
     else:
         return centered_oks, None
 
+@partial(jax.jit, static_argnames=("apply_fun", "mode", "rescale_shift", "chunk_size"))
+def prepare_partial_centered_oks(
+    apply_fun: Callable,
+    params: PyTree,
+    samples: Array,
+    name: str
+    model_state: Optional[PyTree],
+    mode: str,
+    rescale_shift: bool,
+    pdf=None,
+    chunk_size: int = None,
+) -> PyTree:
+    """
+    compute ΔOⱼₖ = Oⱼₖ - ⟨Oₖ⟩ = ∂/∂pₖ ln Ψ(σⱼ) - ⟨∂/∂pₖ ln Ψ⟩
+    divided by √n
 
+    In a somewhat intransparent way this also internally splits all parameters to real
+    in the 'real' and 'complex' modes (for C→R, R&C→R, R&C→C and general C→C) resulting in the respective ΔOⱼₖ
+    which is only compatible with split-to-real pytree vectors
+
+    Args:
+        apply_fun: The forward pass of the Ansatz
+        params : a pytree of parameters p
+        samples : an array of (n in total) batched samples σ
+        model_state: untrained state parameters of the model
+        mode: differentiation mode, must be one of 'real', 'complex', 'holomorphic'
+        rescale_shift: whether scale-invariant regularisation should be used (default: True)
+        pdf: |ψ(x)|^2 if exact optimization is being used else None
+        chunk_size: an int specfying the size of the chunks the gradient should be computed in (default: None)
+
+    Returns:
+        if not rescale_shift:
+            a pytree representing the centered jacobian of ln Ψ evaluated at the samples σ, divided by √n;
+            None
+        else:
+            the same pytree, but the entries for each parameter normalised to unit norm;
+            pytree containing the norms that were divided out (same shape as params)
+
+    """
+    # un-batch the samples
+    samples = samples.reshape((-1, samples.shape[-1]))
+
+    # pre-apply the model state
+    def forward_fn(W, σ):
+        return apply_fun({"params": W, **model_state}, σ)
+
+    centered_jacobian_fun = compose(
+        stack_jacobian_tuple,
+        partial(centered_partial_jacobian_cplx, _build_fn=lambda *x: x, name=name),
+    )
+    jacobian_fun = partial(parital_jacobian_cplx,name=name)
+    
+    params, reassemble = tree_to_real(params)
+
+    def f(W, σ):
+        return forward_fn(reassemble(W), σ)
+
+    centered_oks = _divide_by_sqrt_n_samp(
+        centered_jacobian_fun(
+            f,
+            params,
+            samples,
+            chunk_size=chunk_size,
+        ),
+        samples,
+    )
+    if rescale_shift:
+        return _rescale(centered_oks,rescale_shift)
+    else:
+        return centered_oks, None
+    
+    
 def mat_vec(v: PyTree, centered_oks: PyTree, diag_shift: Scalar) -> PyTree:
     """
     Compute (S + δ) v = 1/n ⟨ΔO† ΔO⟩v + δ v = ∑ₗ 1/n ⟨ΔOₖᴴΔOₗ⟩ vₗ + δ vₗ
