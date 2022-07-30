@@ -330,7 +330,6 @@ def prepare_centered_oks(
     else:
         return centered_oks, None
 
-@partial(jax.jit, static_argnames=("apply_fun", "mode", "rescale_shift", "chunk_size","name"))
 def prepare_partial_centered_oks(
     apply_fun: Callable,
     params: PyTree,
