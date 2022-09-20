@@ -119,7 +119,7 @@ def partial_jacobian_cplx(
     samples: Array,
     name: str,
     chunk_size: int = None,
-    _build_fn: Callable = partial(jax.tree_multimap, jax.lax.complex),
+    _build_fn: Callable = partial(jax.tree_map, jax.lax.complex),
 ) -> PyTree:
     """Calculates Jacobian entries by vmapping grad.
     Assumes the function is R→C, backpropagates 1 and -1j
