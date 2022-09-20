@@ -1,9 +1,13 @@
 # File containing common commands for NetKet Test infrastructure
 
-import pytest
-import netket as nk
+from typing import Any
 
+from functools import partial
 import os
+
+import pytest
+
+import netket as nk
 
 
 def _is_true(x):
@@ -62,6 +66,13 @@ Example:
 
 """
 
+xfailif_mpi = pytest.mark.xfail(
+    nk.utils.mpi.n_nodes > 1, reason="custom_vjp not supports effects."
+)
+"""Use as a decorator to mark a test to be expected to fail only when running with
+at least 2 MPI processes.
+"""
+
 
 class netket_disable_mpi:
     """
@@ -85,6 +96,34 @@ class netket_disable_mpi:
         nk.utils.mpi.n_nodes = self._orig_nodes
         nk.utils.mpi.mpi.n_nodes = self._orig_nodes
         nk.utils.mpi.primitives.n_nodes = self._orig_nodes
+
+
+class set_config:
+    """
+    Temporarily changes the value of the configuration `name`.
+
+    Example:
+
+    >>> with set_config("netket_experimental_disable_ode_jit", True):
+    >>>     run_code
+
+    """
+
+    def __init__(self, name: str, value: Any):
+        self._name = name.upper()
+        self._value = value
+
+    def __enter__(self):
+        self._orig_value = nk.config.FLAGS[self._name]
+        nk.config.update(self._name, self._value)
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        nk.config.update(self._name, self._orig_value)
+
+
+netket_experimental_fft_autocorrelation = partial(
+    set_config, "NETKET_EXPERIMENTAL_FFT_AUTOCORRELATION"
+)
 
 
 def hash_for_seed(obj):

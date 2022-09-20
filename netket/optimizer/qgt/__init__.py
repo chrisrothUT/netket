@@ -18,7 +18,6 @@ from .qgt_onthefly import QGTOnTheFly
 
 from .default import QGTAuto
 
-
 from netket.utils import _hide_submodules
 
 _hide_submodules(__name__)

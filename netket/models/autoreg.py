@@ -22,11 +22,11 @@ from jax import numpy as jnp
 from jax.nn.initializers import zeros
 from plum import dispatch
 
-from netket.hilbert import Fock, Qubit, Spin
 from netket.hilbert.homogeneous import HomogeneousHilbert
 from netket.nn import MaskedConv1D, MaskedConv2D, MaskedDense1D
 from netket.nn.masked_linear import default_kernel_init
 from netket.utils.types import Array, DType, NNInitFunc
+from netket.utils import deprecate_dtype
 
 
 class AbstractARNN(nn.Module):
@@ -35,7 +35,7 @@ class AbstractARNN(nn.Module):
 
     Subclasses must implement the methods `__call__` and `conditionals`.
     They can also override `_conditional` to implement the caching for fast autoregressive sampling.
-    See :ref:`netket.nn.FastARNNConv1D` for example.
+    See :class:`netket.nn.FastARNNConv1D` for example.
 
     They must also implement the field `machine_pow`,
     which specifies the exponent to normalize the outputs of `__call__`.
@@ -97,22 +97,23 @@ class AbstractARNN(nn.Module):
         """
 
 
+@deprecate_dtype
 class ARNNDense(AbstractARNN):
     """Autoregressive neural network with dense layers."""
 
     layers: int
     """number of layers."""
     features: Union[Iterable[int], int]
-    """number of features in each layer. If a single number is given,
+    """output feature density in each layer. If a single number is given,
     all layers except the last one will have the same number of features."""
     activation: Callable[[Array], Array] = jax.nn.selu
     """the nonlinear activation function between hidden layers (default: selu)."""
     use_bias: bool = True
     """whether to add a bias to the output (default: True)."""
-    dtype: DType = jnp.float64
+    param_dtype: DType = jnp.float64
     """the dtype of the computation (default: float64)."""
     precision: Any = None
-    """numerical precision of the computation, see `jax.lax.Precision` for details."""
+    """numerical precision of the computation, see :class:`jax.lax.Precision` for details."""
     kernel_init: NNInitFunc = default_kernel_init
     """initializer for the weights."""
     bias_init: NNInitFunc = zeros
@@ -133,7 +134,7 @@ class ARNNDense(AbstractARNN):
                 features=features[i],
                 exclusive=(i == 0),
                 use_bias=self.use_bias,
-                dtype=self.dtype,
+                param_dtype=self.param_dtype,
                 precision=self.precision,
                 kernel_init=self.kernel_init,
                 bias_init=self.bias_init,
@@ -148,13 +149,14 @@ class ARNNDense(AbstractARNN):
         return _call(self, inputs)
 
 
+@deprecate_dtype
 class ARNNConv1D(AbstractARNN):
     """Autoregressive neural network with 1D convolution layers."""
 
     layers: int
     """number of layers."""
     features: Union[Iterable[int], int]
-    """number of features in each layer. If a single number is given,
+    """output feature density in each layer. If a single number is given,
     all layers except the last one will have the same number of features."""
     kernel_size: int
     """length of the convolutional kernel."""
@@ -164,10 +166,10 @@ class ARNNConv1D(AbstractARNN):
     """the nonlinear activation function between hidden layers (default: selu)."""
     use_bias: bool = True
     """whether to add a bias to the output (default: True)."""
-    dtype: DType = jnp.float64
+    param_dtype: DType = jnp.float64
     """the dtype of the computation (default: float64)."""
     precision: Any = None
-    """numerical precision of the computation, see `jax.lax.Precision` for details."""
+    """numerical precision of the computation, see :class:`jax.lax.Precision` for details."""
     kernel_init: NNInitFunc = default_kernel_init
     """initializer for the weights."""
     bias_init: NNInitFunc = zeros
@@ -190,7 +192,7 @@ class ARNNConv1D(AbstractARNN):
                 kernel_dilation=self.kernel_dilation,
                 exclusive=(i == 0),
                 use_bias=self.use_bias,
-                dtype=self.dtype,
+                param_dtype=self.param_dtype,
                 precision=self.precision,
                 kernel_init=self.kernel_init,
                 bias_init=self.bias_init,
@@ -211,7 +213,7 @@ class ARNNConv2D(AbstractARNN):
     layers: int
     """number of layers."""
     features: Union[Iterable[int], int]
-    """number of features in each layer. If a single number is given,
+    """output feature density in each layer. If a single number is given,
     all layers except the last one will have the same number of features."""
     kernel_size: Tuple[int, int]
     """shape of the convolutional kernel `(h, w)`. Typically, `h = w // 2 + 1`."""
@@ -222,10 +224,10 @@ class ARNNConv2D(AbstractARNN):
     """the nonlinear activation function between hidden layers (default: selu)."""
     use_bias: bool = True
     """whether to add a bias to the output (default: True)."""
-    dtype: DType = jnp.float64
+    param_dtype: DType = jnp.float64
     """the dtype of the computation (default: float64)."""
     precision: Any = None
-    """numerical precision of the computation, see `jax.lax.Precision` for details."""
+    """numerical precision of the computation, see :class:`jax.lax.Precision` for details."""
     kernel_init: NNInitFunc = default_kernel_init
     """initializer for the weights."""
     bias_init: NNInitFunc = zeros
@@ -251,7 +253,7 @@ class ARNNConv2D(AbstractARNN):
                 kernel_dilation=self.kernel_dilation,
                 exclusive=(i == 0),
                 use_bias=self.use_bias,
-                dtype=self.dtype,
+                param_dtype=self.param_dtype,
                 precision=self.precision,
                 kernel_init=self.kernel_init,
                 bias_init=self.bias_init,
@@ -314,7 +316,7 @@ def _call(model: AbstractARNN, inputs: Array) -> Array:
     if inputs.ndim == 1:
         inputs = jnp.expand_dims(inputs, axis=0)
 
-    idx = _local_states_to_numbers(model.hilbert, inputs)
+    idx = model.hilbert.states_to_local_indices(inputs)
     idx = jnp.expand_dims(idx, axis=-1)
 
     log_psi = _conditionals_log_psi(model, inputs)
@@ -332,25 +334,3 @@ def _reshape_inputs(model: ARNNConv2D, inputs: Array) -> Array:  # noqa: F811
 @dispatch
 def _reshape_inputs(model: Any, inputs: Array) -> Array:  # noqa: F811
     return inputs
-
-
-@dispatch
-def _local_states_to_numbers(hilbert: Spin, x: Array) -> Array:  # noqa: F811
-    numbers = (x + hilbert.local_size - 1) / 2
-    numbers = jnp.asarray(numbers, jnp.int32)
-    return numbers
-
-
-@dispatch
-def _local_states_to_numbers(  # noqa: F811
-    hilbert: Union[Fock, Qubit], x: Array
-) -> Array:
-    numbers = jnp.asarray(x, jnp.int32)
-    return numbers
-
-
-@dispatch
-def _local_states_to_numbers(hilbert: Any, x: Array) -> Array:  # noqa: F811
-    raise NotImplementedError(
-        f"_local_states_to_numbers is not implemented for hilbert {type(hilbert)}."
-    )

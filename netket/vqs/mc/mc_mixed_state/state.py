@@ -79,15 +79,15 @@ class MCMixedState(VariationalMixedState, MCState):
             parameters: Optional PyTree of weights from which to start.
             seed: rng seed used to generate a set of parameters (only if parameters is not passed). Defaults to a random one.
             sampler_seed: rng seed used to initialise the sampler. Defaults to a random one.
-            mutable: Dict specifing mutable arguments. Use it to specify if the model has a state that can change
+            mutable: Dict specifying mutable arguments. Use it to specify if the model has a state that can change
                 during evaluation, but that should not be optimised. See also flax.linen.module.apply documentation
                 (default=False)
             init_fun: Function of the signature f(model, shape, rng_key, dtype) -> Optional_state, parameters used to
                 initialise the parameters. Defaults to the standard flax initialiser. Only specify if your network has
                 a non-standard init method.
-            apply_fun: Function of the signature f(model, variables, σ) that should evaluate the model. Defafults to
+            apply_fun: Function of the signature f(model, variables, σ) that should evaluate the model. Defaults to
                 `model.apply(variables, σ)`. specify only if your network has a non-standard apply method.
-            training_kwargs: a dict containing the optionaal keyword arguments to be passed to the apply_fun during training.
+            training_kwargs: a dict containing the optional keyword arguments to be passed to the apply_fun during training.
                 Useful for example when you have a batchnorm layer that constructs the average/mean only during training.
 
         """
@@ -289,10 +289,11 @@ class MCMixedState(VariationalMixedState, MCState):
 def serialize_MCMixedState(vstate):
     state_dict = {
         "variables": serialization.to_state_dict(vstate.variables),
-        "sampler_state": serialization.to_state_dict(vstate.sampler_state),
+        "sampler_state": serialization.to_state_dict(vstate._sampler_state_previous),
         "diagonal": serialization.to_state_dict(vstate.diagonal),
         "n_samples": vstate.n_samples,
         "n_discard_per_chain": vstate.n_discard_per_chain,
+        "chunk_size": vstate.chunk_size,
     }
     return state_dict
 
@@ -316,6 +317,7 @@ def deserialize_MCMixedState(vstate, state_dict):
     )
     new_vstate.n_samples = state_dict["n_samples"]
     new_vstate.n_discard_per_chain = state_dict["n_discard_per_chain"]
+    new_vstate.chunk_size = state_dict["chunk_size"]
 
     return new_vstate
 

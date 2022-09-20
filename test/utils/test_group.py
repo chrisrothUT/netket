@@ -71,7 +71,12 @@ cubics = [
     group.cubic.Fd3m(),
 ]
 cubics_proper = [True, False, False, True, False, False]
-point_groups = planars + uniaxials + screws + biaxials + impropers + cubics
+icosas = [
+    group.icosa.I(),
+    group.icosa.Ih(),
+]
+icosas_proper = [True, False]
+point_groups = planars + uniaxials + screws + biaxials + impropers + cubics + icosas
 proper = (
     planars_proper
     + uniaxials_proper
@@ -79,6 +84,7 @@ proper = (
     + biaxials_proper
     + impropers_proper
     + cubics_proper
+    + icosas_proper
 )
 perms = [
     nk.graph.Hypercube(2, n_dim=3).point_group(),
@@ -140,6 +146,8 @@ details = [
     (group.cubic.O(), [1, 6, 3, 8, 6], [1, 1, 2, 3, 3]),
     (group.cubic.Oh(), [1, 6, 3, 8, 6] * 2, [1, 1, 2, 3, 3] * 2),
     (group.cubic.Fd3m(), [1, 6, 3, 8, 6] * 2, [1, 1, 2, 3, 3] * 2),
+    (group.icosa.I(), [1, 12, 12, 20, 15], [1, 3, 3, 4, 5]),
+    (group.icosa.Ih(), [1, 12, 12, 20, 15] * 2, [1, 3, 3, 4, 5] * 2),
 ]
 
 
@@ -341,3 +349,32 @@ def test_pyrochlore():
     Oh = group.axial.inversion_group() @ group.cubic.Td()
     # after specifying the unit cell, Fd3m is isomorphic to Oh
     assert_equal(Fd3m.product_table, Oh.product_table)
+
+
+# Testing __call__() and permute_index for PermutationGroup
+@pytest.mark.parametrize("grp", perms)
+def test_call_perm(grp):
+    indices = np.arange(grp.degree)
+    σ = np.random.random(size=(2, grp.degree))
+
+    perm_indices = grp.apply_to_id(indices)
+    perm_σ = grp(σ)
+
+    for p, idx, s in zip(grp, perm_indices, perm_σ):
+        assert np.all(σ == s[:, idx])  # permutation consistent with generated indices
+        assert np.all(s == p @ σ)  # group __call__ consistent with permutation @
+        assert np.all(indices == p(idx))  # generated indices cons. with perm. __call__
+
+        # check Permutation.apply_to_id
+        if not isinstance(p, group.Identity):
+            assert np.all(σ == s[:, p.apply_to_id(indices)])
+
+
+# Testing __call__() for PointGroup
+@pytest.mark.parametrize("grp", cubics + icosas)
+def test_call_point(grp):
+    v = np.random.random(size=(2, 3))
+    apply_v = grp @ v
+
+    for g, gv in zip(grp, apply_v):
+        assert_allclose(gv, g(v), rtol=1e-15)

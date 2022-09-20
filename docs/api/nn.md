@@ -6,7 +6,7 @@
 
 ```
 
-This sub-module wraps and re-exports [flax.nn](https://flax.readthedocs.io/en/latest/flax.linen.html).
+This sub-module extends [flax.linen](https://flax.readthedocs.io/en/latest/flax.linen.html) with layers and tools that are useful to applications in quantum physics.
 Read more about the design goal of this module in their [README](https://github.com/google/flax/blob/master/flax/linen/README.md)
 
 
@@ -17,16 +17,16 @@ Read more about the design goal of this module in their [README](https://github.
    :toctree: _generated/nn
    :nosignatures:
 
-   Dense
-   DenseGeneral
    DenseSymm
    DenseEquivariant
-   Conv
-   Embed
 
    MaskedDense1D
    MaskedConv1D
    MaskedConv2D
+
+   FastMaskedDense1D
+   FastMaskedConv1D
+   FastMaskedConv2D
 
 ```
 
@@ -36,20 +36,44 @@ Read more about the design goal of this module in their [README](https://github.
 .. autosummary::
     :toctree: _generated/nn
 
-    celu
-    elu
-    gelu
-    glu
-    log_sigmoid
-    log_softmax
-    relu
-    sigmoid
-    soft_sign
-    softmax
-    softplus
-    swish
-    log_cosh
-    reim_relu
-    reim_selu
+    activation.reim
+    activation.reim_relu
+    activation.reim_selu
+    activation.log_cosh
+    activation.log_sinh
+    activation.log_tanh
+
+```
+
+## Miscellaneous Functions
+
+```{eval-rst}
+.. autosummary::
+    :toctree: _generated/nn
+
+    binary_encoding
+    states_to_numbers
+```
+
+## Utility functions
+
+```{eval-rst}
+.. autosummary::
+   :toctree: _generated/nn
+
+   to_array
+   to_matrix
+
+```
+
+
+## Blocks
+
+```{eval-rst}
+.. autosummary::
+   :toctree: _generated/nn
+   :nosignatures:
+
+    blocks.MLP
 
 ```

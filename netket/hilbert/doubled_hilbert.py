@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List, Optional
-
 import numpy as np
 
 from netket.utils.dispatch import parametric
@@ -94,7 +92,7 @@ class DoubledHilbert(DiscreteHilbert):
             i: The index of the desired site.
 
         Returns:
-            A list of values or None if there are infintely many.
+            A list of values or None if there are infinitely many.
         """
         return self.physical.states_at_index(
             i if i < self.physical.size else i - self.physical.size
@@ -143,6 +141,9 @@ class DoubledHilbert(DiscreteHilbert):
         out += _out_l
 
         return out
+
+    def states_to_local_indices(self, x):
+        return self.physical.states_to_local_indices(x)
 
     def __repr__(self):
         return "DoubledHilbert({})".format(self.physical)

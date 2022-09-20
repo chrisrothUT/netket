@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import jax.numpy as jnp
 import pytest
 import numpy as np
 
@@ -20,7 +19,6 @@ import scipy.integrate as sci
 
 from netket.experimental.dynamics import Euler, Heun, Midpoint, RK4, RK12, RK23, RK45
 from netket.experimental.dynamics._rk_tableau import (
-    NamedTableau,
     bt_feuler,
     bt_heun,
     bt_midpoint,
@@ -57,10 +55,17 @@ explicit_adaptive_solvers = {
     "RK45": RK45,
 }
 
+tableaus_params = [pytest.param(obj, id=name) for name, obj in tableaus.items()]
+explicit_fixed_step_solvers_params = [
+    pytest.param(obj, id=name) for name, obj in explicit_fixed_step_solvers.items()
+]
+explicit_adaptive_solvers_params = [
+    pytest.param(obj, id=name) for name, obj in explicit_adaptive_solvers.items()
+]
 
-@pytest.mark.parametrize("tableau", tableaus)
+
+@pytest.mark.parametrize("tableau", tableaus_params)
 def test_tableau(tableau: str):
-    tableau = tableaus[tableau]  # type: NamedTableau
     assert tableau.name != ""
     td = tableau.data
 
@@ -84,14 +89,20 @@ def test_tableau(tableau: str):
         assert td.b.shape[0] == 2
 
 
-@pytest.mark.parametrize("method", explicit_fixed_step_solvers)
+@pytest.mark.parametrize("method", explicit_fixed_step_solvers_params)
+def test_fixed_adaptive_error(method):
+    with pytest.raises(TypeError):
+        method(dt=0.01, adaptive=True)
+
+
+@pytest.mark.parametrize("method", explicit_fixed_step_solvers_params)
 def test_ode_solver(method):
     def ode(t, x, **_):
         return -t * x
 
     dt = 0.01
     n_steps = 100
-    solver = explicit_fixed_step_solvers[method](dt=dt)
+    solver = method(dt=dt)
 
     y0 = np.array([1.0])
     times = np.linspace(0, n_steps * dt, n_steps, endpoint=False)
@@ -120,14 +131,12 @@ def test_ode_solver(method):
     rtol = {
         "Euler": 1e-2,
         "RK4": 5e-4,
-    }.get(method, 1e-3)
+    }.get(solver.tableau.name, 1e-3)
     np.testing.assert_allclose(y_t[:, 0], y_ref, rtol=rtol)
 
 
-@pytest.mark.parametrize("solver", explicit_adaptive_solvers)
+@pytest.mark.parametrize("solver", explicit_adaptive_solvers_params)
 def test_adaptive_solver(solver):
-    solver = explicit_adaptive_solvers[solver]
-
     tol = 1e-7
 
     def ode(t, x, **_):

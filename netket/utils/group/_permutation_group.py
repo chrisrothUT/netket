@@ -31,11 +31,11 @@ from ._semigroup import Element
 class Permutation(Element):
     def __init__(self, permutation: Array, name: Optional[str] = None):
         r"""
-        Creates a `Permutation` from an array of preimages of :code:`range(N)`
+        Creates a `Permutation` from an array of preimages of :code:`range(N)`.
 
         Arguments:
             permutation: 1D array listing :math:`g^{-1}(x)` for all :math:`0\le x < N`
-                (i.e., `V[permutation]` permutes the elements of `V` as desired)
+                (i.e., :code:`V[permutation]` permutes the elements of `V` as desired)
             name: optional, custom name for the permutation
 
         Returns:
@@ -66,6 +66,10 @@ class Permutation(Element):
     def __array__(self, dtype: DType = None):
         return np.asarray(self.permutation, dtype)
 
+    def apply_to_id(self, x: Array):
+        """Returns the image of indices `x` under the permutation"""
+        return np.argsort(self.permutation)[x]
+
 
 @dispatch
 def product(p: Permutation, x: Array):
@@ -83,12 +87,13 @@ class PermutationGroup(FiniteGroup):
     r"""
     Collection of permutation operations acting on sequences of length :code:`degree`.
 
-    Group elements need not all be of type :ref:`netket.utils.group.Permutation`,
+    Group elements need not all be of type :class:`netket.utils.group.Permutation`,
     only act as such on a sequence when called.
 
     The class can contain elements that are distinct as objects (e.g.,
     :code:`Identity()` and :code:`Translation((0,))`) but have identical action.
-    Those can be removed by calling :code:`remove_duplicates`.
+    Those can be removed by calling
+    :meth:`~netket.utils.group.PermutationGroup.remove_duplicates`.
     """
 
     degree: int
@@ -102,12 +107,22 @@ class PermutationGroup(FiniteGroup):
 
     def to_array(self) -> Array:
         r"""
-        Convert the abstract group operations to an array of permutation indices,
-        such that the `i`-th row contains the indices corresponding to the `i`-th group
-        element. That is, `self.to_array()[i, j]` is :math:`g_i^{-1}(j)`) and
-        (for :code:`G = self`)::
+        Convert the abstract group operations to an array of permutation indices.
+
+
+        It returns a matrix where the `i`-th row contains the indices corresponding
+        to the `i`-th group element. That is, :code:`self.to_array()[i, j]`
+        is :math:`g_i^{-1}(j)`. Moreover,
+
+        .. code::
+
+            G = # this permutation group...
             V = np.arange(G.degree)
             assert np.all(G(V) == V[..., G.to_array()])
+
+        Returns:
+            A matrix that can be used to index arrays in the computational basis
+            in order to obtain their permutations.
         """
         return self._canonical_array()
 
@@ -119,14 +134,14 @@ class PermutationGroup(FiniteGroup):
         Returns a new :code:`PermutationGroup` with duplicate elements (that is,
         elements which represent identical permutations) removed.
 
-        Arguments:
-            return_inverse: If True, also return indices to reconstruct the original
+        Args:
+            return_inverse: If `True`, also return indices to reconstruct the original
                 group from the result.
 
         Returns:
-            group: the permutation group with duplicate elements removed.
-            return_inverse: Indices to reconstruct the original group from the result.
-                Only returned if `return_inverse` is True.
+            The permutation group with duplicate elements removed. If
+            :code:`return_inverse==True`, it also returns the indices needed to
+            reconstruct the original group from the result.
         """
         if return_inverse:
             group, inverse = super().remove_duplicates(return_inverse=True)
@@ -145,10 +160,14 @@ class PermutationGroup(FiniteGroup):
         try:
             lookup = self._canonical_lookup()
             inverses = []
-            for perm in self.to_array():
-                # `np.argsort` changes int32 to int64 on Windows,
-                # and we need to change it back
-                invperm = np.argsort(perm).astype(perm.dtype)
+            # `np.argsort` on a 1D permutation list generates the inverse permutation
+            # it acts along last axis by default, so can perform it on to_array()
+            # `np.argsort` changes int32 to int64 on Windows,
+            # and we need to change it back
+            perms = self.to_array()
+            invperms = np.argsort(perms).astype(perms.dtype)
+
+            for invperm in invperms:
                 inverses.append(lookup[HashableArray(invperm)])
 
             return np.asarray(inverses, dtype=int)
@@ -183,11 +202,15 @@ class PermutationGroup(FiniteGroup):
     @property
     def shape(self) -> Shape:
         r"""
-        Tuple `(<# of group elements>, <degree>)`.
+        Tuple :code:`(<# of group elements>, <degree>)`.
 
         Equivalent to :code:`self.to_array().shape`.
         """
         return (len(self), self.degree)
+
+    def apply_to_id(self, x: Array):
+        """Returns the image of indices `x` under all permutations"""
+        return self.to_array()[self.inverse][:, x]
 
 
 @dispatch
@@ -199,3 +222,8 @@ def product(A: PermutationGroup, B: PermutationGroup):  # noqa: F811
     return PermutationGroup(
         elems=[a @ b for a, b in itertools.product(A.elems, B.elems)], degree=A.degree
     )
+
+
+@dispatch
+def product(G: PermutationGroup, x: Array):  # noqa: F811
+    return np.moveaxis(x[..., G.to_array()], -2, 0)

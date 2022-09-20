@@ -49,7 +49,7 @@ class ContinuousOperator(AbstractOperator):
         self, logpsi: Callable, params: PyTree, x: Array, data: Optional[PyTree]
     ):
         r"""This method defines the action of the local operator on a given quantum state
-        `logpsi` for a given congfiguration `x`.
+        `logpsi` for a given configuration `x`.
         :math:`O_{loc}(x) =  \frac{\bra{x}O{\ket{\psi}}{\bra{x}\ket{\psi}}`
         This method is executed inside of a `jax.jit` block.
         Any static data from the operator itself should be captured in the method.
@@ -95,3 +95,12 @@ class ContinuousOperator(AbstractOperator):
             return SumOperator(self, coefficients=other)
         else:
             return NotImplemented  # pragma: no cover
+
+    def __sub__(self, other):
+        if isinstance(other, ContinuousOperator):
+            return self + (-other)
+        else:
+            return NotImplemented  # pragma: no cover
+
+    def __neg__(self):
+        return -1.0 * self

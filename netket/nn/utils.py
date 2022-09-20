@@ -1,10 +1,29 @@
-from functools import partial
+# Copyright 2021 The NetKet Authors - All rights reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-import numpy as np
-from jax import numpy as jnp
-from netket.utils import get_afun_if_module
-from netket.utils import mpi
+from functools import partial, reduce
+from typing import Tuple, Optional
+import operator
+
 import jax
+from jax import numpy as jnp
+import numpy as np
+
+from netket.utils import get_afun_if_module, mpi, module_version
+from netket.utils.types import Array
+from netket.hilbert import DiscreteHilbert
+
 from flax.traverse_util import flatten_dict, unflatten_dict
 from flax.core import unfreeze
 
@@ -78,7 +97,7 @@ def _to_array_rank(apply_fun, variables, σ_rank, n_states, normalize, allgather
 
     # last rank, get rid of fake elements
     if mpi.rank == mpi.n_nodes - 1 and n_fake_states > 0:
-        log_psi_local = log_psi_local.at[jax.ops.index[-n_fake_states:]].set(-jnp.inf)
+        log_psi_local = log_psi_local.at[-n_fake_states:].set(-jnp.inf)
 
     if normalize:
         # subtract logmax for better numerical stability
@@ -144,3 +163,111 @@ def update_dense_symm(params, names=["dense_symm", "Dense"]):
         return (path, array)
 
     return unflatten_dict(dict(map(fix_one_kernel, flatten_dict(params).items())))
+
+
+def _get_output_idx(
+    shape: Tuple[int, ...], max_bits: Optional[int] = None
+) -> Tuple[Tuple[int, ...], int]:
+    bits_per_local_occupation = tuple(np.ceil(np.log2(shape)).astype(int))
+    if max_bits is None:
+        max_bits = max(bits_per_local_occupation)
+    output_idx = []
+    offset = 0
+    for b in bits_per_local_occupation:
+        output_idx.extend([i + offset for i in range(b)][::-1])
+        offset += max_bits
+    output_idx = tuple(output_idx)
+    return output_idx, max_bits
+
+
+def _separate_binary_indices(
+    shape: Tuple[int, ...]
+) -> Tuple[Tuple[int, ...], Tuple[int, ...]]:
+    binary_indices = tuple([i for i in range(len(shape)) if shape[i] == 2])
+    non_binary_indices = tuple([i for i in range(len(shape)) if shape[i] != 2])
+    return binary_indices, non_binary_indices
+
+
+def _prod(iterable):
+    # This is a workaround for math.prod which is not defined for Python 3.7
+    return reduce(operator.mul, iterable, 1)
+
+
+@partial(jax.jit, static_argnames=("hilbert", "max_bits"))
+def binary_encoding(
+    hilbert: DiscreteHilbert,
+    x: Array,
+    *,
+    max_bits: Optional[int] = None,
+) -> Array:
+    """
+    Encodes the array `x` into a set of binary-encoded variables described by
+    the shape of a Hilbert space. The i-th element of x will be encoded in
+    {code}`ceil(log2(shape[i]))` bits.
+
+    Args:
+        hilbert: Hilbert space of the samples that are to be encoded.
+        x: The array to encode.
+        max_bits: The maximum number of bits to use for each element of `x`.
+    """
+    x = hilbert.states_to_local_indices(x)
+    shape = tuple(hilbert.shape)
+    jax.core.concrete_or_error(None, shape, "Shape must be known statically")
+    output_idx, max_bits = _get_output_idx(shape, max_bits)
+    binarised_states = jnp.zeros(x.shape + (max_bits,), dtype=x.dtype)
+    binary_indices, non_binary_indices = _separate_binary_indices(shape)
+    for i in non_binary_indices:
+        substates = x[..., i].astype(int)[..., jnp.newaxis]
+        binarised_states = (
+            binarised_states.at[..., i, :]
+            .set(
+                substates & 2 ** jnp.arange(binarised_states.shape[-1], dtype=int) != 0
+            )
+            .astype(x.dtype)
+        )
+    for i in binary_indices:
+        binarised_states = binarised_states.at[..., i, 0].set(x[..., i])
+    return binarised_states.reshape(
+        *binarised_states.shape[:-2], _prod(binarised_states.shape[-2:])
+    )[..., output_idx]
+
+
+def states_to_numbers(hilbert: DiscreteHilbert, σ: Array) -> Array:
+    """
+    Converts the configuration σ to a 64-bit integer denoting its index in the full Hilbert space.
+
+    This function calls `hilbert.states_to_numbers` as a JAX pure callback and can thus be used within
+    `jax.jit`.
+
+    .. Note::
+
+        Requires jax >= 0.3.17 and will raise an exception on older versions.
+
+
+    Args:
+        hilbert: The Hilbert space
+        σ: A single or a batch of configurations
+
+    Returns:
+        a single integer or a batch of integer indices.
+    """
+    if module_version("jax") < (0, 3, 17):
+        raise RuntimeError(
+            "The jitted conversion of bit-strings to hilbert numbers"
+            "is only supported with jax.__version__ >= 0.3.17, but you "
+            f"have {module_version('jax')}"
+        )
+
+    if not hilbert.is_indexable:
+        raise ValueError(
+            f"Hilbert space {hilbert} is too large to be indexed or "
+            f"cannot be indexed at all."
+        )
+
+    # calls back into python
+    return jax.pure_callback(
+        hilbert.states_to_numbers,
+        jax.ShapeDtypeStruct(σ.shape[:-1], jnp.int64),
+        σ,
+        vectorized=True,
+    )

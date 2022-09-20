@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Union
+
 import os
 from textwrap import dedent
 
@@ -40,7 +42,7 @@ def int_env(varname: str, default: int) -> int:
     return int(os.getenv(varname, default))
 
 
-def get_env(varname: str, type, default: int):
+def get_env(varname: str, type, default: Union[int, bool]) -> Union[int, bool]:
     if type is int:
         return int_env(varname, default)
     elif type is bool:
@@ -76,6 +78,16 @@ class Config:
         self._editable_at_runtime[name] = runtime
         self._values[name] = get_env(name, type, default)
 
+        @property
+        def _read_config(self):
+            return self.FLAGS[name]
+
+        @_read_config.setter
+        def _read_config(self, value):
+            self.update(name, value)
+
+        setattr(Config, name.lower(), _read_config)
+
     @property
     def FLAGS(self):
         """
@@ -85,12 +97,32 @@ class Config:
 
     def update(self, name, value):
         """
-        Updates a variable in netket
+        Updates a configuration variable in netket.
 
         Args:
             name: the name of the variable
             value: the new value
         """
+        name = name.upper()
+
+        if not self._editable_at_runtime[name]:
+            raise RuntimeError(
+                f"\n\nFlag `{name}` can only be set through an environment "
+                "variable before importing netket.\n"
+                "Try launching python with:\n\n"
+                f"\t{name}={self.FLAGS[name]} python\n\n"
+                "or execute the following snippet BEFORE importing netket:\n\n"
+                "\t>>>import os\n"
+                f'\t>>>os.environ["{name}"]="{self.FLAGS[name]}"\n'
+                "\t>>>import netket as nk\n\n"
+            )
+
+        if not isinstance(value, self._types[name]):
+            raise TypeError(
+                f"Configuration {name} must be a {self._types[name]}, but the "
+                f"value {value} is a {type(value)}."
+            )
+
         self._values[name] = self._types[name](value)
 
 
@@ -110,7 +142,7 @@ config.define(
     bool,
     default=False,
     help="Enable experimental features.",
-    runtime=False,
+    runtime=True,
 )
 
 config.define(
@@ -124,4 +156,76 @@ config.define(
         """
     ),
     runtime=False,
+)
+
+config.define(
+    "NETKET_MPI",
+    bool,
+    default=True,
+    help=dedent(
+        """
+        Prevent NetKet from using (and initializing) MPI. If this flag is
+        `0` `mpi4py` and `mpi4jax` will not be imported.
+        """
+    ),
+    runtime=False,
+)
+
+config.define(
+    "NETKET_USE_PLAIN_RHAT",
+    bool,
+    default=False,
+    help=dedent(
+        """
+        By default, NetKet uses the split-R̂ Gelman-Rubin diagnostic in `netket.stats.statistics`,
+        which detects non-stationarity in the MCMC chains (in addition to the classes of
+        chain-mixing failures detected by plain R) since version 3.4.
+        Enabling this flag restores the previous behavior of using plain (non-split) Rhat.
+        """
+    ),
+    runtime=True,
+)
+
+config.define(
+    "NETKET_EXPERIMENTAL_FFT_AUTOCORRELATION",
+    bool,
+    default=False,
+    help=dedent(
+        """
+        The integrated autocorrelation time $\tau_c$ is computed separately for each chain $c$.
+        To summarize it for the user, `Stats.tau_corr` is changed to contain the average over all
+        chains and a new field `Stats.tau_corr_max` is added containing the maximum autocorrelation
+        among all chains (which helps to identify outliers). Using the average $\tau$ over all chains
+        seems like a good choice as it results in a low-variance estimate
+        (see [here](https://emcee.readthedocs.io/en/stable/tutorials/autocorr/#autocorr) for a good
+        discussion).
+        """
+    ),
+    runtime=True,
+)
+
+config.define(
+    "NETKET_EXPERIMENTAL_DISABLE_ODE_JIT",
+    bool,
+    default=False,
+    help=dedent(
+        """
+        Disables the jitting of the whole ode solver, mainly used within TDVP solvers.
+        The jitting is sometimes incompatible with GPU-based calculations, and on large
+        calculations it gives negligible speedups so it might be beneficial to disable it.
+        """
+    ),
+    runtime=True,
+)
+
+config.define(
+    "NETKET_SPHINX_BUILD",
+    bool,
+    default=False,
+    help=dedent(
+        """
+        Set to True when building documentation with Sphinx. Disables some decorators.
+        """
+    ),
+    runtime=True,
 )

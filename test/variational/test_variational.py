@@ -17,8 +17,11 @@ from functools import partial
 import pytest
 from pytest import approx, raises, warns
 
-import numpy as np
+import flax
+import flax.linen as nn
 import jax
+import jax.numpy as jnp
+import numpy as np
 
 import netket as nk
 from jax.nn.initializers import normal
@@ -297,21 +300,33 @@ def test_constructor():
 def test_serialization(vstate):
     from flax import serialization
 
+    vstate.chunk_size = 12345
+
     bdata = serialization.to_bytes(vstate)
 
     old_params = vstate.parameters
     old_samples = vstate.samples
     old_nsamples = vstate.n_samples
     old_ndiscard = vstate.n_discard_per_chain
+    old_chunksize = vstate.chunk_size
 
+    # test same samples, serialization before sampling
     vstate = nk.vqs.MCState(vstate.sampler, vstate.model, n_samples=10, seed=SEED + 100)
 
     vstate = serialization.from_bytes(vstate, bdata)
 
-    jax.tree_multimap(np.testing.assert_allclose, vstate.parameters, old_params)
+    jax.tree_map(np.testing.assert_allclose, vstate.parameters, old_params)
     np.testing.assert_allclose(vstate.samples, old_samples)
     assert vstate.n_samples == old_nsamples
     assert vstate.n_discard_per_chain == old_ndiscard
+    assert vstate.chunk_size == old_chunksize
+
+    # test samples before serailziation
+    old_samples = vstate.samples
+    bdata = serialization.to_bytes(vstate)
+    vstate = serialization.from_bytes(vstate, bdata)
+
+    np.testing.assert_allclose(vstate.samples, old_samples)
 
 
 @common.skipif_mpi
@@ -324,7 +339,7 @@ def test_init_parameters(vstate):
     def _f(x, y):
         np.testing.assert_allclose(x, y)
 
-    jax.tree_multimap(_f, pars, pars2)
+    jax.tree_map(_f, pars, pars2)
 
 
 @common.skipif_mpi
@@ -429,8 +444,128 @@ def test_expect(vstate, operator):
     same_derivatives(O_grad, grad_exact, abs_eps=err, rel_eps=err)
 
 
+@common.skipif_mpi
+@pytest.mark.parametrize(
+    "operator",
+    [
+        pytest.param(
+            op,
+            id=name,
+            marks=pytest.mark.xfail(
+                reason="MUSTFIX: Non-hermitian and Squared forces known to be wrong"
+            )
+            if isinstance(op, nk.operator.Squared) or (not op.is_hermitian)
+            else [],
+        )
+        for name, op in operators.items()
+    ],
+)
+def test_forces(vstate, operator):
+    _, O_grad1 = vstate.expect_and_grad(operator)
+    O_grad2 = vstate.grad(operator)
+    jax.tree_map(np.testing.assert_array_equal, O_grad1, O_grad2)
+
+    _, f1 = vstate.expect_and_forces(operator)
+    if nk.jax.tree_leaf_iscomplex(vstate.parameters):
+        g1 = f1
+    else:
+        g1 = jax.tree_map(lambda x: 2.0 * np.real(x), f1)
+    jax.tree_map(np.testing.assert_array_equal, g1, O_grad1)
+
+
+def test_forces_gradient_rule():
+    class M1(nn.Module):
+        n_h: int
+
+        @nn.compact
+        def __call__(self, x):
+            n_v = x.shape[-1]
+            W = self.param(
+                "weights", nn.initializers.normal(), (self.n_h, n_v), jnp.complex128
+            )
+
+            y = jnp.einsum("ij,...j", W, x)
+            return jnp.sum(nk.nn.activation.reim_selu(y), axis=-1)
+
+    class M2(nn.Module):
+        n_h: int
+
+        @nn.compact
+        def __call__(self, x):
+            n_v = x.shape[-1]
+            Wr = self.param(
+                "weights_re", nn.initializers.normal(), (self.n_h, n_v), jnp.float64
+            )
+            Wi = self.param(
+                "weights_im", nn.initializers.normal(), (self.n_h, n_v), jnp.float64
+            )
+
+            W = Wr + 1j * Wi
+
+            y = jnp.einsum("ij,...j", W, x)
+            return jnp.sum(nk.nn.activation.reim_selu(y), axis=-1)
+
+    ma1 = M1(8)
+    ma2 = M2(8)
+    hi = nk.hilbert.Spin(1 / 2, N=4)
+    ha = nk.operator.Ising(hi, nk.graph.Chain(4), h=0.5)
+    samp = nk.sampler.ExactSampler(hi)
+    vs1 = nk.vqs.MCState(samp, model=ma1, n_samples=1024, sampler_seed=1234, seed=1234)
+    vs2 = nk.vqs.MCState(samp, model=ma2, n_samples=1024, sampler_seed=1234, seed=1234)
+    vs1.parameters = flax.core.freeze(
+        {"weights": vs2.parameters["weights_re"] + 1j * vs2.parameters["weights_im"]}
+    )
+
+    assert np.allclose(vs1.to_array(), vs2.to_array())
+
+    _, f1 = vs1.expect_and_forces(ha)
+    _, f2 = vs2.expect_and_forces(ha)
+    _, g1 = vs1.expect_and_grad(ha)
+    _, g2 = vs2.expect_and_grad(ha)
+
+    assert np.allclose(g1["weights"], f1["weights"])
+    assert np.allclose(g2["weights_re"], 2 * np.real(f2["weights_re"]))
+    assert np.allclose(g2["weights_im"], 2 * np.real(f2["weights_im"]))
+    assert np.allclose(g1["weights"], 0.5 * (g2["weights_re"] + 1j * g2["weights_im"]))
+
+
+@common.skipif_mpi
+@pytest.mark.parametrize(
+    "operator",
+    [
+        pytest.param(
+            op,
+            id=name,
+        )
+        for name, op in operators.items()
+    ],
+)
+def test_local_estimators(vstate, operator):
+    def assert_stats_equal(st1, st2):
+        assert st1.mean == pytest.approx(st2.mean)
+        assert st1.variance == pytest.approx(st2.variance)
+        assert st1.error_of_mean == pytest.approx(st2.error_of_mean)
+
+    def inner_test():
+        print(vstate.samples.shape)
+        oloc = vstate.local_estimators(operator)
+        print(oloc.shape)
+        assert oloc.shape == (vstate.sampler.n_chains, vstate.n_samples)
+
+        stats1 = nk.stats.statistics(oloc)
+        stats2 = vstate.expect(operator)
+        assert_stats_equal(stats1, stats2)
+
+    # no chunking
+    inner_test()
+    # chunking
+    vstate.chunk_size = 2
+    inner_test()
+
+
 # Have a different test because the above is marked as xfail.
 # This only checks that the code runs.
+@common.xfailif_mpi
 def test_expect_grad_nonhermitian_works(vstate):
     op = nk.operator.spin.sigmap(vstate.hilbert, 0)
     O_stat, O_grad = vstate.expect_and_grad(op)
@@ -457,7 +592,7 @@ def test_expect_chunking(vstate, operator, n_chunks):
     vstate.chunk_size = chunk_size
     eval_chunk = vstate.expect(operator)
 
-    jax.tree_multimap(
+    jax.tree_map(
         partial(np.testing.assert_allclose, atol=1e-13), eval_nochunk, eval_chunk
     )
 
@@ -466,6 +601,6 @@ def test_expect_chunking(vstate, operator, n_chunks):
     vstate.chunk_size = chunk_size
     grad_chunk = vstate.grad(operator)
 
-    jax.tree_multimap(
+    jax.tree_map(
         partial(np.testing.assert_allclose, atol=1e-13), grad_nochunk, grad_chunk
     )

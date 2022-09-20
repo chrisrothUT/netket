@@ -43,14 +43,14 @@ def _is_dense_solver(solver: Any) -> bool:
 
 def default_qgt_matrix(variational_state, solver=False, **kwargs):
     """
-    Determines default metric tensor depending on variational_state and sovler
+    Determines default metric tensor depending on variational_state and solver
     """
     from netket.vqs import ExactState
 
     if isinstance(variational_state, ExactState):
         return partial(QGTJacobianPyTree, **kwargs)
 
-    n_param_leaves = len(jax.tree_leaves(variational_state.parameters))
+    n_param_leaves = len(jax.tree_util.tree_leaves(variational_state.parameters))
     n_params = variational_state.n_parameters
 
     # those require dense matrix that is known to be faster for this qgt
@@ -72,7 +72,7 @@ def default_qgt_matrix(variational_state, solver=False, **kwargs):
 class QGTAuto:
     """
     Automatically select the 'best' Quantum Geometric Tensor
-    computing format acoording to some rather untested heuristic.
+    computing format according to some rather untested heuristic.
 
     Args:
         variational_state: The variational State

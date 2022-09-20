@@ -224,6 +224,13 @@ def test_get_conn_numpy_closure(op):
     "op", [pytest.param(op, id=name) for name, op in operators.items()]
 )
 @pytest.mark.parametrize(
+    "dtype",
+    [
+        pytest.param(np.float32, id="float32"),
+        pytest.param(np.float64, id="float64"),
+    ],
+)
+@pytest.mark.parametrize(
     "shape",
     [
         pytest.param(s, id=f"shape={s}")
@@ -237,15 +244,17 @@ def test_get_conn_numpy_closure(op):
         ]
     ],
 )
-def test_get_conn_padded(op, shape):
+def test_get_conn_padded(op, shape, dtype):
     hi = op.hilbert
 
-    v = hi.random_state(jax.random.PRNGKey(0), shape)
+    v = hi.random_state(jax.random.PRNGKey(0), shape, dtype=dtype)
 
     vp, mels = op.get_conn_padded(v)
 
     assert vp.ndim == v.ndim + 1
     assert mels.ndim == v.ndim
+    assert vp.dtype == v.dtype
+    assert mels.dtype == op.dtype
 
     vp_f, mels_f = op.get_conn_padded(v.reshape(-1, hi.size))
     np.testing.assert_allclose(vp_f, vp.reshape(-1, *vp.shape[-2:]))
@@ -354,6 +363,26 @@ def test_pauli(hilbert):
     assert np.allclose(op.to_dense(), op_l.to_dense())
 
     assert op.to_sparse().shape == op_l.to_sparse().shape
+
+
+def test_pauli_simple_constructor():
+    operator = "XX"
+    weight = 0.3
+
+    op1 = nk.operator.PauliStrings(operator, weight)
+    op2 = nk.operator.PauliStrings([operator], [weight])
+
+    assert np.allclose(op1.to_dense(), op2.to_dense())
+
+
+def test_pauli_simple_constructor_2():
+    operators = ["XX", "YZ", "IZ"]
+    weight = 0.3
+
+    op1 = nk.operator.PauliStrings(operators, weight)
+    op2 = nk.operator.PauliStrings(operators, [weight for _ in operators])
+
+    assert np.allclose(op1.to_dense(), op2.to_dense())
 
 
 def test_pauli_trivials():
@@ -503,6 +532,12 @@ def test_pauli_zero():
     all_states = op.hilbert.all_states()
     _, mels = op.get_conn_padded(all_states)
     assert np.allclose(mels, 0)
+
+
+def test_ising_int_dtype():
+    H = nk.operator.Ising(nk.hilbert.Spin(0.5, 4), nk.graph.Chain(4), h=1, J=-1)
+    H.to_local_operator()
+    (H @ H).collect()
 
 
 def test_operator_on_subspace():

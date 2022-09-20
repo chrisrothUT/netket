@@ -1,3 +1,7 @@
+# -- Set env variables to correctly detect sphinx in NetKet
+import os
+
+os.environ["NETKET_SPHINX_BUILD"] = "1"
 import netket as nk
 
 # -- Project information -----------------------------------------------------
@@ -79,6 +83,7 @@ myst_update_mathjax = False
 mathjax_path = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
 
 myst_heading_anchors = 2
+autosectionlabel_maxdepth = 1
 
 main_website_base_url = "https://www.netket.org"
 
@@ -101,7 +106,7 @@ html_favicon = "assets/static/favicon.ico"
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3/", None),
     "numpy": ("https://numpy.org/doc/stable/", None),
-    "scipy": ("https://docs.scipy.org/doc/scipy-1.8.0/html-scipyorg", None),
+    "scipy": ("https://docs.scipy.org/doc/scipy/", None),
     "jax": ("https://jax.readthedocs.io/en/latest/", None),
     "flax": ("https://flax.readthedocs.io/en/latest/", None),
     "igraph": ("https://igraph.org/python/api/latest", None),
@@ -156,7 +161,7 @@ html_context = {
         ),
         (
             '<i class="fab fa-slack" aria-hidden="true"></i>',
-            "https://join.slack.com/t/mlquantum/shared_invite/zt-13nohbtt3-nWgz~faxWXjVnu0BCHWM7w",
+            "https://join.slack.com/t/mlquantum/shared_invite/zt-19wibmfdv-LLRI6i43wrLev6oQX0OfOw",
             True,
         ),
     ],
@@ -168,8 +173,8 @@ html_context = {
 }
 
 # -- Options for myst ----------------------------------------------
-jupyter_execute_notebooks = "off"
-execution_allow_errors = False
+nb_execution_mode = "off"
+nb_execution_allow_errors = False
 
 # do not show __init__ if it does not have a docstring
 def autodoc_skip_member(app, what, name, obj, skip, options):
@@ -204,7 +209,7 @@ import inspect
 def process_module_names(module, modname="", inner=0):
     """
     This function goes through everything that is exported through __all__ in every
-    module, recursively, and if it hits classes or functions it chagnes their __module__
+    module, recursively, and if it hits classes or functions it changes their __module__
     so that it reflects the one we want printed in the docs (instead of the actual one).
 
     This fixes the fact that for example netket.graph.Lattice is actually

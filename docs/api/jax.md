@@ -49,7 +49,6 @@ This part of the API is not public, and can change without notice.
   :nosignatures:
 
   dtype_complex
-  is_complex
   is_complex_dtype
   maybe_promote_to_complex
 
@@ -75,8 +74,9 @@ This part of the API is not public, and can change without notice.
 
   chunk
   unchunk
-  vjp_chunked
+  apply_chunked
   vmap_chunked
+  vjp_chunked
 ```
 
 

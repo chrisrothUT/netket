@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from dataclasses import dataclass
-from typing import Union
+from typing import Optional, Union
 
 import numpy as np
 
@@ -27,7 +27,7 @@ class EarlyStopping:
     """Minimum change in the monitored quantity to qualify as an improvement."""
     patience: Union[int, float] = 0
     """Number of epochs with no improvement after which training will be stopped."""
-    baseline: float = None
+    baseline: Optional[float] = None
     """Baseline value for the monitored quantity. Training will stop if the driver hits the baseline."""
     monitor: str = "mean"
     """Loss statistic to monitor. Should be one of 'mean', 'variance', 'sigma'."""
@@ -49,7 +49,7 @@ class EarlyStopping:
             A boolean. If True, training continues, else, it does not.
         """
         loss = np.real(getattr(log_data[driver._loss_name], self.monitor))
-        if loss <= self._best_val:
+        if loss < self._best_val:
             self._best_val = loss
             self._best_iter = step
         if self.baseline is not None:
@@ -57,7 +57,7 @@ class EarlyStopping:
                 return False
         if (
             step - self._best_iter >= self.patience
-            and loss > self._best_val - self.min_delta
+            and loss >= self._best_val - self.min_delta
         ):
             return False
         else:

@@ -1,5 +1,3 @@
-(api-experimental)=
-
 # Experimental API
 
 ```{eval-rst}
@@ -9,7 +7,7 @@
 In this page we present some experimental interfaces of NetKet.
 Those are not guaranteed to be API-stable, and might change without notice (other than the
 changelog) among minor releases.
-The {ref}`netket.experimental` modules mirrors the standard {ref}`netket` module structure,
+The [netket.experimental](api-experimental) module mirrors the standard {ref}`netket <netket_api>` module structure,
 and we suggest to use it as follows:
 
 ```python
@@ -18,18 +16,17 @@ import netket.experimental as nkx
 ```
 
 (experimental-sampler-api)=
-
 ## Samplers
 
 This module contains the Metropolis Parallel Tempered sampler.
 This sampler is experimental because we believe it to be correct, but our tests
 fail. We believe it to be a false negative: possibly the implementation of the
 sampler is correct, but the test is too tight.
-Until we will have verified this hypotesis and updated the tests in order not
+Until we will have verified this hypothesis and updated the tests in order not
 to fail, we provide the current implementation as-is, in the hope that some
 contributor might take up that work.
 
-The other experimental sampler is MetropolisSamplerPmap, which makes use of {ref}`jax.pmap`
+The other experimental sampler is MetropolisSamplerPmap, which makes use of {func}`jax.pmap`
 to use different GPUs/CPUs without having to use MPI. It should scale much better over
 several CPUs, but you have to start jax with a specific environment variable.
 
@@ -39,19 +36,38 @@ several CPUs, but you have to start jax with a specific environment variable.
    :template: class
    :nosignatures:
 
-   netket.experimental.sampler.MetropolisPtSampler
-   netket.experimental.sampler.MetropolisLocalPt
-   netket.experimental.sampler.MetropolisExchangePt
+   sampler.MetropolisPtSampler
+   sampler.MetropolisLocalPt
+   sampler.MetropolisExchangePt
 
-   netket.experimental.sampler.MetropolisSamplerPmap
+   sampler.MetropolisSamplerPmap
+```
+
+(experimental-logging-api)=
+## Logging
+
+```{eval-rst}
+.. currentmodule:: netket.experimental
+
+```
+
+This module contains experimental loggers that can be used with the optimization drivers.
+
+
+```{eval-rst}
+.. autosummary::
+   :toctree: _generated/experimental/logging
+   :nosignatures:
+
+   logging.HDF5Log
+
 ```
 
 (experimental-variational-api)=
-
 ## Variational State Interface
 
 ```{eval-rst}
-.. currentmodule:: netket
+.. currentmodule:: netket.experimental
 ```
 
 ```{eval-rst}
@@ -59,15 +75,27 @@ several CPUs, but you have to start jax with a specific environment variable.
   :toctree: _generated/experimental/variational
   :nosignatures:
 
-  netket.experimental.vqs.variables_from_file
-  netket.experimental.vqs.variables_from_tar
+  vqs.variables_from_file
+  vqs.variables_from_tar
 
 ```
 
 ## Time Evolution Driver
 
+````{admonition} Apple ARM (M1) processors 
+:class: warning
+
+Those drivers are automatically jitted with `jax.jit`. To disable jitting set 
+```python
+netket.config.netket_disable_ode_jit = True
+```
+or set the equivalent environment variable.
+
+````
+
+
 ```{eval-rst}
-.. currentmodule:: netket
+.. currentmodule:: netket.experimental
 ```
 
 ```{eval-rst}
@@ -75,17 +103,27 @@ several CPUs, but you have to start jax with a specific environment variable.
   :toctree: _generated/experimental/dynamics
   :nosignatures:
 
-  netket.experimental.driver.TDVP
+  TDVP
 
 ```
 
 ## ODE Integrators
 
-This is a collection of ODE integrators that can be used with the TDVP
-driver above.
+This is a collection of ODE integrators that can be used with the TDVP driver above.
+
+````{admonition} Apple ARM (M1) processors 
+:class: warning
+
+Those drivers are automatically jitted with `jax.jit`. To disable jitting set 
+```python
+netket.config.netket_disable_ode_jit = True
+```
+or set the equivalent environment variable.
+
+````
 
 ```{eval-rst}
-.. currentmodule:: netket
+.. currentmodule:: netket.experimental
 ```
 
 ```{eval-rst}
@@ -93,13 +131,13 @@ driver above.
    :toctree: _generated/experimental/dynamics
    :nosignatures:
 
-   netket.experimental.dynamics.Euler
-   netket.experimental.dynamics.Heun
-   netket.experimental.dynamics.Midpoint
-   netket.experimental.dynamics.RK12
-   netket.experimental.dynamics.RK23
-   netket.experimental.dynamics.RK4
-   netket.experimental.dynamics.RK45
+   dynamics.Euler
+   dynamics.Heun
+   dynamics.Midpoint
+   dynamics.RK12
+   dynamics.RK23
+   dynamics.RK4
+   dynamics.RK45
 ```
 
 ## Fermions
@@ -108,7 +146,7 @@ This modules contains hilbert space and operator implementations of fermions in 
 It is experimental until it has been thoroughly tested by the community, meaning feedback is welcome.
 
 ```{eval-rst}
-.. currentmodule:: netket
+.. currentmodule:: netket.experimental
 ```
 
 ```{eval-rst}
@@ -117,7 +155,7 @@ It is experimental until it has been thoroughly tested by the community, meaning
    :template: class
    :nosignatures:
 
-   netket.experimental.hilbert.SpinOrbitalFermions
+   hilbert.SpinOrbitalFermions
 ```
 
 ```{eval-rst}
@@ -126,8 +164,8 @@ It is experimental until it has been thoroughly tested by the community, meaning
    :template: class
    :nosignatures:
 
-   netket.experimental.operator.FermionOperator2nd
-   netket.experimental.operator.fermion.create
-   netket.experimental.operator.fermion.destroy
-   netket.experimental.operator.fermion.number
+   operator.FermionOperator2nd
+   operator.fermion.create
+   operator.fermion.destroy
+   operator.fermion.number
 ```

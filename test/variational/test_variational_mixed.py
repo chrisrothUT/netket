@@ -243,6 +243,8 @@ def test_deprecations(vstate):
 def test_serialization(vstate):
     from flax import serialization
 
+    vstate.chunk_size = 12345
+
     bdata = serialization.to_bytes(vstate)
 
     vstate_new = nk.vqs.MCMixedState(
@@ -251,15 +253,20 @@ def test_serialization(vstate):
 
     vstate_new = serialization.from_bytes(vstate_new, bdata)
 
-    jax.tree_multimap(
-        np.testing.assert_allclose, vstate.parameters, vstate_new.parameters
-    )
+    jax.tree_map(np.testing.assert_allclose, vstate.parameters, vstate_new.parameters)
     np.testing.assert_allclose(vstate.samples, vstate_new.samples)
     np.testing.assert_allclose(vstate.diagonal.samples, vstate_new.diagonal.samples)
     assert vstate.n_samples == vstate_new.n_samples
     assert vstate.n_discard_per_chain == vstate_new.n_discard_per_chain
     assert vstate.n_samples_diag == vstate_new.n_samples_diag
     assert vstate.n_discard_per_chain_diag == vstate_new.n_discard_per_chain_diag
+    assert vstate.chunk_size == vstate_new.chunk_size
+
+    old_samples = vstate.samples
+    bdata = serialization.to_bytes(vstate)
+    vstate_new = serialization.from_bytes(vstate_new, bdata)
+
+    np.testing.assert_allclose(old_samples, vstate_new.samples)
 
 
 @common.skipif_mpi
@@ -303,7 +310,7 @@ def test_expect_chunking(vstate, operator, n_chunks):
     vstate.diagonal.chunk_size = chunk_size_diag
     eval_chunk = vstate.expect(operator)
 
-    jax.tree_multimap(
+    jax.tree_map(
         partial(np.testing.assert_allclose, atol=1e-13), eval_nochunk, eval_chunk
     )
 
@@ -324,7 +331,7 @@ def test_expect_grad_chunking(vstate, n_chunks):
     vstate.diagonal.chunk_size = chunk_size_diag
     grad_chunk = vstate.grad(operator)
 
-    jax.tree_multimap(
+    jax.tree_map(
         partial(np.testing.assert_allclose, atol=1e-13), grad_nochunk, grad_chunk
     )
 
@@ -366,6 +373,25 @@ def check_consistent_diag(vstate):
     )
 
 
+def _skip_expect_exact_hotfix(vstate, operator):
+    """
+    Skip one specific test which regularly crashes (only) on CI
+    when Python 3.7 is used.
+    TODO: Remove this once the crash is actually fixed.
+    """
+    import os
+    import sys
+
+    info = sys.version_info
+    is_python_37 = info.major == 3 and info.minor == 7
+
+    is_crashing_test = operator is LdagL and type(vstate.model).__name__ == "NDM"
+
+    is_ci = common._is_true(os.environ.get("CI", False))
+
+    return is_ci and is_python_37 and is_crashing_test
+
+
 @common.skipif_mpi
 @pytest.mark.parametrize(
     "operator",
@@ -378,6 +404,9 @@ def check_consistent_diag(vstate):
     ],
 )
 def test_expect_exact(vstate, operator):
+    if _skip_expect_exact_hotfix(vstate, operator):
+        pytest.skip("Test crashes on CI with Python 3.7")
+
     # Use lots of samples
     vstate.n_samples = 5 * 1e5
     vstate.n_discard_per_chain = 1e3

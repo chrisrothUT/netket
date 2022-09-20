@@ -86,7 +86,7 @@ class VMC(AbstractVariationalDriver):
                 warn_deprecation(
                     (
                         "The `sr` keyword argument is deprecated in favour of `preconditioner`."
-                        "Please update your code to `VMC(.., precondioner=your_sr)`"
+                        "Please update your code to `VMC(.., preconditioner=your_sr)`"
                     )
                 )
         if sr_restart is not None:
@@ -98,7 +98,7 @@ class VMC(AbstractVariationalDriver):
                 preconditioner.solver_restart = sr_restart
                 warn_deprecation(
                     (
-                        "The `sr_restart` keyword argument is deprecated in favour of specifiying "
+                        "The `sr_restart` keyword argument is deprecated in favour of specifying "
                         "`solver_restart` in the constructor of the SR object."
                         "Please update your code to `VMC(.., preconditioner=nk.optimizer.SR(..., solver_restart=True/False))`"
                     )
@@ -136,7 +136,7 @@ class VMC(AbstractVariationalDriver):
         self._dp = self.preconditioner(self.state, self._loss_grad)
 
         # If parameters are real, then take only real part of the gradient (if it's complex)
-        self._dp = jax.tree_multimap(
+        self._dp = jax.tree_map(
             lambda x, target: (x if jnp.iscomplexobj(target) else x.real),
             self._dp,
             self.state.parameters,

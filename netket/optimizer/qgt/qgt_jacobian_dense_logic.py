@@ -14,10 +14,12 @@
 
 from typing import Callable, Optional, Tuple
 from functools import partial, wraps
+import math
 
-import numpy as np
 import jax
 from jax import numpy as jnp
+
+import numpy as np
 
 from netket.stats import subtract_mean
 from netket.utils.types import PyTree, Array
@@ -28,52 +30,7 @@ from .qgt_jacobian_pytree_logic import (
     single_sample,
 )
 
-
-# Utilities for splitting real and imaginary part
-def _to_re(x):
-    if jnp.iscomplexobj(x):
-        return x.real
-        # TODO find a way to make it a nop?
-        # return jax.vmap(lambda y: jnp.array((y.real, y.imag)))(x)
-    else:
-        return x
-
-
-def _to_im(x):
-    if jnp.iscomplexobj(x):
-        return x.imag
-        # TODO find a way to make it a nop?
-        # return jax.vmap(lambda y: jnp.array((y.real, y.imag)))(x)
-    else:
-        return None
-
-
-def _tree_to_reim(x):
-    return (jax.tree_map(_to_re, x), jax.tree_map(_to_im, x))
-
-
-def _tree_reassemble_complex(x, target, fun=_tree_to_reim):
-    (res,) = jax.linear_transpose(fun, target)(x)
-    return nkjax.tree_conj(res)
-
-
-# This function differs from tree_to_real because once ravelled
-# the real parts are all contiguous and then stacked on top of
-# the complex parts.
-def tree_to_reim(pytree: PyTree) -> Tuple[PyTree, Callable]:
-    """Replace the PyTree with a tuple of PyTrees with the same
-    structure but containing only the real and imaginary part
-    of the leaves. Real leaves are not duplicated.
-
-    Args:
-      pytree: a pytree to convert to real
-
-    Returns:
-      A pair where the first element is the tuple of pytrees,
-      and the second element is a callable for converting back the tuple of
-      pytrees to a complex pytree of the same structure as the input pytree.
-    """
-    return _tree_to_reim(pytree), partial(_tree_reassemble_complex, target=pytree)
+from netket.jax.utils import RealImagTuple
 
 
 def vec_to_real(vec: Array) -> Tuple[Array, Callable]:
@@ -88,24 +45,21 @@ def vec_to_real(vec: Array) -> Tuple[Array, Callable]:
     Args:
         vec: a dense vector
     """
-    out, reassemble = nkjax.tree_to_real(vec)
-
-    if nkjax.is_complex(vec):
-        re, im = out
-
-        out = jnp.concatenate([re, im], axis=0)
+    if jnp.iscomplexobj(vec):
+        out, reassemble = nkjax.tree_to_real(vec)
+        out = jnp.concatenate([out.real, out.imag], axis=0)
 
         def reassemble_concat(x):
-            x = tuple(jnp.split(x, 2, axis=0))
+            x = RealImagTuple(jnp.split(x, 2, axis=0))
             return reassemble(x)
 
+        return out, reassemble_concat
+
     else:
-        reassemble_concat = reassemble
-
-    return out, reassemble_concat
+        return vec, lambda x: x
 
 
-#  TODO thos 3 functions are the same as those in qgt_jac_pytree_logic.py
+# TODO those 3 functions are the same as those in qgt_jac_pytree_logic.py
 # but without the vmap.
 # we should cleanup and de-duplicate the code.
 
@@ -122,13 +76,13 @@ def jacobian_real_holo(forward_fn: Callable, params: PyTree, σ: Array) -> PyTre
     Returns:
         The Jacobian matrix ∂/∂pₖ ln Ψ(σⱼ) as a PyTree
     """
-    y, vjp_fun = jax.vjp(single_sample(forward_fn), params, σ)
-    res, _ = vjp_fun(np.array(1.0, dtype=jnp.result_type(y)))
+    y, vjp_fun = jax.vjp(lambda pars: single_sample(forward_fn)(pars, σ), params)
+    (res,) = vjp_fun(np.array(1.0, dtype=jnp.result_type(y)))
     return res
 
 
 def _jacobian_cplx(
-    forward_fn: Callable, params: PyTree, samples: Array, _build_fn: Callable
+    forward_fn: Callable, params: PyTree, σ: Array, _build_fn: Callable
 ) -> PyTree:
     """Calculates one Jacobian entry.
     Assumes the function is R→C, backpropagates 1 and -1j
@@ -141,15 +95,15 @@ def _jacobian_cplx(
     Returns:
         The Jacobian matrix ∂/∂pₖ ln Ψ(σⱼ) as a PyTree
     """
-    y, vjp_fun = jax.vjp(single_sample(forward_fn), params, samples)
-    gr, _ = vjp_fun(np.array(1.0, dtype=jnp.result_type(y)))
-    gi, _ = vjp_fun(np.array(-1.0j, dtype=jnp.result_type(y)))
+    y, vjp_fun = jax.vjp(lambda pars: single_sample(forward_fn)(pars, σ), params)
+    (gr,) = vjp_fun(np.array(1.0, dtype=jnp.result_type(y)))
+    (gi,) = vjp_fun(np.array(-1.0j, dtype=jnp.result_type(y)))
     return _build_fn(gr, gi)
 
 
 @partial(wraps(_jacobian_cplx))
 def jacobian_cplx(
-    forward_fn, params, samples, _build_fn=partial(jax.tree_multimap, jax.lax.complex)
+    forward_fn, params, samples, _build_fn=partial(jax.tree_map, jax.lax.complex)
 ):
     return _jacobian_cplx(forward_fn, params, samples, _build_fn)
 
@@ -229,7 +183,7 @@ def prepare_centered_oks(
         model_state: untrained state parameters of the model
         mode: differentiation mode, must be one of 'real', 'complex', 'holomorphic'
         rescale_shift: whether scale-invariant regularisation should be used (default: True)
-        chunk_size: an int specfying the size of the chunks degradient should be computed in (default: None)
+        chunk_size: an int specifying the size of the chunks the gradient should be computed in (default: None)
 
     Returns:
         if not rescale_shift:
@@ -270,7 +224,7 @@ def prepare_centered_oks(
     # Stored as contiguous real stacked on top of contiguous imaginary (SOA)
     if split_complex_params:
         # doesn't do anything if the params are already real
-        params, reassemble = tree_to_reim(params)
+        params, reassemble = nkjax.tree_to_real(params)
 
         def f(W, σ):
             return forward_fn(reassemble(W), σ)
@@ -282,13 +236,19 @@ def prepare_centered_oks(
         gradf_dense = jacobian_fun(f, params, σ)
         return gradf_dense
 
+    # jacobians has shape:
+    # - (n_samples, 2, n_pars) if mode complex, holding the real and imaginary jacobian
+    # - (n_samples, n_pars) if mode real/holomorphic
     jacobians = nkjax.vmap_chunked(gradf_fun, in_axes=(None, 0), chunk_size=chunk_size)(
         params, samples
     )
 
     n_samp = samples.shape[0] * mpi.n_nodes
-    centered_oks = subtract_mean(jacobians, axis=0) / np.sqrt(n_samp)
+    centered_oks = subtract_mean(jacobians, axis=0) / math.sqrt(
+        n_samp
+    )  # maintain weak type!
 
+    # here the jacobian is reshaped and the real/complex part are concatenated.
     centered_oks = centered_oks.reshape(-1, centered_oks.shape[-1])
 
     if rescale_shift:

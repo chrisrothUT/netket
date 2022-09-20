@@ -1,4 +1,4 @@
-(api)=
+(netket_api)=
 
 # Public API
 
@@ -21,6 +21,7 @@ hilbert
 operator
 exact
 sampler
+stats
 models
 nn
 jax

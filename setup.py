@@ -4,27 +4,28 @@ DEV_DEPENDENCIES = [
     "pytest>=6",
     "pytest-xdist[psutil]>=2",
     "pytest-cov>=2.10.1",
+    "pytest-json-report>=1.3",
     "coverage>=5",
     "networkx~=2.4",
     "pre-commit>=2.7",
-    "black==22.1.0",
-    "flake8==4.0.1",
+    "black==22.3.0",
+    "flake8==5.0.4",
 ]
 MPI_DEPENDENCIES = ["mpi4py>=3.0.1, <4", "mpi4jax~=0.3.1"]
-EXTRA_DEPENDENCIES = ["tensorboardx>=2.0.0", "openfermion>=1.0.0"]
+EXTRA_DEPENDENCIES = ["tensorboardx>=2.0.0", "openfermion>=1.0.0", "h5py>=3.7.0"]
 BASE_DEPENDENCIES = [
-    "numpy~=1.18",
+    "numpy~=1.19",
     "scipy>=1.5.3, <2",
     "tqdm~=4.60",
-    "plum-dispatch~=1.5.1",
-    "numba>=0.52, <0.56",
-    "igraph~=0.9.8",
-    "jax>=0.2.23, <0.4",
-    "jaxlib>=0.1.69",
-    "flax>=0.3.5, <0.5",
+    "plum-dispatch>=1.5.1,<2",
+    "numba>=0.52, <0.57",
+    "igraph>=0.9.8,<0.11.0",
+    "jax>=0.3.2, <0.4",
+    "jaxlib>=0.3, <0.4",
+    "flax>=0.5, <0.7",
     "orjson~=3.4",
     "optax>=0.1.1, <0.2",
-    "numba4jax>=0.0.3, <0.1",
+    "numba4jax>=0.0.10, <0.1",
 ]
 
 setup(
@@ -47,7 +48,7 @@ setup(
         "Operating System :: Unix",
         "Topic :: Scientific/Engineering :: Physics",
     ],
-    packages=find_packages(),
+    packages=find_packages(include=["netket*"]),
     install_requires=BASE_DEPENDENCIES,
     python_requires=">=3.7",
     extras_require={

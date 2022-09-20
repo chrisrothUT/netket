@@ -52,37 +52,57 @@ from netket.jax import HashablePartial
 
 
 def reim(f):
-    r"""Modifies a non-linearity to act seperately on the real and imaginary parts"""
+    r"""Modifies a non-linearity to act separately on the real and imaginary parts"""
 
-    def reim_activation(f, x):
+    @wraps(f)
+    def reim_f(f, x):
         sqrt2 = jnp.sqrt(jnp.array(2, dtype=x.real.dtype))
         if jnp.iscomplexobj(x):
             return jax.lax.complex(f(sqrt2 * x.real), f(sqrt2 * x.imag)) / sqrt2
         else:
             return f(x)
 
-    return HashablePartial(reim_activation, f)
+    fun = HashablePartial(reim_f, f)
+
+    fun.__name__ = f"reim_{f.__name__}"
+    fun.__doc__ = (
+        f"{f.__name__} applied separately to the real and"
+        f"imaginary parts of it's input.\n\n"
+        f"The docstring to the original function follows.\n\n"
+        f"{f.__doc__}"
+    )
+
+    return fun
 
 
 def log_cosh(x):
+    """
+    Logarithm of the hyperbolic cosine, implemented in a more stable way.
+    """
     sgn_x = -2 * jnp.signbit(x.real) + 1
     x = x * sgn_x
     return x + jnp.log1p(jnp.exp(-2.0 * x)) - jnp.log(2.0)
 
 
 def log_sinh(x):
+    """
+    Logarithm of the hyperbolic sine.
+    """
     return jax.numpy.log(jax.numpy.sinh(x))
 
 
 def log_tanh(x):
+    """
+    Logarithm of the hyperbolic tangent.
+    """
     return jax.numpy.log(jax.numpy.tanh(x))
 
 
 reim_selu = reim(selu)
-r"""Returns the selu non-linearity, applied seperately to the real and imaginary parts"""
+r"""Returns the selu non-linearity, applied separately to the real and imaginary parts"""
 
 reim_relu = reim(relu)
-r"""Returns the relu non-linearity, applied seperately to the real and imaginary parts"""
+r"""Returns the relu non-linearity, applied separately to the real and imaginary parts"""
 
 
 # TODO: DEPRECATION 3.1

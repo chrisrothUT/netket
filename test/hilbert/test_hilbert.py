@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import itertools
+from functools import partial
 import netket as nk
 import numpy as np
 import pytest
@@ -117,12 +118,16 @@ hilberts["SpinOrbitalFermions (n_fermions)"] = nkx.hilbert.SpinOrbitalFermions(
 hilberts["SpinOrbitalFermions (n_fermions=list)"] = nkx.hilbert.SpinOrbitalFermions(
     5, s=1 / 2, n_fermions=(2, 3)
 )
+hilberts["SpinOrbitalFermions (polarized)"] = nkx.hilbert.SpinOrbitalFermions(
+    5, s=1 / 2, n_fermions=(2, 0)
+)
 
 # Continuous space
 # no pbc
 hilberts["ContinuousSpaceHilbert"] = nk.hilbert.Particle(
     N=5, L=(np.inf, 10.0), pbc=(False, True)
 )
+
 
 all_hilbert_params = [pytest.param(hi, id=name) for name, hi in hilberts.items()]
 discrete_hilbert_params = [
@@ -158,6 +163,7 @@ def test_consistent_size_homogeneous(hi: HomogeneousHilbert):
 def test_consistent_size_particle(hi: Particle):
     assert hi.size > 0
     assert hi.n_particles > 0
+    assert hi.n_particles == sum(hi.n_per_spin)
     assert len(hi.extent) == (hi.size // hi.n_particles)
 
 
@@ -212,6 +218,11 @@ def test_random_states_particle(hi: Particle):
     assert jnp.sum(
         jnp.where(jnp.equal(boundary, True), state < extension, 0)
     ) == jnp.sum(jnp.where(jnp.equal(boundary, True), 1, 0))
+
+
+def test_particle_fail():
+    with pytest.raises(ValueError):
+        _ = Particle(N=5, L=(jnp.inf, 2.0), pbc=True)
 
 
 @pytest.mark.parametrize("hi", discrete_hilbert_params)
@@ -317,6 +328,26 @@ def test_hilbert_index_discrete(hi: DiscreteHilbert):
         op.to_dense()
     with pytest.raises(RuntimeError):
         op.to_sparse()
+
+
+@partial(jax.jit, static_argnums=0)
+def _states_to_local_indices_jit(hilb, x):
+    return hilb.states_to_local_indices(x)
+
+
+@pytest.mark.parametrize("hi", discrete_hilbert_params)
+def test_states_to_local_indices(hi):
+
+    x = hi.random_state(jax.random.PRNGKey(3), (200))
+    idxs = hi.states_to_local_indices(x)
+    idxs_jit = _states_to_local_indices_jit(hi, x)
+
+    np.testing.assert_allclose(idxs, idxs_jit)
+
+    # check that the index is correct
+    for s in range(hi.size):
+        local_states = np.asarray(hi.states_at_index(s))
+        np.testing.assert_allclose(local_states[idxs[..., s]], x[..., s])
 
 
 def test_state_iteration():
@@ -454,3 +485,37 @@ def test_fermions_get_index():
     assert hi._get_index(0, +0.5) == 3
     # first block (-0.5) and second site (1) --> idx = 1 + n_orbital
     assert hi._get_index(1, +0.5) == 4
+
+
+def test_no_particles():
+    hi = Fock(n_max=3, n_particles=0, N=4)
+    states = hi.all_states()
+    assert states.shape[0] == 1
+    assert np.allclose(states, 0.0)
+
+    # same for fermions
+    hi = nkx.hilbert.SpinOrbitalFermions(2, s=1 / 2, n_fermions=(0, 0))
+    states = hi.all_states()
+    assert states.shape[0] == 1
+    assert np.allclose(states, 0.0)
+
+    with pytest.raises(ValueError):
+        # also test negative particles
+        _ = Fock(n_max=3, n_particles=-1, N=4)
+
+
+def test_tensor_no_recursion():
+    # Issue https://github.com/netket/netket/issues/1101
+    hi = nk.hilbert.Fock(3) * nk.hilbert.Spin(0.5, 2, total_sz=0.0)
+    assert isinstance(hi, nk.hilbert.TensorHilbert)
+
+
+def test_tensor_combination():
+    hi1 = Spin(s=1 / 2, N=2) * Spin(s=1, N=2) * Fock(n_max=3, N=1)
+    hi2 = Fock(n_max=3, N=1) * Spin(s=1, N=2) * Spin(s=1 / 2, N=2)
+    hit = hi1 * hi2
+    assert isinstance(hit, nk.hilbert.TensorHilbert)
+    assert np.allclose(hit.shape, np.hstack([hi1.shape, hi2.shape]))
+    assert hit.n_states == hi1.n_states * hi2.n_states
+    assert len(hit._hilbert_spaces) == 5
+    repr(hit)

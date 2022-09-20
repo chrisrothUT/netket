@@ -16,7 +16,7 @@ Optimizers in NetKet are simple wrappers of [optax](https://github.com/deepmind/
 optimizers. If you want to write a custom optimizer or use more advanced ones, we suggest
 you have a look at optax documentation.
 
-Check it out for up-to-date informations on available optimisers.
+Check it out for up-to-date information on available optimisers.
 
 :::{warning}
 Even if optimisers in `netket.optimizer` are optax optimisers, they have slightly different
@@ -42,7 +42,7 @@ optimisers, and it's extremely easy to use step-dependent schedulers.
 
 ## Preconditioners
 
-This module also provides an implemnetation of the Stochastic Reconfiguration/Natural
+This module also provides an implementation of the Stochastic Reconfiguration/Natural
 gradient preconditioner.
 
 ```{eval-rst}

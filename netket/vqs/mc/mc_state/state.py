@@ -27,7 +27,7 @@ from flax import serialization
 from netket import jax as nkjax
 from netket import nn
 from netket.stats import Stats
-from netket.operator import AbstractOperator
+from netket.operator import AbstractOperator, Squared
 from netket.sampler import Sampler, SamplerState
 from netket.utils import (
     maybe_wrap_module,
@@ -41,7 +41,8 @@ from netket.utils.types import PyTree, SeedT, NNInitFunc
 from netket.optimizer import LinearOperator
 from netket.optimizer.qgt import QGTAuto
 
-from netket.vqs.base import VariationalState, expect, expect_and_grad
+from netket.vqs.base import VariationalState, expect, expect_and_grad, expect_and_forces
+from netket.vqs.mc import get_local_kernel, get_local_kernel_arguments
 
 
 def compute_chain_length(n_chains, n_samples):
@@ -108,6 +109,12 @@ class MCState(VariationalState):
     """The sampler used to sample the Hilbert space."""
     sampler_state: SamplerState
     """The current state of the sampler."""
+    _previous_sampler_state: SamplerState = None
+    """The sampler state before the last sampling has been effected.
+
+    This field is used so that we don't need to serialize the current samples
+    but we can always regenerate them.
+    """
 
     _chain_length: int = 0
     """Length of the Markov chain used for sampling configurations."""
@@ -157,17 +164,17 @@ class MCState(VariationalState):
             parameters: Optional PyTree of weights from which to start.
             seed: rng seed used to generate a set of parameters (only if parameters is not passed). Defaults to a random one.
             sampler_seed: rng seed used to initialise the sampler. Defaults to a random one.
-            mutable: Dict specifing mutable arguments. Use it to specify if the model has a state that can change
+            mutable: Dict specifying mutable arguments. Use it to specify if the model has a state that can change
                 during evaluation, but that should not be optimised. See also flax.linen.module.apply documentation
                 (default=False)
             init_fun: Function of the signature f(model, shape, rng_key, dtype) -> Optional_state, parameters used to
                 initialise the parameters. Defaults to the standard flax initialiser. Only specify if your network has
                 a non-standard init method.
             variables: Optional initial value for the variables (parameters and model state) of the model.
-            apply_fun: Function of the signature f(model, variables, σ) that should evaluate the model. Defafults to
+            apply_fun: Function of the signature f(model, variables, σ) that should evaluate the model. Defaults to
                 `model.apply(variables, σ)`. specify only if your network has a non-standard apply method.
             sample_fun: Optional function used to sample the state, if it is not the same as `apply_fun`.
-            training_kwargs: a dict containing the optionaal keyword arguments to be passed to the apply_fun during training.
+            training_kwargs: a dict containing the optional keyword arguments to be passed to the apply_fun during training.
                 Useful for example when you have a batchnorm layer that constructs the average/mean only during training.
             n_discard: DEPRECATED. Please use `n_discard_per_chain` which has the same behaviour.
         """
@@ -315,6 +322,7 @@ class MCState(VariationalState):
         self.sampler_state = self.sampler.init_state(
             self.model, self.variables, seed=self._sampler_seed
         )
+        self._sampler_state_previous = self.sampler_state
 
         # Update `n_samples`, `n_samples_per_rank`, and `chain_length` according
         # to the new `sampler.n_chains`.
@@ -479,8 +487,8 @@ class MCState(VariationalState):
         """
         Sample a certain number of configurations.
 
-        If one among chain_leength or n_samples is defined, that number of samples
-        are gen erated. Otherwise the value set internally is used.
+        If one among chain_length or n_samples is defined, that number of samples
+        are generated. Otherwise the value set internally is used.
 
         Args:
             chain_length: The length of the markov chains.
@@ -499,6 +507,9 @@ class MCState(VariationalState):
 
         if n_discard_per_chain is None:
             n_discard_per_chain = self.n_discard_per_chain
+
+        # Store the previous sampler state, for serialization purposes
+        self._sampler_state_previous = self.sampler_state
 
         self.sampler_state = self.sampler.reset(
             self.model, self.variables, self.sampler_state
@@ -525,11 +536,12 @@ class MCState(VariationalState):
         """
         Returns the set of cached samples.
 
-        The samples returnede are guaranteed valid for the current state of
+        The samples returned are guaranteed valid for the current state of
         the variational state. If no cached parameters are available, then
         they are sampled first and then cached.
 
-        To obtain a new set of samples either use :ref:`reset` or :ref:`sample`.
+        To obtain a new set of samples either use
+        :meth:`~MCState.reset` or :meth:`~MCState.sample`.
         """
         if self._samples is None:
             self.sample()
@@ -548,6 +560,32 @@ class MCState(VariationalState):
         Given a batch of inputs (Nb, N), returns a batch of outputs (Nb,).
         """
         return jit_evaluate(self._apply_fun, self.variables, σ)
+
+    def local_estimators(
+        self, op: AbstractOperator, *, chunk_size: Optional[int] = None
+    ):
+        r"""
+        Compute the local estimators for the operator :code:`op` (also known as local energies
+        when :code:`op` is the Hamiltonian) at the current configuration samples :code:`self.samples`.
+
+        .. math::
+
+            O_\mathrm{loc}(s) = \frac{\langle s | \mathtt{op} | \psi \rangle}{\langle s | \psi \rangle}
+
+        .. warning::
+
+            The samples differ between MPI processes, so returned the local estimators will
+            also take different values on each process. To compute sample averages and similar
+            quantities, you will need to perform explicit operations over all MPI ranks.
+            (Use functions like :code:`self.expect` to get process-independent quantities without
+            manual reductions.)
+
+        Args:
+            op: The operator.
+            chunk_size: Suggested maximum size of the chunks used in forward and backward evaluations
+                of the model. (Default: :code:`self.chunk_size`)
+        """
+        return local_estimators(self, op, chunk_size=chunk_size)
 
     # override to use chunks
     def expect(self, Ô: AbstractOperator) -> Stats:
@@ -571,23 +609,23 @@ class MCState(VariationalState):
         mutable: Optional[Any] = None,
         use_covariance: Optional[bool] = None,
     ) -> Tuple[Stats, PyTree]:
-        r"""Estimates both the gradient of the quantum expectation value of a given operator O.
+        r"""Estimates the quantum expectation value and its gradient for a given operator O.
 
         Args:
-            Ô: the operator Ô for which we compute the expectation value and it's gradient
+            Ô: The operator Ô for which expectation value and gradient are computed.
             mutable: Can be bool, str, or list. Specifies which collections in the model_state should
                      be treated as  mutable: bool: all/no collections are mutable. str: The name of a
                      single mutable  collection. list: A list of names of mutable collections.
                      This is used to mutate the state of the model while you train it (for example
                      to implement BatchNorm. Consult
                      `Flax's Module.apply documentation <https://flax.readthedocs.io/en/latest/_modules/flax/linen/module.html#Module.apply>`_
-                     for a more in-depth exaplanation).
-            use_covariance: whever to use the covariance formula, usually reserved for
+                     for a more in-depth explanation).
+            use_covariance: whether to use the covariance formula, usually reserved for
                 hermitian operators, ⟨∂logψ Oˡᵒᶜ⟩ - ⟨∂logψ⟩⟨Oˡᵒᶜ⟩
 
         Returns:
-            An estimation of the quantum expectation value <O>.
-            An estimation of the average gradient of the quantum expectation value <O>.
+            An estimate of the quantum expectation value <O>.
+            An estimate of the gradient of the quantum expectation value <O>.
         """
         if mutable is None:
             mutable = self.mutable
@@ -595,6 +633,44 @@ class MCState(VariationalState):
         return expect_and_grad(
             self, Ô, use_covariance, self.chunk_size, mutable=mutable
         )
+
+    # override to use chunks
+    def expect_and_forces(
+        self,
+        Ô: AbstractOperator,
+        *,
+        mutable: Optional[Any] = None,
+    ) -> Tuple[Stats, PyTree]:
+        r"""Estimates the quantum expectation value and the corresponding force vector for a given operator O.
+
+        The force vector F_j is defined as the covariance of log-derivative of the trial wave function
+        and the local estimators of the operator. For complex holomorphic states, this is
+        equivalent to the expectation gradient d<O>/d(θ_j)* = F_j. For real-parameter states,
+        the gradient is given by d<O>/dθ_j = 2 Re[F_j].
+
+        Args:
+            Ô: The operator Ô for which expectation value and force are computed.
+            mutable: Can be bool, str, or list. Specifies which collections in the model_state should
+                     be treated as  mutable: bool: all/no collections are mutable. str: The name of a
+                     single mutable  collection. list: A list of names of mutable collections.
+                     This is used to mutate the state of the model while you train it (for example
+                     to implement BatchNorm. Consult
+                     `Flax's Module.apply documentation <https://flax.readthedocs.io/en/latest/_modules/flax/linen/module.html#Module.apply>`_
+                     for a more in-depth explanation).
+
+        Returns:
+            An estimate of the quantum expectation value <O>.
+            An estimate of the forve vector F_j = cov[dlog(ψ)/dx_j, O_loc].
+        """
+        if isinstance(Ô, Squared):
+            raise NotImplementedError(
+                "expect_and_forces not yet implemented for `Squared`"
+            )
+
+        if mutable is None:
+            mutable = self.mutable
+
+        return expect_and_forces(self, Ô, self.chunk_size, mutable=mutable)
 
     @deprecated("Use MCState.log_value(σ) instead.")
     def evaluate(self, σ: jnp.ndarray) -> jnp.ndarray:
@@ -644,13 +720,45 @@ class MCState(VariationalState):
         )
 
 
+@partial(jax.jit, static_argnames=("kernel", "apply_fun", "shape"))
+def _local_estimators_kernel(kernel, apply_fun, shape, variables, samples, extra_args):
+    O_loc = kernel(apply_fun, variables, samples, extra_args)
+
+    # transpose O_loc so it matches the (n_chains, n_samples_per_chain) shape
+    # expected by netket.stats.statistics.
+    return O_loc.reshape(shape).T
+
+
+def local_estimators(
+    state: MCState, op: AbstractOperator, *, chunk_size: Optional[int]
+):
+    s, extra_args = get_local_kernel_arguments(state, op)
+
+    shape = s.shape
+    if jnp.ndim(s) != 2:
+        s = s.reshape((-1, shape[-1]))
+
+    if chunk_size is None:
+        chunk_size = state.chunk_size  # state.chunk_size can still be None
+
+    if chunk_size is None:
+        kernel = get_local_kernel(state, op)
+    else:
+        kernel = get_local_kernel(state, op, chunk_size)
+
+    return _local_estimators_kernel(
+        kernel, state._apply_fun, shape[:-1], state.variables, s, extra_args
+    )
+
+
 # serialization
 def serialize_MCState(vstate):
     state_dict = {
         "variables": serialization.to_state_dict(vstate.variables),
-        "sampler_state": serialization.to_state_dict(vstate.sampler_state),
+        "sampler_state": serialization.to_state_dict(vstate._sampler_state_previous),
         "n_samples": vstate.n_samples,
         "n_discard_per_chain": vstate.n_discard_per_chain,
+        "chunk_size": vstate.chunk_size,
     }
     return state_dict
 
@@ -669,6 +777,7 @@ def deserialize_MCState(vstate, state_dict):
     )
     new_vstate.n_samples = state_dict["n_samples"]
     new_vstate.n_discard_per_chain = state_dict["n_discard_per_chain"]
+    new_vstate.chunk_size = state_dict["chunk_size"]
 
     return new_vstate
 

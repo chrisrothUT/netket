@@ -16,7 +16,6 @@ from netket.utils import HashablePartial
 
 from .utils import (
     tree_ravel,
-    is_complex,
     is_complex_dtype,
     tree_size,
     eval_shape,
@@ -44,7 +43,9 @@ from ._expect import expect
 from ._chunk_utils import chunk, unchunk
 from ._scanmap import scan_reduce, scan_append, scan_append_reduce, scanmap
 from ._vjp_chunked import vjp_chunked
-from ._vmap_chunked import vmap_chunked
+from ._vmap_chunked import apply_chunked, vmap_chunked
+
+from ._math import logsumexp_cplx
 
 from netket.utils import _hide_submodules
 

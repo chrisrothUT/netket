@@ -19,6 +19,7 @@ from pytest import approx, raises, warns
 
 import numpy as np
 import jax
+import jax.numpy as jnp
 import netket as nk
 from jax.nn.initializers import normal
 
@@ -94,7 +95,7 @@ def test_init_parameters(vstate):
     def _f(x, y):
         np.testing.assert_allclose(x, y)
 
-    jax.tree_multimap(_f, pars, pars2)
+    jax.tree_map(_f, pars, pars2)
 
 
 @common.skipif_mpi
@@ -138,7 +139,17 @@ def test_derivatives_agree(machine):
     ha = nk.operator.Ising(hilbert=hi, graph=g, h=1)
     vs = nk.vqs.ExactState(hi, machine)
 
-    _, grads_exact = vs.expect_and_grad(ha)
+    e_expect = vs.expect(ha)
+    assert isinstance(e_expect, nk.stats.Stats)
+    np.testing.assert_almost_equal(e_expect.error_of_mean, 0)
+
+    e, grads_exact = vs.expect_and_grad(ha)
+    assert isinstance(e, nk.stats.Stats)
+    np.testing.assert_almost_equal(e.error_of_mean, 0)
+
+    # check that energies match
+    np.testing.assert_almost_equal(e_expect.mean, e.mean)
+    np.testing.assert_almost_equal(e_expect.variance, e.variance)
 
     # Prepare the exact estimations
     pars_0 = vs.parameters
@@ -175,7 +186,7 @@ def central_diff_grad(func, x, eps, *args, dtype=None):
     for i in range(len(x)):
         assert not np.any(np.isnan(x + epsd))
         grad_r = 0.5 * (func(x + epsd, *args) - func(x - epsd, *args))
-        if nk.jax.is_complex(x):
+        if jnp.iscomplexobj(x):
             grad_i = 0.5 * (func(x + 1j * epsd, *args) - func(x - 1j * epsd, *args))
             grad[i] = 0.5 * grad_r + 0.5j * grad_i
         else:
@@ -216,7 +227,7 @@ def test_TFIM_energy_strictly_decreases(
     log = nk.logging.RuntimeLog()
     gs.run(n_iter=n_iterations, out=log)
 
-    energies = log.data["Energy"]["value"]
+    energies = log.data["Energy"]["Mean"]
 
     for i in range(len(energies) - 1):
         assert energies[i + 1] < energies[i]

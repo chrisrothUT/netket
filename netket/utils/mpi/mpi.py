@@ -24,6 +24,11 @@ _mpi4jax_loaded = False
 mpi4jax_available = False
 
 try:
+    if not config.netket_mpi:  # pragma: no cover
+        # if mpi is disabled, import a package that does not exist
+        # to trigger import error and follow the no-mpi code path
+        import this_package_does_not_exist_zuzzurellone  # noqa: F401
+
     from mpi4py import MPI
 
     _mpi4py_loaded = True
@@ -38,14 +43,6 @@ try:
     n_nodes = MPI_py_comm.Get_size()
     node_number = MPI_py_comm.Get_rank()
     rank = MPI_py_comm.Get_rank()
-
-    import jax
-
-    if not jax.config.omnistaging_enabled:
-        raise RuntimeError(
-            "MPI requires jax omnistaging to be enabled."
-            + "check jax documentation to enable it or uninstall mpi."
-        )
 
     import mpi4jax
 
@@ -67,7 +64,7 @@ except ImportError:
     MPI = FakeMPI()
 
     # Try to detect if we are running under MPI and warn that mpi4py is not installed
-    if config.FLAGS["NETKET_MPI_WARNING"]:
+    if config.netket_mpi_warning:
         _MPI_ENV_VARIABLES = [
             "OMPI_COMM_WORLD_SIZE",
             "I_MPI_HYDRA_HOST_FILE",

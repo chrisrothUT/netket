@@ -111,7 +111,7 @@ def vjp_chunked(
     Returns:
         a function corresponding to the vjp_fun returned by an equivalent ``jax.vjp(fun, *primals)[1]``` call
         which computes the vjp in chunks (recomputing the forward pass every time on subsequent calls).
-        If return_forward=True the vjp_fun returned returns a tuple containg the ouput of the forward pass and the vjp.
+        If return_forward=True the vjp_fun returned returns a tuple containing the output of the forward pass and the vjp.
 
     Example:
         >>> import jax
@@ -163,10 +163,10 @@ def vjp_chunked(
         chunk_size = None
 
     if chunk_size is not None:
-        n_elements = jax.tree_leaves(primals[chunk_argnums[0]])[0].shape[0]
+        n_elements = jax.tree_util.tree_leaves(primals[chunk_argnums[0]])[0].shape[0]
 
         # check that they are all the same size
-        chunk_leaves = jax.tree_leaves([primals[i] for i in chunk_argnums])
+        chunk_leaves = jax.tree_util.tree_leaves([primals[i] for i in chunk_argnums])
         if not all(map(lambda x: x.shape[0] == n_elements, chunk_leaves)):
             raise ValueError(
                 "The chunked arguments have inconsistent leading array dimensions"

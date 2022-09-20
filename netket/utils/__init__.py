@@ -19,6 +19,7 @@ from . import struct
 from . import numbers
 from . import types
 from . import float
+from . import errors
 
 from .array import HashableArray
 from .partial import HashablePartial
@@ -27,7 +28,13 @@ from .optional_deps import tensorboard_available
 from .seed import random_seed
 from .summation import KahanSum
 
-from .deprecation import warn_deprecation, deprecated, deprecated_new_name
+from .deprecation import (
+    warn_deprecation,
+    deprecated,
+    deprecated_new_name,
+    deprecate_dtype,
+    pure_callback,
+)
 from .moduletools import _hide_submodules, rename_class, auto_export as _auto_export
 from .version_check import module_version
 
@@ -41,5 +48,7 @@ from . import mpi
 from . import _dependencies_check
 
 _hide_submodules(
-    __name__, remove_self=False, ignore=["numbers", "types", "float", "dispatch"]
+    __name__,
+    remove_self=False,
+    ignore=["numbers", "types", "float", "dispatch", "errors"],
 )

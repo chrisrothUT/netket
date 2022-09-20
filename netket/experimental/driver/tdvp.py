@@ -15,13 +15,15 @@
 from typing import Callable, Optional, Sequence, Union
 import warnings
 
+from functools import partial
+
 import jax
 import jax.numpy as jnp
-import jax.experimental.host_callback as hcb
 import numpy as np
 from tqdm import tqdm
 
 import netket as nk
+from netket import config
 from netket.driver import AbstractVariationalDriver
 from netket.driver.abstract_variational_driver import _to_iterable
 from netket.driver.vmc_common import info
@@ -30,20 +32,32 @@ from netket.logging.json_log import JsonLog
 from netket.operator import AbstractOperator
 from netket.optimizer import LinearOperator
 from netket.optimizer.qgt import QGTAuto
-from netket.utils import mpi
+from netket.utils import mpi, pure_callback
 from netket.utils.dispatch import dispatch
 from netket.utils.types import PyTree
-from netket.vqs import VariationalState, VariationalMixedState, MCState
+from netket.vqs import VariationalState, VariationalMixedState, MCState, ExactState
 
 from netket.experimental.dynamics import RKIntegratorConfig
-from netket.experimental.dynamics._rk_solver import euclidean_norm, maximum_norm
+from netket.experimental.dynamics._rk_solver_structures import (
+    euclidean_norm,
+    maximum_norm,
+)
 
 
 class TDVP(AbstractVariationalDriver):
     """
     Variational time evolution based on the time-dependent variational principle which,
-    when used with Monte Carlo sampling via :ref:`netket.vqs.MCState`, is the time-dependent VMC
+    when used with Monte Carlo sampling via :class:`netket.vqs.MCState`, is the time-dependent VMC
     (t-VMC) method.
+
+    .. note::
+        This TDVP Driver uses the time-integrators from the `nkx.dynamics` module, which are
+        automatically executed under a `jax.jit` context.
+
+        When running computations on GPU, this can lead to infinite hangs or extremely long
+        compilation times. In those cases, you might try setting the configuration variable
+        :py:`nk.config.netket_experimental_disable_ode_jit = True` to mitigate those issues.
+
     """
 
     def __init__(
@@ -55,7 +69,7 @@ class TDVP(AbstractVariationalDriver):
         t0: float = 0.0,
         propagation_type="real",
         qgt: LinearOperator = None,
-        linear_solver=None,
+        linear_solver=nk.optimizer.solver.svd,
         linear_solver_restart: bool = False,
         error_norm: Union[str, Callable] = "euclidean",
     ):
@@ -69,9 +83,15 @@ class TDVP(AbstractVariationalDriver):
             integrator: Configuration of the algorithm used for solving the ODE.
             t0: Initial time at the start of the time evolution.
             propagation_type: Determines the equation of motion: "real"  for the
-                real-time Schödinger equation (SE), "imag" for the imaginary-time SE.
+                real-time Schrödinger equation (SE), "imag" for the imaginary-time SE.
             qgt: The QGT specification.
             linear_solver: The solver for solving the linear system determining the time evolution.
+                This must be a jax-jittable function :code:`f(A,b) -> x` that accepts a Matrix-like, Linear Operator
+                PyTree object :math:`A` and a vector-like PyTree :math:`b` and returns the PyTree :math:`x` solving
+                the system :math:`Ax=b`.
+                Defaults to :ref:`nk.optimizer.solver.svd` with the default svd threshold of 1e-10.
+                To change the svd threshold you can use :ref:`functools.partial` as follows:
+                :code:`functools.partial(nk.optimizer.solver.svd, rcond=1e-4)`.
             linear_solver_restart: If False (default), the last solution of the linear system
                 is used as initial value in subsequent steps.
             error_norm: Norm function used to calculate the error with adaptive integrators.
@@ -87,8 +107,6 @@ class TDVP(AbstractVariationalDriver):
         """
         self._t0 = t0
 
-        if linear_solver is None:
-            linear_solver = nk.optimizer.solver.svd
         if qgt is None:
             qgt = QGTAuto(solver=linear_solver)
 
@@ -189,15 +207,18 @@ class TDVP(AbstractVariationalDriver):
         elif error_norm == "maximum":
             self._error_norm = maximum_norm
         elif error_norm == "qgt":
-            w = self.state.parameters
-            norm_dtype = nk.jax.dtype_real(nk.jax.tree_dot(w, w))
-            # QGT norm is called via host callback since it accesses the driver
-            # TODO: make this also an hashablepartial on self to reduce recompilation
-            self._error_norm = lambda x: hcb.call(
-                HashablePartial(qgt_norm, self),
-                x,
-                result_shape=jax.ShapeDtypeStruct((), norm_dtype),
-            )
+            if config.netket_experimental_disable_ode_jit:
+                self._error_norm = HashablePartial(qgt_norm, self)
+            else:
+                w = self.state.parameters
+                norm_dtype = nk.jax.dtype_real(nk.jax.tree_dot(w, w))
+                # QGT norm is called via host callback since it accesses the driver
+                # TODO: make this also an hashablepartial on self to reduce recompilation
+                self._error_norm = lambda x: pure_callback(
+                    HashablePartial(qgt_norm, self),
+                    jax.ShapeDtypeStruct((), norm_dtype),
+                    x,
+                )
         else:
             raise ValueError(
                 "error_norm must be a callable or one of 'euclidean', 'qgt', 'maximum',"
@@ -224,7 +245,7 @@ class TDVP(AbstractVariationalDriver):
 
         Args:
             T: Length of the integration interval.
-            tstops: A sequence of stopping times, each within the intervall :code:`[self.t0, self.t0 + T]`,
+            tstops: A sequence of stopping times, each within the interval :code:`[self.t0, self.t0 + T]`,
                 at which this method will stop and yield. By default, a stop is performed
                 after each time step (at potentially varying step size if an adaptive
                 integrator is used).
@@ -305,7 +326,7 @@ class TDVP(AbstractVariationalDriver):
         """
         Runs the time evolution.
 
-        By default uses :ref:`netket.logging.JsonLog`. To know about the output format
+        By default uses :class:`netket.logging.JsonLog`. To know about the output format
         check it's documentation. The logger object is also returned at the end of this function
         so that you can inspect the results without reading the json output.
 
@@ -314,13 +335,13 @@ class TDVP(AbstractVariationalDriver):
             out: A logger object, or an iterable of loggers, to be used to store simulation log and data.
                 If this argument is a string, it will be used as output prefix for the standard JSON logger.
             obs: An iterable containing the observables that should be computed.
-            tstops: A sequence of stopping times, each within the intervall :code:`[self.t0, self.t0 + T]`,
-                at which the driver will stop and perform estimation of observables, logging, and excecute
+            tstops: A sequence of stopping times, each within the interval :code:`[self.t0, self.t0 + T]`,
+                at which the driver will stop and perform estimation of observables, logging, and execute
                 the callback function. By default, a stop is performed after each time step (at potentially
                 varying step size if an adaptive integrator is used).
             show_progress: If true displays a progress bar (default=True)
             callback: Callable or list of callable callback functions to be executed at each
-                stoping time.
+                stopping time.
         """
         if obs is None:
             obs = {}
@@ -362,11 +383,18 @@ class TDVP(AbstractVariationalDriver):
 
                 pbar.n = np.asarray(self._integrator.t)
                 self._postfix["n"] = self.step_count
+                self._postfix.update(
+                    {
+                        self._loss_name: str(self._loss_stats),
+                    }
+                )
+
                 pbar.set_postfix(self._postfix)
                 pbar.refresh()
 
             for step in self._iter(T, tstops=tstops, callback=update_progress_bar):
                 log_data = self.estimate(obs)
+                self._log_additional_data(log_data, step)
 
                 self._postfix = {"n": self.step_count}
                 # if the cost-function is defined then report it in the progress bar
@@ -402,8 +430,8 @@ class TDVP(AbstractVariationalDriver):
 
         return loggers
 
-    def _log_additional_data(self, obs, step):
-        obs["t"] = self.t
+    def _log_additional_data(self, log_dict, step):
+        log_dict["t"] = self.t
 
     @property
     def _default_step_size(self):
@@ -494,18 +522,25 @@ def odefun(state, driver, t, w, **kwargs):
 
 
 @dispatch
-def odefun(state: MCState, driver: TDVP, t, w, *, stage=0):  # noqa: F811
+def odefun(  # noqa: F811
+    state: Union[MCState, ExactState], driver: TDVP, t, w, *, stage=0
+):
     # pylint: disable=protected-access
 
     state.parameters = w
     state.reset()
 
-    driver._loss_stats, driver._loss_grad = state.expect_and_grad(
-        driver.generator(t),
-        use_covariance=True,
+    op_t = driver.generator(t)
+
+    driver._loss_stats, driver._loss_forces = state.expect_and_forces(
+        op_t,
     )
-    driver._loss_grad = jax.tree_map(
-        lambda x: driver._loss_grad_factor * x, driver._loss_grad
+    driver._loss_grad = _map_parameters(
+        driver._loss_forces,
+        state.parameters,
+        driver._loss_grad_factor,
+        driver.propagation_type,
+        type(state),
     )
 
     qgt = driver.qgt(driver.state)
@@ -514,7 +549,33 @@ def odefun(state: MCState, driver: TDVP, t, w, *, stage=0):  # noqa: F811
 
     initial_dw = None if driver.linear_solver_restart else driver._dw
     driver._dw, _ = qgt.solve(driver.linear_solver, driver._loss_grad, x0=initial_dw)
+
+    # If parameters are real, then take only real part of the gradient (if it's complex)
+    driver._dw = jax.tree_map(
+        lambda x, target: (x if jnp.iscomplexobj(target) else x.real),
+        driver._dw,
+        state.parameters,
+    )
+
     return driver._dw
+
+
+@partial(jax.jit, static_argnums=(3, 4))
+def _map_parameters(forces, parameters, loss_grad_factor, propagation_type, state_T):
+
+    forces = jax.tree_map(
+        lambda x, target: loss_grad_factor * x,
+        forces,
+        parameters,
+    )
+
+    forces = jax.tree_map(
+        lambda x, target: (x if jnp.iscomplexobj(target) else x.real),
+        forces,
+        parameters,
+    )
+
+    return forces
 
 
 def odefun_host_callback(state, driver, *args, **kwargs):
@@ -522,14 +583,17 @@ def odefun_host_callback(state, driver, *args, **kwargs):
     Calls odefun through a host callback in order to make the rest of the
     ODE solver jit-able.
     """
+    if config.netket_experimental_disable_ode_jit:
+        return odefun(state, driver, *args, **kwargs)
+
     result_shape = jax.tree_map(
         lambda x: jax.ShapeDtypeStruct(x.shape, x.dtype),
         state.parameters,
     )
 
-    return hcb.call(
+    return pure_callback(
         lambda args_and_kw: odefun(state, driver, *args_and_kw[0], **args_and_kw[1]),
-        # pack args and kwargs together, since host_callback passes a single argument:
+        result_shape,
+        # TODO: once we support only jax>0.3.17 pass directly args and kwargs
         (args, kwargs),
-        result_shape=result_shape,
     )

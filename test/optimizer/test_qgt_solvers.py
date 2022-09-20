@@ -21,13 +21,14 @@ import jax.flatten_util
 from jax.nn.initializers import normal
 
 import netket as nk
+from netket.utils import module_version
 from netket.optimizer import qgt
 
 from .. import common  # noqa: F401
 
 QGT_types = {}
 QGT_types["QGTOnTheFly"] = nk.optimizer.qgt.QGTOnTheFly
-# QGT_types["QGTJacobianDense"] = nk.optimizer.qgt.QGTJacobianDense
+QGT_types["QGTJacobianDense"] = nk.optimizer.qgt.QGTJacobianDense
 QGT_types["QGTJacobianPyTree"] = nk.optimizer.qgt.QGTJacobianPyTree
 
 QGT_objects = {}
@@ -97,5 +98,26 @@ def test_qgt_throws(SType):
     S = vs.quantum_geometric_tensor(SType)
     g_cmplx = jax.tree_map(lambda x: x + x * 0.1j, vs.parameters)
 
-    with pytest.raises(TypeError, match="Cannot multiply the"):
+    with pytest.raises(nk.utils.errors.ComplexDomainError, match="Cannot multiply the"):
         S @ g_cmplx
+
+
+@common.skipif_mpi
+@pytest.mark.skipif(
+    module_version("jax") < (0, 3, 17), reason="Needs jax.pure_callback"
+)
+@pytest.mark.parametrize(
+    "SType", [pytest.param(T, id=name) for name, T in QGT_types.items()]
+)
+def test_qgt_nondiff_sigma(SType):
+    # Test that we dont attempt to differentiate through the samples
+    # by testing a model that would fail in that case because its
+    # nondifferentiable.
+
+    hi = nk.hilbert.Spin(s=1 / 2, N=5)
+    ma = nk.models.LogStateVector(hi)
+    sa = nk.sampler.MetropolisLocal(hi, n_chains=2, reset_chains=False)
+    vs = nk.vqs.MCState(sa, ma, n_samples=2, n_discard_per_chain=0)
+
+    S = vs.quantum_geometric_tensor(SType)
+    S @ vs.parameters

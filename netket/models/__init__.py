@@ -14,13 +14,28 @@
 
 from .rbm import RBM, RBMModPhase, RBMMultiVal, RBMSymm
 from .equivariant import GCNN
+from .full_space import LogStateVector
 from .jastrow import Jastrow
 from .mps import MPSPeriodic
 from .gaussian import Gaussian
+from .deepset import DeepSetRelDistance
 from .ndm import NDM
-from .autoreg import AbstractARNN, ARNNDense, ARNNConv1D, ARNNConv2D
-from .fast_autoreg import FastARNNDense, FastARNNConv1D, FastARNNConv2D
+from .autoreg import AbstractARNN, ARNNDense, ARNNConv1D, ARNNConv2D as _ARNNConv2D
+from .fast_autoreg import (
+    FastARNNDense,
+    FastARNNConv1D,
+    FastARNNConv2D as _FastARNNConv2D,
+)
+from .mlp import MLP
 from .utils import update_GCNN_parity
+
+
+# TODO: remove dtype deprecation
+from netket.utils import deprecate_dtype as _deprecate_dtype
+
+ARNNConv2D = _deprecate_dtype(_ARNNConv2D)
+FastARNNConv2D = _deprecate_dtype(_FastARNNConv2D)
+
 
 from netket.utils import _hide_submodules
 

@@ -17,6 +17,8 @@ from textwrap import dedent
 
 import numpy as np
 
+from netket.utils.types import Array
+
 from .abstract_hilbert import AbstractHilbert
 
 max_states = np.iinfo(np.int32).max
@@ -54,7 +56,7 @@ legacy_warn_str = (
 class DiscreteHilbert(AbstractHilbert):
     """Abstract class for an hilbert space defined on a lattice.
 
-    This class definese the common interface that can be used to
+    This class defines the common interface that can be used to
     interact with hilbert spaces on lattices.
     """
 
@@ -119,7 +121,7 @@ class DiscreteHilbert(AbstractHilbert):
             i: The index of the desired site.
 
         Returns:
-            A list of values or None if there are infintely many.
+            A list of values or None if there are infinitely many.
         """
         raise NotImplementedError()  # pragma: no cover
 
@@ -184,7 +186,7 @@ class DiscreteHilbert(AbstractHilbert):
         r"""Returns an iterator over all valid configurations of the Hilbert space.
         Throws an exception iff the space is not indexable.
         Iterating over all states with this method is typically inefficient,
-        and ```all_states``` should be prefered.
+        and ```all_states``` should be preferred.
 
         """
         for i in range(self.n_states):
@@ -199,16 +201,37 @@ class DiscreteHilbert(AbstractHilbert):
             out: an optional pre-allocated output array
 
         Returns:
-            A (n_states x size) batch of statess. this corresponds
+            A (n_states x size) batch of states. this corresponds
             to the pre-allocated array if it was passed.
         """
         numbers = np.arange(0, self.n_states, dtype=np.int64)
 
         return self.numbers_to_states(numbers, out)
 
+    def states_to_local_indices(self, x: Array):
+        r"""Returns a tensor with the same shape of `x`, where all local
+        values are converted to indices in the range `0...self.shape[i]`.
+        This function is guaranteed to be jax-jittable.
+
+        For the `Fock` space this returns `x`, but for other hilbert spaces
+        such as `Spin` this returns an array of indices.
+
+        NOTE: This function is experimental. Use at your own risk.
+
+        Args:
+            x: a tensor containing samples from this hilbert space
+
+        Returns:
+            a tensor containing integer indices into the local hilbert
+        """
+        raise NotImplementedError(
+            "states_to_local_indices(self, x) is not "
+            f"implemented for Hilbert space {self} of type {type(self)}"
+        )
+
     @property
     def is_indexable(self) -> bool:
-        """Whever the space can be indexed with an integer"""
+        """Whether the space can be indexed with an integer"""
         if not self.is_finite:
             return False
         return _is_indexable(self.shape)
@@ -224,4 +247,4 @@ class DiscreteHilbert(AbstractHilbert):
                 if res is not NotImplemented:
                     return res
 
-            return TensorHilbert(self) * other
+            return TensorHilbert(self, other)

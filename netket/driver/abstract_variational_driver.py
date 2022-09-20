@@ -49,9 +49,9 @@ def _to_iterable(maybe_iterable):
 # - _estimate_stats should return the MC estimate of a single operator
 # - reset should reset the driver (usually the sampler).
 # - info should return a string with an overview of the driver.
-# - The __init__ method shouldbe called with the machine and the optimizer. If this
+# - The __init__ method should be called with the machine and the optimizer. If this
 #   driver is minimising a loss function and you want it's name to show up automatically
-#   in the progress bar/ouput files you should pass the optional keyword argument
+#   in the progress bar/output files you should pass the optional keyword argument
 #   minimized_quantity_name.
 class AbstractVariationalDriver(abc.ABC):
     """Abstract base class for NetKet Variational Monte Carlo drivers"""
@@ -198,7 +198,7 @@ class AbstractVariationalDriver(abc.ABC):
         in the output `logger`. If no logger is specified, creates a json file at `out`,
         overwriting files with the same prefix.
 
-        By default uses :ref:`netket.logging.JsonLog`. To know about the output format
+        By default uses :class:`nk.logging.JsonLog`. To know about the output format
         check it's documentation. The logger object is also returned at the end of this function
         so that you can inspect the results without reading the json output.
 
@@ -252,6 +252,7 @@ class AbstractVariationalDriver(abc.ABC):
             for step in self.iter(n_iter, step_size):
 
                 log_data = self.estimate(obs)
+                self._log_additional_data(log_data, step)
 
                 # if the cost-function is defined then report it in the progress bar
                 if self._loss_stats is not None:
@@ -313,6 +314,22 @@ class AbstractVariationalDriver(abc.ABC):
         self._optimizer_state, self.state.parameters = apply_gradient(
             self._optimizer.update, self._optimizer_state, dp, self.state.parameters
         )
+
+    def _log_additional_data(self, log_dict, step):
+        """
+        Method to be implemented in sub-classes of AbstractVariationalDriver to
+        log additional data at every step.
+        This method is called at every iteration when executing with `run`.
+
+        Args:
+            `log_dict`: The dictionary containing all logged data. It must be
+                modified in-place adding new keys.
+            `step`: the current step number.
+
+        Returns:
+            Nothing. The log dictionary should be modified in place.
+        """
+        pass  # pragma: no cover
 
 
 @partial(jax.jit, static_argnums=0)

@@ -85,7 +85,7 @@ class LinearOperator:
         self, solve_fun: SolverT, y: PyTree, *, x0: Optional[PyTree] = None, **kwargs
     ) -> PyTree:
         """
-        Solve the linear system x=⟨S⟩⁻¹⟨y⟩ with the chosen iterataive solver.
+        Solve the linear system x=⟨S⟩⁻¹⟨y⟩ with the chosen iterative solver.
 
         Args:
             y: the vector y in the system above.
@@ -94,8 +94,8 @@ class LinearOperator:
 
         Returns:
             x: the PyTree solving the system.
-            info: optional additional informations provided by the solver. Might be
-                None if there are no additional informations provided.
+            info: optional additional information provided by the solver. Might be
+                None if there are no additional information provided.
         """
         return self._solve(jax.tree_util.Partial(solve_fun), y, x0=x0, **kwargs)
 

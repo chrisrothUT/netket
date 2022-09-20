@@ -31,15 +31,11 @@ fancy = []
 
 
 @struct.dataclass
-class SamplerState:
+class SamplerState(abc.ABC):
     """
     Base class holding the state of a sampler.
     """
 
-    pass
-
-
-def autodoc(clz):
     pass
 
 
@@ -52,12 +48,20 @@ class Sampler(abc.ABC):
     API.
     Note that fields marked with `pytree_node=False` are treated as static arguments
     when jitting.
+
+    Subclasses should be NetKet dataclasses and they should define the `_init_state`,
+    `_reset` and `_sample_chain` methods which only accept positional arguments.
+    See the respective method's definition for its signature.
+
+    Notice that those methods are different from the API-entry point without the leading
+    underscore in order to allow us to share some pre-processing code between samplers
+    and simplify the definition of a new sampler.
     """
 
     hilbert: AbstractHilbert = struct.field(pytree_node=False)
     """The Hilbert space to sample."""
 
-    n_chains_per_rank: int = struct.field(pytree_node=False, default=None)
+    n_chains_per_rank: int = struct.field(pytree_node=False, default=None, repr=False)
     """Number of independent chains on every MPI rank."""
 
     machine_pow: int = struct.field(default=2)
@@ -130,7 +134,7 @@ class Sampler(abc.ABC):
         """
         The total number of independent chains across all MPI ranks.
 
-        If you are not using MPI, this is equal to `n_chains_per_rank`.
+        If you are not using MPI, this is equal to :attr:`~Sampler.n_chains_per_rank`.
         """
         return self.n_chains_per_rank * mpi.n_nodes
 

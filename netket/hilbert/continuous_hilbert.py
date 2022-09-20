@@ -15,6 +15,8 @@ from typing import Tuple, Union
 
 from .abstract_hilbert import AbstractHilbert
 
+import numpy as np
+
 
 class ContinuousHilbert(AbstractHilbert):
     """Abstract class for the Hilbert space of particles
@@ -30,14 +32,29 @@ class ContinuousHilbert(AbstractHilbert):
          of the continuous space they are defined in.
 
         Args:
-            domain: range of the continuous quantum numbers
+            domain: Tuple indicating the maximum of the continuous quantum number(s) in the configurations. Each entry
+                in the tuple corresponds to a different physical dimension.
+                If np.inf is used an infinite box is considered and `pbc=False` is mandatory (because what are PBC
+                if there are no boundaries?). If a finite value is given, a minimum value of zero is assumed for the
+                quantum number(s).
+                A particle in a 3D box of size L would take `(L,L,L)`. A rotor model would take e.g. `(2pi,)`.
+            pbc: Tuple or bool indicating whether to use periodic boundary conditions in a given physical dimension.
+                If tuple it must have the same length as domain. If bool the same value is used for all the dimensions
+                defined in domain.
         """
-        self._extent = domain
-        self._pbc = pbc
+        self._extent = tuple(domain)
+        self._pbc = tuple(pbc)
         if not len(self._extent) == len(self._pbc):
             raise ValueError(
                 """`pbc` must be either a bool or a tuple indicating the periodicity of each spatial dimension."""
             )
+
+        if np.any(np.isinf(np.array(self._extent) * np.array(self._pbc))):
+            raise ValueError(
+                "If you do have periodic boundary conditions in a given direction the maximum of the quantum number "
+                "in that direction must be finite."
+            )
+
         super().__init__()
 
     @property

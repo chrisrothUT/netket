@@ -21,20 +21,22 @@ from numba import jit
 from itertools import product
 
 from netket.hilbert import Qubit, AbstractHilbert
+from netket.utils.numbers import is_scalar
 
+from ._abstract_operator import AbstractOperator
 from ._discrete_operator import DiscreteOperator
 
 valid_pauli_regex = re.compile(r"^[XYZI]+$")
 
 
 class PauliStrings(DiscreteOperator):
-    """A Hamiltonian consisiting of the sum of products of Pauli operators."""
+    """A Hamiltonian consisting of the sum of products of Pauli operators."""
 
     def __init__(
         self,
         hilbert: AbstractHilbert,
-        operators: List[str] = None,
-        weights: List[Union[float, complex]] = None,
+        operators: Union[str, List[str]] = None,
+        weights: Union[float, complex, List[Union[float, complex]]] = None,
         *,
         cutoff: float = 1.0e-10,
         dtype: DType = complex,
@@ -74,15 +76,22 @@ class PauliStrings(DiscreteOperator):
 
         if operators is None:
             raise ValueError(
-                "None valued operators passed. (Might arised when passing None valued hilbert explicitly)"
+                "None valued operators passed. (Might arise when passing None valued hilbert explicitly)"
             )
+
+        # Support single-operator
+        if isinstance(operators, str):
+            operators = [operators]
 
         if len(operators) == 0:
             raise ValueError("No Pauli operators passed.")
 
+        # default weight is 1
         if weights is None:
-            # default weight is 1
-            weights = [True for i in operators]
+            weights = True
+
+        if is_scalar(weights):
+            weights = [weights for _ in operators]
 
         if len(weights) != len(operators):
             raise ValueError("weights should have the same length as operators.")
@@ -105,11 +114,11 @@ class PauliStrings(DiscreteOperator):
         if hilbert is None:
             hilbert = Qubit(_hilb_size)
 
-        super().__init__(hilbert)
-        if self.hilbert.local_size != 2:
+        if hilbert.local_size != 2:
             raise ValueError(
                 "PauliStrings only work for local hilbert size 2 where PauliMatrices are defined"
             )
+        super().__init__(hilbert)
 
         self._cutoff = cutoff
         b_weights = np.asarray(weights, dtype=dtype)
@@ -123,9 +132,7 @@ class PauliStrings(DiscreteOperator):
 
     @staticmethod
     def identity(hilbert: AbstractHilbert, **kwargs):
-        operators = ("I" * hilbert.size,)
-        weights = (1.0,)
-        return PauliStrings(hilbert, operators, weights, **kwargs)
+        return PauliStrings(hilbert, "I" * hilbert.size, **kwargs)
 
     def _setup(self, force=False):
         """Analyze the operator strings and precompute arrays for get_conn inference"""
@@ -219,21 +226,25 @@ class PauliStrings(DiscreteOperator):
     @staticmethod
     def from_openfermion(
         hilbert: AbstractHilbert,
-        of_qubit_operator: "openfermion.ops.QubitOperator" = None,  # noqa: F821
+        of_qubit_operator=None,  # : "openfermion.ops.QubitOperator" type
         *,
         n_qubits: int = None,
-    ):
+    ) -> "PauliStrings":
         r"""
         Converts an openfermion QubitOperator into a netket PauliStrings.
-        The hilbert first argument can be dropped, see __init__ for details and default value
+
+        The hilbert first argument can be dropped, see :code:`__init__` for
+        details and default value
 
         Args:
-            hilbert (optional): hilbert of the resulting PauliStrings object
-            of_qubit_operator (required): openfermion.ops.QubitOperator object
-            n_qubits (int): total number of qubits in the system, default None means inferring it from the QubitOperator. Argument is ignored when hilbert is given.
+            hilbert: hilbert of the resulting PauliStrings object
+            of_qubit_operator: this must be a
+                `QubitOperator object <https://quantumai.google/reference/python/openfermion/ops/QubitOperator>`_ .
+                More information about those objects can be found in
+                `OpenFermion's documentation <https://quantumai.google/reference/python/openfermion>`_
+            n_qubits: (optional) total number of qubits in the system, default None means inferring
+                it from the QubitOperator. Argument is ignored when hilbert is given.
 
-        Returns:
-            A PauliStrings object.
         """
         from openfermion.ops import QubitOperator
 
@@ -319,6 +330,16 @@ class PauliStrings(DiscreteOperator):
         return self * scalar
 
     def __mul__(self, scalar):
+        if isinstance(scalar, AbstractOperator):
+            raise TypeError(
+                "To multiply operators use the matrix`@` "
+                "multiplication operator `@` instead of the element-wise "
+                "multiplication operator `*`.\n\n"
+                "For example:\n\n"
+                ">>> nk.operator.PauliStrings('XY')@nk.operator.PauliStrings('ZY')"
+                "\n\n"
+            )
+
         if not np.issubdtype(type(scalar), np.number):
             raise NotImplementedError
         weights = self._orig_weights * scalar

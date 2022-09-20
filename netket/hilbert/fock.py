@@ -55,7 +55,7 @@ class Fock(HomogeneousHilbert):
           N: number of bosonic modes (default = 1)
           n_particles: Constraint for the number of particles. If None, no constraint
             is imposed.
-          graph: (Deprecated, pleaese use `N`) A graph, from which the number of nodes
+          graph: (Deprecated, please use `N`) A graph, from which the number of nodes
             is extracted.
 
         Examples:
@@ -74,8 +74,11 @@ class Fock(HomogeneousHilbert):
 
         if n_particles is not None:
             n_particles = int(n_particles)
+            if n_particles < 0:
+                raise ValueError(
+                    f"Number of particles must be >= 0, but received {n_particles}."
+                )
             self._n_particles = n_particles
-            assert n_particles > 0
 
             if self._n_max is None:
                 self._n_max = n_particles
@@ -160,6 +163,9 @@ class Fock(HomogeneousHilbert):
         )
         nmax = self._n_max if self._n_max < FOCK_MAX else "FOCK_MAX"
         return "Fock(n_max={}{}, N={})".format(nmax, n_particles, self._size)
+
+    def states_to_local_indices(self, x):
+        return x.astype(np.int32)
 
     @property
     def _attrs(self):

@@ -2,13 +2,11 @@ import jax
 import jax.numpy as jnp
 
 from jax import linear_util as lu
-from jax.api_util import argnums_partial as _argnums_partial
+from jax.api_util import argnums_partial
 
-from functools import partial, wraps
+from functools import partial
 
-from netket.utils import module_version
-
-_tree_add = partial(jax.tree_multimap, jax.lax.add)
+_tree_add = partial(jax.tree_map, jax.lax.add)
 _tree_zeros_like = partial(jax.tree_map, lambda x: jnp.zeros(x.shape, dtype=x.dtype))
 
 
@@ -18,19 +16,6 @@ def _multimap(f, *args):
         return tuple(map(lambda a: f(*a), zip(*args)))
     except TypeError:
         return f(*args)
-
-
-# TODO: When minimum jax is v0.2.22, remove this function and import directly
-# argnums_partial.
-# This works around onled argnums_partial implementations that did not have
-# require_static_args_hashable kwarg (which was implicitly False).
-if module_version(jax) >= (0, 2, 22):
-    argnums_partial = _argnums_partial
-else:
-
-    @wraps(_argnums_partial)
-    def argnums_partial(*args, require_static_args_hashable=True, **kwargs):
-        return _argnums_partial(*args, **kwargs)
 
 
 def scan_append_reduce(f, x, append_cond, op=_tree_add):
@@ -50,7 +35,7 @@ def scan_append_reduce(f, x, append_cond, op=_tree_add):
             containing the evaluation of f at each element in x
         else (append_cond is False):
             a (pytree of) array(s) with the same shape as the corresponding output of f,
-            containg the reduction over op of f evaluated at each x
+            containing the reduction over op of f evaluated at each x
 
 
     Example:
@@ -75,7 +60,7 @@ def scan_append_reduce(f, x, append_cond, op=_tree_add):
 
     # special code path if there is only one element
     # to avoid having to rely on xla/llvm to optimize the overhead away
-    if jax.tree_leaves(x)[0].shape[0] == 1:
+    if jax.tree_util.tree_leaves(x)[0].shape[0] == 1:
         return _multimap(
             lambda c, x: jnp.expand_dims(x, 0) if c else x, append_cond, f(x0)
         )
@@ -93,7 +78,7 @@ def scan_append_reduce(f, x, append_cond, op=_tree_add):
         y_op = _get_op_part(y)
         y_append = _get_append_part(y)
         # select here to avoid the user having to specify the zero element for op
-        y_reduce = jax.tree_multimap(
+        y_reduce = jax.tree_map(
             partial(jax.lax.select, is_first), y_op, op(y_carry, y_op)
         )
         return (False, y_reduce), y_append

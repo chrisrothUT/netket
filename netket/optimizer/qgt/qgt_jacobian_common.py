@@ -24,22 +24,38 @@ import netket.jax as nkjax
 @partial(jax.jit, static_argnums=(0, 4, 5))
 def _choose_jacobian_mode(apply_fun, pars, model_state, samples, mode, holomorphic):
     homogeneous_vars = nkjax.tree_ishomogeneous(pars)
+    leaf_iscomplex = nkjax.tree_leaf_iscomplex(pars)
 
     if holomorphic is True:
-        if not homogeneous_vars:
+        if homogeneous_vars and leaf_iscomplex:
+            ## all complex parameters
+            mode = "holomorphic"
+        elif homogeneous_vars and not leaf_iscomplex:
+            # all real parameters
+            raise ValueError(
+                dedent(
+                    """
+                A function with real parameters cannot be holomorphic.
+
+                Please remove the kw-arg `holomorphic=True`.
+                """
+                )
+            )
+        else:
+            # mixed complex and real parameters
             warnings.warn(
                 dedent(
                     """The ansatz has non homogeneous variables, which might not behave well with the
-                       holomorhic implemnetation.
+                       holomorhic implementation.
+
                        Use `holomorphic=False` or mode='complex' for more accurate results but
                        lower performance.
                     """
                 )
             )
-        mode = "holomorphic"
+            mode = "holomorphic"
     else:
-        leaf_iscomplex = nkjax.tree_leaf_iscomplex(pars)
-        complex_output = nkjax.is_complex(
+        complex_output = jax.numpy.iscomplexobj(
             jax.eval_shape(
                 apply_fun,
                 {"params": pars, **model_state},
@@ -82,7 +98,7 @@ def choose_jacobian_mode(afun, pars, state, samples, *, mode, holomorphic):
     """
     Select an implementation of Jacobian
     """
-    i = _choose_jacobian_mode(afun, pars, state, samples, mode, holomorphic).item()
+    i = int(_choose_jacobian_mode(afun, pars, state, samples, mode, holomorphic))
     if i == 0:
         return "real"
     elif i == 1:

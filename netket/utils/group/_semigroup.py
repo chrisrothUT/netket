@@ -28,17 +28,20 @@ from netket.utils.dispatch import dispatch
 
 
 class Element(ABC):
-    """Base element of a FiniteSemiGroup.
+    """Base element of a :class:`netket.utils.group.FiniteSemiGroup`.
 
     Every element must define at least a dispatch rule
     to determine how it is applied to a ket as follows:
 
-    @nk.utils.dispatch.dispatch
-    def product(A: MyElement, b: nk.utils.types.Array):
-        return A*b
+    .. code:
+
+        @nk.utils.dispatch.dispatch
+        def product(A: MyElement, b: nk.utils.types.Array):
+            return A*b
 
     An element can also define dispatch rules to combine
-    itself with other elements
+    itself with other elements.
+
     """
 
     def __call__(self, ket):
@@ -79,8 +82,8 @@ def product(a: Element, _: Identity):  # noqa: F811
 @dataclass(frozen=True)
 class Composite(Element):
     """
-    Composition of two elements of a finite group, representing
-    `left@right`
+    Composition of two :class:`netket.utils.group.Element` of a finite group,
+    representing `left@right`
     """
 
     left: Element
@@ -148,7 +151,7 @@ class FiniteSemiGroup:
         Apply all group elements to all entries of `initial` along the last axis.
         """
         initial = np.asarray(initial)
-        return np.array([np.apply_along_axis(elem, -1, initial) for elem in self.elems])
+        return product(self, initial)
 
     def __getitem__(self, i):
         return self.elems[i]
@@ -176,3 +179,8 @@ def product(A: FiniteSemiGroup, B: FiniteSemiGroup):  # noqa: F811
     return FiniteSemiGroup(
         elems=[a @ b for a, b in itertools.product(A.elems, B.elems)],
     )
+
+
+@dispatch
+def product(self: FiniteSemiGroup, initial: Array):  # noqa: F811
+    return np.array([np.apply_along_axis(elem, -1, initial) for elem in self.elems])

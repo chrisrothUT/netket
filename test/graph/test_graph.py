@@ -601,7 +601,7 @@ def test_grid_translations():
 @pytest.mark.parametrize("n_dim", [1, 2, 3, 4])
 def test_grid_point_group_dim(n_dim):
     # point group of n-dimensional Hypercube should be the
-    # hyperoctaherdal group of order 2^n n!, see
+    # hyperoctahedral group of order 2^n n!, see
     # https://en.wikipedia.org/wiki/Hyperoctahedral_group
     point_group = Hypercube(length=3, n_dim=n_dim).point_group()
     order = 2**n_dim * math.factorial(n_dim)
@@ -819,3 +819,20 @@ def test_lattice_k_neighbors():
     g = nk.graph.Square(10, pbc=True, max_neighbor_order=2)
     assert len(g.edges(filter_color=0)) == 200
     assert len(g.edges(filter_color=1)) == 200
+
+
+def test_one_arm_irrep():
+    g = nk.graph.Square(6)
+    sgb = g.space_group_builder()
+    # Stars consist of one arm
+    np.testing.assert_almost_equal(
+        sgb.space_group_irreps(0, 0), sgb.one_arm_irreps(0, 0)
+    )
+    np.testing.assert_almost_equal(
+        sgb.space_group_irreps(pi, pi), sgb.one_arm_irreps(pi, pi)
+    )
+    # Star consists of two arms, with irreps listed in different order
+    np.testing.assert_almost_equal(
+        sgb.space_group_irreps(pi, 0),
+        sgb.one_arm_irreps(pi, 0) + sgb.one_arm_irreps(0, pi)[[0, 2, 1, 3]],
+    )

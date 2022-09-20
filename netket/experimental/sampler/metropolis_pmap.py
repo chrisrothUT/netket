@@ -70,7 +70,7 @@ class MetropolisSamplerPmap(MetropolisSampler):
 
         A(s \rightarrow s^\prime) = \mathrm{min} \left( 1,\frac{P(s^\prime)}{P(s)} e^{L(s,s^\prime)} \right) ,
 
-    where the probability being sampled from is :math:`P(s)=|M(s)|^p. Here :math:`M(s)` is a
+    where the probability being sampled from is :math:`P(s)=|M(s)|^p`. Here :math:`M(s)` is a
     user-provided function (the machine), :math:`p` is also user-provided with default value :math:`p=2`,
     and :math:`L(s,s^\prime)` is a suitable correcting factor computed by the transition kernel.
 
@@ -88,13 +88,13 @@ class MetropolisSamplerPmap(MetropolisSampler):
             n_sweeps: The number of exchanges that compose a single sweep.
                     If None, sweep_size is equal to the number of degrees of freedom being sampled
                     (the size of the input vector s to the machine).
-            reset_chains: If False the state configuration is not resetted when reset() is called.
+            reset_chains: If False the state configuration is not reset when reset() is called.
             n_chains: The total number of Markov Chain to be run in parallel on a the available devices.
                 This will be rounded to the nearest multiple of `len(jax.devices())`
             n_chains_per_device: The number of chains to be run in parallel on one device.
                 Cannot be specified if n_chains is also specified.
             machine_pow: The power to which the machine should be exponentiated to generate the pdf (default = 2).
-            dtype: The dtype of the statees sampled (default = np.float32).
+            dtype: The dtype of the states sampled (default = np.float32).
         """
 
         n_devices = len(jax.devices())

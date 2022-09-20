@@ -15,6 +15,7 @@
 from typing import Optional, List, Union
 
 import numpy as np
+import jax.numpy as jnp
 
 from .discrete_hilbert import DiscreteHilbert, _is_indexable
 
@@ -35,7 +36,7 @@ class TensorHilbert(DiscreteHilbert):
 
         >>> from netket.hilbert import Spin, Fock
         >>> Fock(3)*Spin(0.5, 5)
-        Fock(n_max=3, N=1)*Spin(s=1/2, N=5)
+        Fock(n_max=3, N=1)⊗Spin(s=1/2, N=5)
         >>> type(_)
         <class 'netket.hilbert.tensor_hilbert.TensorHilbert'>
 
@@ -146,10 +147,23 @@ class TensorHilbert(DiscreteHilbert):
 
         return out
 
+    def states_to_local_indices(self, x):
+        out = jnp.empty_like(x, dtype=jnp.int32)
+        for (i, hilb_i) in enumerate(self._hilbert_spaces):
+            out = out.at[..., self._cum_indices[i] : self._cum_sizes[i]].set(
+                hilb_i.states_to_local_indices(
+                    x[..., self._cum_indices[i] : self._cum_sizes[i]]
+                )
+            )
+        return out
+
     def __repr__(self):
+        if len(self._hilbert_spaces) == 1:
+            return f"TensorHilbert({self._hilbert_spaces[0]})"
+
         _str = "{}".format(self._hilbert_spaces[0])
         for hi in self._hilbert_spaces[1:]:
-            _str += "*{}".format(hi)
+            _str += "⊗{}".format(hi)
 
         return _str
 
@@ -168,14 +182,12 @@ class TensorHilbert(DiscreteHilbert):
             space_center_r = other
             spaces_r = tuple()
 
-        try:
-            spaces_center = space_center_l * space_center_r
-            if isinstance(spaces_center, TensorHilbert):
-                spaces_center = (space_center_l, space_center_r)
-            else:
-                spaces_center = (spaces_center,)
-        except Exception:
+        # Attempt to 'merge' the two spaces at the interface.
+        spaces_center = space_center_l * space_center_r
+        if isinstance(spaces_center, TensorHilbert):
             spaces_center = (space_center_l, space_center_r)
+        else:
+            spaces_center = (spaces_center,)
 
         return TensorHilbert(*spaces_l, *spaces_center, *spaces_r)
 
