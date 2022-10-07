@@ -198,7 +198,7 @@ def _rescale(centered_oks,rescale_shift):
     Sₖₗ/(√Sₖₖ√Sₗₗ) = ΔOₖᴴΔOₗ/(√Sₖₖ√Sₗₗ) = (ΔOₖ/√Sₖₖ)ᴴ(ΔOₗ/√Sₗₗ)
     """
     scale = jax.tree_map(
-        lambda x: mpi.mpi_sum_jax(jnp.sum((x * x.conj()).real + rescale_shift, axis=0, keepdims=True))[
+        lambda x: mpi.mpi_sum_jax(jnp.sum((x * x.conj()).real, axis=0, keepdims=True) + rescale_shift)[
             0
         ]
         ** 0.5,
