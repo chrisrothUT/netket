@@ -93,7 +93,7 @@ def expect_fallback(
 @expect.dispatch
 def expect_mcstate_operator_chunked(
     vstate: MCState, Ô: AbstractOperator, chunk_size: int
-) -> Stats:  # noqa: F811
+):  # noqa: F811
     σ, args = get_local_kernel_arguments(vstate, Ô)
 
     local_estimator_fun = get_local_kernel(vstate, Ô, chunk_size)
@@ -120,7 +120,7 @@ def _expect_chunking(
     model_state: PyTree,
     σ: jnp.ndarray,
     args: PyTree,
-) -> Stats:
+):
     σ_shape = σ.shape
 
     if jnp.ndim(σ) != 2:
