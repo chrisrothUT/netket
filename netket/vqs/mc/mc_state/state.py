@@ -589,7 +589,7 @@ class MCState(VariationalState):
         return local_estimators(self, op, chunk_size=chunk_size)
 
     # override to use chunks
-    def expect(self, Ô: AbstractOperator) -> Stats:
+    def expect(self, Ô: AbstractOperator):
         r"""Estimates the quantum expectation value for a given operator O.
             In the case of a pure state $\psi$, this is $<O>= <Psi|O|Psi>/<Psi|Psi>$
             otherwise for a mixed state $\rho$, this is $<O> = \Tr[\rho \hat{O}/\Tr[\rho]$.
