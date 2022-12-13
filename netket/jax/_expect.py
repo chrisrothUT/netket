@@ -53,10 +53,7 @@ def _expect(n_chains, log_pdf, expected_fun, pars, σ, *expected_fun_args):
     if n_chains is not None:
         L_σ = L_σ.reshape((n_chains, -1))
 
-    L̄_σ = mpi_statistics(L_σ.T)
-    # L̄_σ = L_σ.mean(axis=0)
-
-    return L̄_σ.mean, L̄_σ
+    return L_σ
 
 
 def _expect_fwd(n_chains, log_pdf, expected_fun, pars, σ, *expected_fun_args):
