@@ -140,4 +140,4 @@ def _expect(
     L_σ = L_σ.reshape((σ_shape[0], -1))
     Ō_stats = mpi_statistics(L_σ.T)
 
-    return Ō_stats
+    return L_σ
