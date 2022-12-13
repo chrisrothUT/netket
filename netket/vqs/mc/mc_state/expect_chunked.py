@@ -132,7 +132,7 @@ def _expect_chunking(
     def log_pdf(w, σ):
         return machine_pow * model_apply_fun({"params": w, **model_state}, σ).real
 
-    _, Ō_stats = nkjax.expect(
+    elocs, Ō_stats = nkjax.expect(
         log_pdf,
         partial(local_value_kernel, logpsi, chunk_size=chunk_size),
         parameters,
@@ -141,4 +141,4 @@ def _expect_chunking(
         n_chains=σ_shape[0],
     )
 
-    return Ō_stats
+    return elocs
