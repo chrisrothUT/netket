@@ -296,7 +296,7 @@ def prepare_centered_oks(
         # by passing around the oks as a tuple of two pytrees representing the real and imag parts
         centered_jacobian_fun = compose(
             stack_jacobian_tuple,
-            partial(centered_jacobian_cplx, _build_fn=lambda *x: x),
+            centered_jacobian_cplx,
         )
         jacobian_fun = jacobian_cplx
     elif mode == "holomorphic":
