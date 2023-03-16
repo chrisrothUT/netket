@@ -68,11 +68,12 @@ def expect_and_grad_covariance_chunked(  # noqa: F811
     Ô: AbstractOperator,
     use_covariance: TrueT,
     chunk_size: int,
+    grad_chunk_size: int,
     *,
     mutable: CollectionFilter,
 ) -> Tuple[Stats, PyTree]:
 
-    Ō, Ō_grad = expect_and_forces(vstate, Ô, chunk_size, mutable=mutable)
+    Ō, Ō_grad = expect_and_forces(vstate, Ô, chunk_size, grad_chunk_size, mutable=mutable)
     Ō_grad = _force_to_grad(Ō_grad, vstate.parameters)
     return Ō, Ō_grad
 
