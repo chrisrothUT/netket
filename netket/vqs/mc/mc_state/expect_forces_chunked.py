@@ -98,6 +98,7 @@ def expect_and_forces_impl(  # noqa: F811
 @partial(jax.jit, static_argnums=(0, 1, 2, 3))
 def forces_expect_hermitian_chunked(
     chunk_size: int,
+    grad_chunk_size: int,
     local_value_kernel_chunked: Callable,
     model_apply_fun: Callable,
     mutable: CollectionFilter,
@@ -134,7 +135,7 @@ def forces_expect_hermitian_chunked(
             parameters,
             σ,
             conjugate=True,
-            chunk_size=chunk_size,
+            chunk_size=grad_chunk_size,
             chunk_argnums=1,
             nondiff_argnums=1,
         )
